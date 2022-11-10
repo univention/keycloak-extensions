@@ -9,3 +9,19 @@ package_and_release:
   rules:
     - changes:
         - notification-service/*
+stages:
+  - build
+
+build_jar:
+  stage: build
+  image: maven:3.8.6-openjdk-18
+  rules:
+    - changes:
+      - reCaptcha-auth-flow/*
+  artifacts:
+      paths:
+        - reCaptcha-auth-flow/target
+  script:
+    - cd reCaptcha-auth-flow
+    - mvn clean install
+
