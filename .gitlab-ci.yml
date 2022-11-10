@@ -1,0 +1,11 @@
+---
+stages:
+  - release
+
+package_and_release:
+  stage: release
+  trigger:
+    include: /.gitlab/ci/release.yml
+  rules:
+    - changes:
+        - notification-service/*

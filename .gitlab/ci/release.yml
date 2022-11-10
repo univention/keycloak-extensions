@@ -1,0 +1,10 @@
+---
+# TODO: 1. A release branch is created, e.g. release-${COMMITHASH};
+# TODO: 2. A git version tag (e.g. v1.2.3) is created;
+# TODO: 3. The pom.xml version is updated, using mvn versions:set -DnewVersion=1.2.3;
+# TODO: 4. The changes are committed and pushed to the release branch;
+# TODO: 5. The release branch is merged into the main branch;
+# TODO: 6. A generic release package is created from the merge into main;
+# TODO: 7. This release package is uploaded to this repo's Package Registry.
+# TODO: 8. The release branch is deleted;
+# TODO: 9. main is merged into develop again to have the same version numbers everywhere.
