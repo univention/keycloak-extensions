@@ -1,0 +1,12 @@
+---
+stages:
+  - build
+
+build_theme:
+  stage: build
+  image: "artifacts.knut.univention.de/dockerhub_proxy_cache/library/maven:3.8.6-openjdk-18"
+  script:
+    - zip –r reCaptcha-theme.zip ./reCaptcha-theme
+  artifacts:
+    paths:
+      - "reCaptcha-theme.zip"

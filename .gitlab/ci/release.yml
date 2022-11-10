@@ -1,4 +1,25 @@
 ---
+stages:
+  - build
+  - release
+
+release_job:
+  stage: release
+  image: "registry.gitlab.com/gitlab-org/release-cli:latest"
+  rules:
+    - if: $CI_COMMIT_TAG
+  script:
+    - echo "Running the release job."
+  release:
+    tag_name: $CI_COMMIT_TAG
+    name: 'Release $CI_COMMIT_TAG'
+    description: 'Release created using the release-cli.'
+  needs:
+    - pipeline: $PARENT_PIPELINE_ID
+      job: "build_theme"
+    - pipeline: $PARENT_PIPELINE_ID
+      job: "build_jar"
+
 # TODO: 1. A release branch is created, e.g. release-${COMMITHASH};
 # TODO: 2. A git version tag (e.g. v1.2.3) is created;
 # TODO: 3. The pom.xml version is updated, using mvn versions:set -DnewVersion=1.2.3;

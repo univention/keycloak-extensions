@@ -1,27 +1,33 @@
 ---
 stages:
-  - release
-
-package_and_release:
-  stage: release
-  trigger:
-    include: /.gitlab/ci/release.yml
-  rules:
-    - changes:
-        - notification-service/*
-stages:
   - build
+  - release
 
 build_jar:
   stage: build
-  image: maven:3.8.6-openjdk-18
+  trigger:
+    include: "/.gitlab/ci/build_jar.yml"
   rules:
     - changes:
-      - reCaptcha-auth-flow/*
-  artifacts:
-      paths:
-        - reCaptcha-auth-flow/target
-  script:
-    - cd reCaptcha-auth-flow
-    - mvn clean install
+        - "reCaptcha-auth-flow/*"
 
+build_theme:
+  stage: build
+  trigger:
+    include: "/.gitlab/ci/build_theme.yml"
+  rules:
+    - changes:
+        - "reCaptcha-theme/*"
+
+release_job:
+  stage: release
+  variables:
+    PARENT_PIPELINE_ID: $CI_PIPELINE_ID
+    DIST_FOLDER_NAME: "dist"
+    VERSION_TAG: "v1.2.3"
+  trigger:
+    include: "/.gitlab/ci/release.yml"
+  needs:
+    - "build_jar"
+    - "build_theme"
+  when: manual
