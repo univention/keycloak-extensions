@@ -13,19 +13,13 @@ build_theme:
   trigger:
     include: "/.gitlab/ci/build_theme.yml"
 
+# This whole job only runs when a tag is added that adheres to semantic versioning.
+# For more info on Semantic Versioning, see: https://semver.org/
 release_job:
   stage: release
   variables:
     PARENT_PIPELINE_ID: $CI_PIPELINE_ID
-    VERSION_MAJOR:
-      value: "0"
-      description: "The major version number."
-    VERSION_MINOR:
-      value: "1"
-      description: "The minor version number."
-    VERSION_PATCH:
-      value: "0"
-      description: "The patch version number."
+  rules:
+    - if: '$CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+$/'
   trigger:
     include: "/.gitlab/ci/release.yml"
-  when: manual
