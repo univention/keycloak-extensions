@@ -17,7 +17,7 @@ workflow:
 upload:
   stage: upload
   image: "artifacts.knut.univention.de/dockerhub_proxy_cache/library/curlimages/curl:latest"
-  needs:
+  dependencies:
     - pipeline: $PARENT_PIPELINE_ID
       job: "build_theme"
       artifacts: true

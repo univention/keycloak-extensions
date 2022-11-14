@@ -16,7 +16,7 @@ cache:
       - ".m2/repository"
 
 # We build the project, and publish the JAR file as an artifact.
-build_jar:
+maven_clean_install:
   stage: build
   image: "artifacts.knut.univention.de/dockerhub_proxy_cache/library/maven:3.8.6-openjdk-18"
   script:

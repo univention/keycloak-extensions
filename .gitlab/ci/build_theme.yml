@@ -2,7 +2,7 @@
 stages:
   - build
 
-build_theme:
+archive_theme:
   stage: build
   image: "artifacts.knut.univention.de/dockerhub_proxy_cache/library/busybox"
   script:
