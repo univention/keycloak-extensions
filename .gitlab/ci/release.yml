@@ -8,16 +8,17 @@ stages:
 upload:
   stage: upload
   image: "artifacts.knut.univention.de/dockerhub_proxy_cache/library/curlimages/curl:latest"
-  rules:
-    - if: $CI_COMMIT_TAG
+  needs:
+    - pipeline: $PARENT_PIPELINE_ID
+      job: "build_theme"
+    - pipeline: $PARENT_PIPELINE_ID
+      job: "build_jar"
   script:
     - ls -la
     - |
       curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file reCaptcha-theme-$VERSION_TAG.tar.gz ${PACKAGE_REGISTRY_URL}/reCaptcha-theme-$VERSION_TAG.tar.gz
     - |
       curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file reCaptcha-auth-flow/target/reCaptcha-auth-flow-$VERSION_TAG.jar ${PACKAGE_REGISTRY_URL}/reCaptcha-auth-flow/target/reCaptcha-auth-flow-$VERSION_TAG.jar
-
-
 
 # The Release Job is triggered manually.
 # This happens in the Gitlab CI pipeline web UI.
@@ -31,18 +32,4 @@ release_version_package:
     name: 'Release $VERSION_TAG'
     description: 'Release created using the release-cli.'
   needs:
-    - pipeline: $PARENT_PIPELINE_ID
-      job: "build_theme"
-    - pipeline: $PARENT_PIPELINE_ID
-      job: "build_jar"
     - upload
-
-# TODO: 1. A release branch is created, e.g. release-${COMMITHASH};
-# TODO: 2. A git version tag (e.g. v1.2.3) is created;
-# TODO: 3. The pom.xml version is updated, using mvn versions:set -DnewVersion=1.2.3;
-# TODO: 4. The changes are committed and pushed to the release branch;
-# TODO: 5. The release branch is merged into the main branch;
-# TODO: 6. A generic release package is created from the merge into main;
-# TODO: 7. This release package is uploaded to this repo's Package Registry.
-# TODO: 8. The release branch is deleted;
-# TODO: 9. main is merged into develop again to have the same version numbers everywhere.
