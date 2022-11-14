@@ -6,7 +6,7 @@ build_theme:
   stage: build
   image: "artifacts.knut.univention.de/dockerhub_proxy_cache/library/busybox"
   script:
-    - 'tar -cvzf reCaptcha-theme-$VERSION_TAG.tar.gz ./reCaptcha-theme'
+    - 'tar -cvzf reCaptcha-theme.tar.gz ./reCaptcha-theme'
   artifacts:
     paths:
-      - "reCaptcha-theme-$VERSION_TAG.tar.gz"
+      - "reCaptcha-theme.tar.gz"
