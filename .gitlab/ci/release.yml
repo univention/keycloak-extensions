@@ -3,24 +3,17 @@ stages:
   - preparation
   - release
 
-create_release_branch:
-  stage: preparation
-  script:
-    - git checkout -b release/${CI_COMMIT_TAG}
-    - git tag -m $CI_COMMIT_TAG
-    - git push
-
 # The Release Job is triggered manually.
 # This happens in the Gitlab CI pipeline web UI.
 release_job:
   stage: release
   image: "registry.gitlab.com/gitlab-org/release-cli:latest"
   script:
-    - 'echo "Running release job for: ${$CI_COMMIT_TAG}"'
+    - 'echo "Running release job for: $VERSION_TAG"'
     - ls -la
   release:
-    tag_name: $CI_COMMIT_TAG
-    name: 'Release $CI_COMMIT_TAG'
+    tag_name: $VERSION_TAG
+    name: 'Release $VERSION_TAG'
     description: 'Release created using the release-cli.'
   needs:
     - pipeline: $PARENT_PIPELINE_ID

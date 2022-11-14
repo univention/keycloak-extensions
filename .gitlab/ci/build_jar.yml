@@ -22,6 +22,7 @@ build_jar:
   script:
     - cd reCaptcha-auth-flow
     - mvn clean install
+    - mv reCaptcha-auth-flow/target/reCaptcha-auth-flow.jar reCaptcha-auth-flow/target/reCaptcha-auth-flow-$VERSION_TAG.jar
   artifacts:
     paths:
-      - "reCaptcha-auth-flow/target/reCaptcha-auth-flow.jar"
+      - "reCaptcha-auth-flow/target/reCaptcha-auth-flow-$VERSION_TAG.jar"
