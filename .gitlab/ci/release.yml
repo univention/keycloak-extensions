@@ -16,7 +16,7 @@ workflow:
 # Taken from: https://gitlab.com/gitlab-org/release-cli/-/tree/master/docs/examples/release-assets-as-generic-package/
 upload:
   stage: upload
-  image: "artifacts.knut.univention.de/dockerhub_proxy_cache/library/curlimages/curl:latest"
+  image: "curlimages/curl:latest"
   needs:
     - pipeline: $PARENT_PIPELINE_ID
       job: "maven_clean_install"
