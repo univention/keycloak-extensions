@@ -17,12 +17,12 @@ workflow:
 upload:
   stage: upload
   image: "artifacts.knut.univention.de/dockerhub_proxy_cache/library/curlimages/curl:latest"
-  dependencies:
+  needs:
     - pipeline: $PARENT_PIPELINE_ID
-      job: "build_theme"
+      job: "maven_clean_install"
       artifacts: true
     - pipeline: $PARENT_PIPELINE_ID
-      job: "build_jar"
+      job: "archive_theme"
       artifacts: true
   script:
     - ls -la
