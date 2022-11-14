@@ -18,11 +18,11 @@ upload:
   stage: upload
   image: "curlimages/curl:latest"
   needs:
-    - pipeline: $PARENT_PIPELINE_ID
-      job: "maven_clean_install"
+    - pipeline: $UPSTREAM_PIPELINE_ID
+      job: "build_jar"
       artifacts: true
-    - pipeline: $PARENT_PIPELINE_ID
-      job: "archive_theme"
+    - pipeline: $UPSTREAM_PIPELINE_ID
+      job: "build_theme"
       artifacts: true
   script:
     - ls -la
