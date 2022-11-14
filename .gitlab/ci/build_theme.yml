@@ -4,9 +4,9 @@ stages:
 
 build_theme:
   stage: build
-  image: "artifacts.knut.univention.de/dockerhub_proxy_cache/library/maven:3.8.6-openjdk-18"
+  image: "artifacts.knut.univention.de/dockerhub_proxy_cache/library/busybox"
   script:
-    - zip –r reCaptcha-theme.zip ./reCaptcha-theme
+    - tar –cvzf reCaptcha-theme.tar.gz ./reCaptcha-theme
   artifacts:
     paths:
-      - "reCaptcha-theme.zip"
+      - "reCaptcha-theme.tar.gz"
