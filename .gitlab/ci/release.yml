@@ -13,7 +13,7 @@ workflow:
         VERSION_TAG: $CI_COMMIT_SHORT_SHA
 
 variables:
-  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/myawesomerelease/${PACKAGE_VERSION}"
+  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/reCaptcha-auth-flow/${VERSION_TAG}"
 
 # This uploads the built artifacts to the GitLab registry as a generic package.
 # Taken from: https://gitlab.com/gitlab-org/release-cli/-/tree/master/docs/examples/release-assets-as-generic-package/
