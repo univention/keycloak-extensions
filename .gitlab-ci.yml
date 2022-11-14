@@ -20,9 +20,10 @@ build_jar:
   script:
     - cd reCaptcha-auth-flow
     - mvn clean install
+    - mv reCaptcha-auth-flow/target/reCaptcha-auth-flow.jar .
   artifacts:
     paths:
-      - "reCaptcha-auth-flow/target/reCaptcha-auth-flow.jar"
+      - "./*.jar"
 
 build_theme:
   stage: build
@@ -31,7 +32,7 @@ build_theme:
     - 'tar -cvzf reCaptcha-theme.tar.gz ./reCaptcha-theme'
   artifacts:
     paths:
-      - "reCaptcha-theme.tar.gz"
+      - "./*.tar.gz"
 
 release_job:
   stage: release
