@@ -7,17 +7,11 @@ build_jar:
   stage: build
   trigger:
     include: "/.gitlab/ci/build_jar.yml"
-  rules:
-    - changes:
-        - "reCaptcha-auth-flow/*"
 
 build_theme:
   stage: build
   trigger:
     include: "/.gitlab/ci/build_theme.yml"
-  rules:
-    - changes:
-        - "reCaptcha-theme/*"
 
 release_job:
   stage: release
@@ -27,7 +21,4 @@ release_job:
     VERSION_TAG: "v1.2.3"
   trigger:
     include: "/.gitlab/ci/release.yml"
-  needs:
-    - "build_jar"
-    - "build_theme"
   when: manual

@@ -1,15 +1,22 @@
 ---
 stages:
-  - build
+  - preparation
   - release
 
+create_release_branch:
+  stage: preparation
+
+# The Release Job is triggered manually.
+# This happens in the Gitlab CI pipeline web UI.
+# The job can only be triggered if a Semantic Version Tag was pushed.
+# For more info on Semantic Versioning, see: https://semver.org/
 release_job:
   stage: release
   image: "registry.gitlab.com/gitlab-org/release-cli:latest"
   rules:
-    - if: $CI_COMMIT_TAG
+    - if: '$CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+$/'
   script:
-    - echo "Running the release job."
+    - 'echo "Running release job for: ${$CI_COMMIT_TAG}"'
   release:
     tag_name: $CI_COMMIT_TAG
     name: 'Release $CI_COMMIT_TAG'
@@ -19,6 +26,7 @@ release_job:
       job: "build_theme"
     - pipeline: $PARENT_PIPELINE_ID
       job: "build_jar"
+
 
 # TODO: 1. A release branch is created, e.g. release-${COMMITHASH};
 # TODO: 2. A git version tag (e.g. v1.2.3) is created;
