@@ -20,8 +20,10 @@ upload:
   needs:
     - pipeline: $PARENT_PIPELINE_ID
       job: "build_theme"
+      artifacts: true
     - pipeline: $PARENT_PIPELINE_ID
       job: "build_jar"
+      artifacts: true
   script:
     - ls -la
     - |
