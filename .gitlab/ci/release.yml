@@ -29,10 +29,16 @@ upload:
       artifacts: true
   script:
     - ls -la
-    - |
-      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file "reCaptcha-theme.tar.gz $PACKAGE_REGISTRY_URL/reCaptcha-theme.tar.gz"
-    - |
-      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file reCaptcha-auth-flow/target/reCaptcha-auth-flow.jar $PACKAGE_REGISTRY_URL/reCaptcha-auth-flow/target/reCaptcha-auth-flow.jar
+    - >
+      curl
+      --header "JOB-TOKEN: ${CI_JOB_TOKEN}"
+      --upload-file "reCaptcha-theme.tar.gz"
+      $PACKAGE_REGISTRY_URL/reCaptcha-theme.tar.gz
+    - >
+      curl
+      --header "JOB-TOKEN: ${CI_JOB_TOKEN}"
+      --upload-file "reCaptcha-auth-flow/target/reCaptcha-auth-flow.jar"
+      $PACKAGE_REGISTRY_URL/reCaptcha-auth-flow.jar
 
 # The Release Job is triggered manually.
 # This happens in the Gitlab CI pipeline web UI.
