@@ -17,14 +17,15 @@ create_release_branch:
 release_job:
   stage: release
   image: "registry.gitlab.com/gitlab-org/release-cli:latest"
-  rules:
-    - if: '$CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+$/'
+  variables:
+    VERSION_TAG: 'v$VERSION_MAJOR.$VERSION_MINOR.$VERSION_PATCH'
   script:
-    - 'echo "Running release job for: ${$CI_COMMIT_TAG}"'
+    - 'echo "Running release job for: $VERSION_TAG"'
+    - ls -la
   release:
-    tag_name: $CI_COMMIT_TAG
-    name: 'Release $CI_COMMIT_TAG'
-    description: 'Release created using the release-cli.'
+    tag_name: $VERSION_TAG
+    name: 'Release $VERSION_TAG'
+    description: 'Release $VERSION_TAG created using the release-cli.'
   needs:
     - pipeline: $PARENT_PIPELINE_ID
       job: "build_theme"
