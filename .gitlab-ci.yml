@@ -3,6 +3,7 @@
 stages:
   - build
   - env
+  - deploy
 
 .environment-common:
   before_script:
@@ -68,6 +69,35 @@ stop-env:
   variables:
     TF_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${CI_COMMIT_REF_SLUG}
   when: manual
+
+
+.prepare_ansible: &prepare_ansible
+  # Donwload ssh key
+  - echo "${ID_RSA_UCS_KVM_IMAGE}" > ${CI_PROJECT_DIR}/id_rsa
+  - chown 0400 ${CI_PROJECT_DIR}/id_rsa
+
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  - chmod -R o-w .
+  - chmod -R ug+rw .
+
+  # copy public key file #
+  - cat "${AUTHORIZED_KEYS_FILE}" > ansible/files/authorized_keys
+
+  # Install dependencies
+  - cd ansible
+  - ansible-galaxy install -r collections/requirements.yml
+
+deploy-hetzner:
+  before_script:
+    - *prepare_ansible
+  dependencies:
+    - env
+  image: artifacts.knut.univention.de/upx/container-tooling/automation-ansible:main-0ff77d38
+  resource_group: ${CI_COMMIT_REF_SLUG}
+  script:
+    - ansible-playbook -i root@${SERVER_IP}, playbook.yml -e "hostname=master" -e "domain_name=bfa-${CI_COMMIT_REF_SLUG}.at-univention.de" -e "basedn=dc=bfa-${CI_COMMIT_REF_SLUG},dc=at-univention,dc=de"
+  stage: deploy
 
 build_jar:
   stage: build
