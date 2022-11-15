@@ -23,55 +23,50 @@ class ActionDelegate:
         self.fails = fails
         self.condition = condition
 
-        if(self.condition == "ipAddress"):
-            self.conditionValue = "ip"
-            self.proxyCondition = state.get("ipAddress")
+        if(self.condition == "ip_address"):
+            self.condition_value = "ip"
+            self.proxy_condition = state.get("ip_address")
         elif(self.condition == "code_id"):
-            self.conditionValue = "cookie_contains"
-            self.proxyCondition = state.get("details").get("code_id")
+            self.condition_value = "cookie_contains"
+            self.proxy_condition = state.get("details").get("code_id")
 
     def trigger(self):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def cleanup(self):
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
 class ActionBlockIpProxy(ActionDelegate):
 
     def trigger(self):
-        print("IP Proxy")
-        print(self.proxy)
-        if(self.fails > 5 and self.condition == "code_id"):
-            payload = {"action": "block", "condition": self.conditionValue,
-                       "value": self.proxyCondition}
+        if self.fails > 5 and self.condition == "code_id":
+            payload = {"action": "block", "condition": self.condition_value,
+                       "value": self.proxy_condition}
             r = requests.post(self.proxy, headers={"Content-Type": "application/json"},
-                              data=json.dumps(payload))
+                              json=payload)
         if(self.fails > 10):
-            payload = {"action": "block", "condition": self.conditionValue,
-                       "value": self.proxyCondition}
+            payload = {"action": "block", "condition": self.condition_value,
+                       "value": self.proxy_condition}
             r = requests.post(self.proxy, headers={"Content-Type": "application/json"},
                               data=json.dumps(payload))
 
-        payload = {"action": "add-header", "condition": self.conditionValue,
-                   "value": self.proxyCondition}
+        payload = {"action": "add-header", "condition": self.condition_value,
+                   "value": self.proxy_condition}
         r = requests.post(self.proxy, headers={"Content-Type": "application/json"},
                           data=json.dumps(payload))
 
-        print(r)
 
     def cleanup(self):
-        print("IP Proxy cleanup")
-        payload = {"action": "block", "condition": self.conditionValue,
-                   "value": self.proxyCondition}
+        payload = {"action": "block", "condition": self.condition_value,
+                   "value": self.proxy_condition}
         r = requests.delete(self.proxy, headers={"Content-Type": "application/json"},
                             data=json.dumps(payload))
-        payload = {"action": "add-header", "condition": self.conditionValue,
-                   "value": self.proxyCondition}
+        payload = {"action": "add-header", "condition": self.condition_value,
+                   "value": self.proxy_condition}
         r = requests.delete(self.proxy, headers={"Content-Type": "application/json"},
                             data=json.dumps(payload))
 
-        print(r)
 
 
 class ActionSendMail(ActionDelegate):
@@ -90,7 +85,6 @@ class ActionSendMail(ActionDelegate):
         with open("last_mail", "w") as f:
             f.write(str(int(datetime.datetime.now().timestamp())))
 
-        print("Sending Mail...")
 
         port = 465  # For SSL
 
@@ -101,8 +95,7 @@ class ActionSendMail(ActionDelegate):
             sender = self.args.mail_user + "@" + self.args.mail_server
             server.login(sender, self.args.mail_pass)
 
-            message = "Subject: Brute Force Detected\n\n{}\n\nCondition: {}".format(
-                self.state, self.condition)
+            message = f"Subject: Brute Force Detected\n\n{self.state}\n\nCondition: {self.condition}"
 
             server.sendmail(sender, self.args.admin_mail, message)
 

@@ -16,42 +16,40 @@ class Condition:
 class ConditionFieldSpecificLimit(Condition):
 
     def check(self, **kwargs):
-
         field = kwargs["field"]
 
-        login_errors = list(utils.filterEventsByType(self.events, "LOGIN_ERROR"))
+        login_errors = list(utils.filter_events_by_type(self.events, "LOGIN_ERROR"))
         print(self.__class__.__name__, "({})".format(field), "- Login Errors:", len(login_errors))
-        timestampToEvents = utils.buildTimestampToEventDict(login_errors)
+        timestamp_to_events = utils.build_timestamp_to_event_dict(login_errors)
         times = list(filter(lambda x: x - datetime.datetime.now() < self.timeframe,
-                            timestampToEvents.keys()))
+                            timestamp_to_events.keys()))
 
         # check per IP-fails #
-        countMap = {}
-        fieldContentToAnyEvent = {}
+        count_map = {}
+        field_content_to_any_event = {}
         for t in times:
-
             # try main structure #
-            fieldContent = timestampToEvents[t].get(field)
+            field_content = timestamp_to_events[t].get(field)
 
             # try details #
-            if not fieldContent:
-                details = timestampToEvents[t].get("details")
+            if not field_content:
+                details = timestamp_to_events[t].get("details")
                 if details:
-                    fieldContent = details.get(field)
+                    field_content = details.get(field)
 
             # continue if still not found #
-            if not fieldContent:
+            if not field_content:
                 continue
 
-            if fieldContent in countMap:
-                countMap[fieldContent] += 1
+            if field_content in count_map:
+                count_map[field_content] += 1
             else:
-                countMap[fieldContent] = 1
-                fieldContentToAnyEvent.update({fieldContent: timestampToEvents[t]})
+                count_map[field_content] = 1
+                field_content_to_any_event.update({field_content: timestamp_to_events[t]})
 
-        print(countMap)
-        aboveValues = list(filter(lambda x: countMap[x] > self.threshold, countMap.keys()))
+        print(count_map)
+        above_values = [x for x in count_map if count_map[x] > self.threshold]
         results = []
-        for v in aboveValues:
-            results.append((fieldContentToAnyEvent[v], countMap[v], field))
+        for v in above_values:
+            results.append((field_content_to_any_event[v], count_map[v], field))
         return results
