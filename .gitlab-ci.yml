@@ -140,3 +140,22 @@ build_image_proxy:
       --context "${CI_PROJECT_DIR}/proxy"
       --dockerfile "${CI_PROJECT_DIR}/proxy/Dockerfile"
       --destination "${CI_REGISTRY}/${CI_REGISTRY_IMAGE}:${DOCKER_TAG}"
+
+build_image_handler:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    # install KNUT CA (not needed if publishing to quay.io)
+    - install -m 644 "$KNUT_CA" /kaniko/ssl/certs/knut.pem
+    - cat /kaniko/ssl/certs/knut.pem >> /kaniko/ssl/certs/ca-certificates.crt
+    - if [ "$CI_COMMIT_BRANCH" != "$CI_DEFAULT_BRANCH" ] ; then export DOCKER_TAG="develop"; else ex    port DOCKER_TAG="latest" ; fi
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - cd "${CI_PROJECT_DIR}/handler"
+    - /kaniko/executor
+      --force
+      --context "${CI_PROJECT_DIR}/handler"
+      --dockerfile "${CI_PROJECT_DIR}/handler/Dockerfile"
+      --destination "${CI_REGISTRY}/${CI_REGISTRY_IMAGE}:${DOCKER_TAG}"
