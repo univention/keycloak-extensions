@@ -20,4 +20,4 @@ maven_clean_install:
     expose_as: "KeyCloak ReCaptcha Plugin"
     name: plugin
     paths:
-      - "./reCaptcha-auth-flow.jar"
+      - "reCaptcha-auth-flow.jar"

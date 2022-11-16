@@ -21,7 +21,7 @@ theme_pipeline:
     - changes:
         - "reCaptcha-theme/*"
 
-# This release job can be triggered manually, from the GitLab CI web UI.
+# A release can be triggered manually, from the GitLab CI web UI.
 release_pipeline:
   stage: release
   trigger:
