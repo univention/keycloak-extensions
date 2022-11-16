@@ -14,6 +14,7 @@ retrieve_maven_version:
   <<: *maven_job
   stage: build
   script:
+    - 'cd reCaptcha-auth-flow'
     - 'VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)'
     - 'echo "MAVEN_PROJECT_VERSION=$VERSION" >> maven.env'
     - 'echo "Extracted Maven artifact version: $VERSION"'
