@@ -11,11 +11,12 @@ cache:
 propagate_variables_maven:
   stage: build
   script:
-    - echo "MAVEN_PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> maven.env
-    - echo "$FILENAME_RECAPTCHA_PLUGIN_JAR=reCaptcha-auth-flow.jar" >> maven.env
+    - 'version="$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)"'
+    - 'echo "MAVEN_PROJECT_VERSION=$version" >> maven.env'
+    - 'echo "FILENAME_RECAPTCHA_PLUGIN_JAR=reCaptcha-auth-flow.jar" >> maven.env'
   artifacts:
     reports:
-      dotenv: maven.env
+      dotenv: "maven.env"
 
 # Inspired by: https://gitlab.com/gitlab-org/gitlab-ci-yml/-/blob/master/Maven.gitlab-ci.yml
 maven_clean_install:
@@ -28,7 +29,7 @@ maven_clean_install:
   script:
     - cd reCaptcha-auth-flow
     - mvn clean install
-    - mv target/$$FILENAME_RECAPTCHA_PLUGIN_JAR ..
+    - mv target/$FILENAME_RECAPTCHA_PLUGIN_JAR ..
   artifacts:
     paths:
-      - "$$FILENAME_RECAPTCHA_PLUGIN_JAR"
+      - "$FILENAME_RECAPTCHA_PLUGIN_JAR"

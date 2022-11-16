@@ -7,7 +7,7 @@ propagate_variables_theme:
     - echo "FILENAME_RECAPTCHA_PLUGIN_THEME=reCaptcha-theme.tar.gz" >> theme.env
   artifacts:
     reports:
-      dotenv: theme.env
+      dotenv: "theme.env"
 
 archive_theme_files:
   stage: build
