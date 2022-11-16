@@ -40,8 +40,10 @@ upload:
   stage: upload
   image: "curlimages/curl:latest"
   needs:
-    - build_jar
-    - build_theme
+    - job: "maven_clean_install"
+      artifacts: true
+    - job: "archive_theme_files"
+      artifacts: true
   script:
     - ls -la
     - >
