@@ -6,8 +6,6 @@ stages:
 
 variables:
   PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/reCaptcha-auth-flow/${VERSION_TAG}"
-  FILENAME_RECAPTCHA_PLUGIN_THEME: "reCaptcha-theme.tar.gz"
-  FILENAME_RECAPTCHA_PLUGIN_JAR: "reCaptcha-auth-flow.jar"
 
 include:
   - local: "/.gitlab/ci/maven_pipeline.yml"
@@ -26,13 +24,13 @@ upload:
     - >
       curl
       --header "JOB-TOKEN: ${CI_JOB_TOKEN}"
-      --upload-file "$FILENAME_RECAPTCHA_PLUGIN_THEME"
-      "$PACKAGE_REGISTRY_URL/$FILENAME_RECAPTCHA_PLUGIN_THEME"
+      --upload-file "reCaptcha-theme.tar.gz"
+      "$PACKAGE_REGISTRY_URL/reCaptcha-theme.tar.gz"
     - >
       curl
       --header "JOB-TOKEN: ${CI_JOB_TOKEN}"
-      --upload-file "$FILENAME_RECAPTCHA_PLUGIN_JAR"
-      "$PACKAGE_REGISTRY_URL/$FILENAME_RECAPTCHA_PLUGIN_JAR"
+      --upload-file "reCaptcha-auth-flow.jar"
+      "$PACKAGE_REGISTRY_URL/reCaptcha-auth-flow.jar"
 
 # The Release Job is triggered manually.
 # This happens in the Gitlab CI pipeline web UI.

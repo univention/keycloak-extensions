@@ -1,10 +1,4 @@
 ---
-workflow:
-  rules:
-    - if: '$FILENAME_RECAPTCHA_PLUGIN_JAR == null'
-      variables:
-        FILENAME_RECAPTCHA_PLUGIN_JAR: "reCaptcha-auth-flow.jar"
-
 .maven_job_template: &maven_job
   image: "artifacts.knut.univention.de/dockerhub_proxy_cache/library/maven:3.8.6-openjdk-18"
   cache:
@@ -36,7 +30,7 @@ maven_clean_install:
   script:
     - cd reCaptcha-auth-flow
     - mvn clean install
-    - mv target/$FILENAME_RECAPTCHA_PLUGIN_JAR ..
+    - mv target/*.jar ..
   artifacts:
     paths:
-      - "./$FILENAME_RECAPTCHA_PLUGIN_JAR"
+      - "reCaptcha-auth-flow.jar"
