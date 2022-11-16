@@ -40,11 +40,12 @@ release_version_package:
   needs:
     - "retrieve_maven_version"
     - "upload"
-  variables:
-    VERSION_TAG: "v$MAVEN_PROJECT_VERSION"
   script:
-    - 'echo "Running release job for: $VERSION_TAG"'
-  release:
-    tag_name: "$VERSION_TAG"
-    name: 'KeyCloak reCaptcha Auth-Flow Plugin ($VERSION_TAG)'
-    description: 'JAR file and theme archive for the KeyCloak reCaptcha Auth-Flow plugin.'
+    - 'echo "Running release job for: v$MAVEN_PROJECT_VERSION"'
+    - >
+      release-cli
+      create
+      --name "KeyCloak reCaptcha Auth-Flow Plugin ($MAVEN_PROJECT_VERSION)"
+      --tag-name "v$MAVEN_PROJECT_VERSION"
+      --assets-link "{\"name\":\"reCaptcha-theme.tar.gz\",\"url\":\"${PACKAGE_REGISTRY_URL}/reCaptcha-theme.tar.gz\"}"
+      --assets-link "{\"name\":\"reCaptcha-auth-flow.jar\",\"url\":\"${PACKAGE_REGISTRY_URL}/reCaptcha-auth-flow.jar\"}"
