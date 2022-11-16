@@ -7,15 +7,6 @@ stages:
 variables:
   PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/reCaptcha-auth-flow/${VERSION_TAG}"
 
-workflow:
-  rules:
-    - if: '$FILENAME_RECAPTCHA_PLUGIN_THEME == null'
-      variables:
-        FILENAME_RECAPTCHA_PLUGIN_THEME: "reCaptcha-theme.tar.gz"
-    - if: '$FILENAME_RECAPTCHA_PLUGIN_JAR == null'
-      variables:
-        FILENAME_RECAPTCHA_PLUGIN_JAR: "reCaptcha-auth-flow.jar"
-
 include:
   - local: "/.gitlab/ci/maven_pipeline.yml"
   - local: "/.gitlab/ci/theme_pipeline.yml"

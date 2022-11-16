@@ -33,4 +33,4 @@ maven_clean_install:
     - mv target/$FILENAME_RECAPTCHA_PLUGIN_JAR ..
   artifacts:
     paths:
-      - "$FILENAME_RECAPTCHA_PLUGIN_JAR"
+      - "./$FILENAME_RECAPTCHA_PLUGIN_JAR"
