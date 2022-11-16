@@ -15,36 +15,50 @@ workflow:
 
 variables:
   PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/reCaptcha-auth-flow/${VERSION_TAG}"
-  RECAPTCHA_FILENAME_THEME: "reCaptcha-theme.tar.gz"
-  RECAPTCHA_FILENAME_JAR: "reCaptcha-auth-flow.jar"
+  FILENAME_RECAPTCHA_PLUGIN_THEME: "reCaptcha-theme.tar.gz"
+  FILENAME_RECAPTCHA_PLUGIN_JAR: "reCaptcha-auth-flow.jar"
+  CI_DEBUG_TRACE: "true"
 
 build_jar:
   stage: build
   trigger:
-    include: "/.gitlab/ci/plugin_pipeline.yml"
+    strategy: depend
+    include:
+      - local: "/.gitlab/ci/plugin_pipeline.yml"
 
 build_theme:
   stage: build
   trigger:
-    include: "/.gitlab/ci/theme_pipeline.yml"
+    strategy: depend
+    include:
+      - local: "/.gitlab/ci/theme_pipeline.yml"
 
 # This uploads the built artifacts to the GitLab registry as a generic package.
 # Taken from: https://gitlab.com/gitlab-org/release-cli/-/tree/master/docs/examples/release-assets-as-generic-package/
 upload:
   stage: upload
   image: "curlimages/curl:latest"
+  needs:
+    - project: $CI_PROJECT_NAME
+      ref: $CI_COMMIT_REF_NAME
+      job: "build_theme"
+      artifacts: true
+    - project: $CI_PROJECT_NAME
+      ref: $CI_COMMIT_REF_NAME
+      job: "build_jar"
+      artifacts: true
   script:
     - ls -la
     - >
       curl
       --header "JOB-TOKEN: ${CI_JOB_TOKEN}"
-      --upload-file "$RECAPTCHA_FILENAME_THEME"
-      "$PACKAGE_REGISTRY_URL/$RECAPTCHA_FILENAME_THEME"
+      --upload-file "$FILENAME_RECAPTCHA_PLUGIN_THEME"
+      "$PACKAGE_REGISTRY_URL/$FILENAME_RECAPTCHA_PLUGIN_THEME"
     - >
       curl
       --header "JOB-TOKEN: ${CI_JOB_TOKEN}"
-      --upload-file "$RECAPTCHA_FILENAME_JAR"
-      "$PACKAGE_REGISTRY_URL/$RECAPTCHA_FILENAME_JAR"
+      --upload-file "$FILENAME_RECAPTCHA_PLUGIN_JAR"
+      "$PACKAGE_REGISTRY_URL/$FILENAME_RECAPTCHA_PLUGIN_JAR"
 
 # The Release Job is triggered manually.
 # This happens in the Gitlab CI pipeline web UI.
