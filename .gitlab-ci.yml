@@ -25,8 +25,5 @@ release_pipeline:
   stage: triggers
   trigger:
     include: "/.gitlab/ci/release_pipeline.yml"
-    forward:
-      pipeline_variables: true
-      yaml_variables: true
   rules:
     - when: manual
