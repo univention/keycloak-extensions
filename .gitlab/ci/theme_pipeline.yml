@@ -1,4 +1,10 @@
 ---
+workflow:
+  rules:
+    - if: '$FILENAME_RECAPTCHA_PLUGIN_THEME == null'
+      variables:
+        FILENAME_RECAPTCHA_PLUGIN_THEME: "reCaptcha-theme.tar.gz"
+
 archive_theme_files:
   image: "artifacts.knut.univention.de/dockerhub_proxy_cache/library/busybox"
   stage: build

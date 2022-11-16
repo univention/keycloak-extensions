@@ -6,6 +6,8 @@ stages:
 
 variables:
   PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/reCaptcha-auth-flow/${VERSION_TAG}"
+  FILENAME_RECAPTCHA_PLUGIN_THEME: "reCaptcha-theme.tar.gz"
+  FILENAME_RECAPTCHA_PLUGIN_JAR: "reCaptcha-auth-flow.jar"
 
 include:
   - local: "/.gitlab/ci/maven_pipeline.yml"
@@ -17,7 +19,6 @@ upload:
   stage: upload
   image: "curlimages/curl:latest"
   needs:
-    - "retrieve_maven_version"
     - "maven_clean_install"
     - "archive_theme_files"
   script:
@@ -38,11 +39,11 @@ upload:
 release_version_package:
   stage: release
   image: "registry.gitlab.com/gitlab-org/release-cli:latest"
-  variables:
-    VERSION_TAG: "v$MAVEN_PROJECT_VERSION"
   needs:
     - "retrieve_maven_version"
     - "upload"
+  variables:
+    VERSION_TAG: "v$MAVEN_PROJECT_VERSION"
   script:
     - 'echo "Running release job for: $VERSION_TAG"'
   release:

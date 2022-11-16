@@ -2,10 +2,6 @@
 stages:
   - triggers
 
-variables:
-  FILENAME_RECAPTCHA_PLUGIN_THEME: "reCaptcha-theme.tar.gz"
-  FILENAME_RECAPTCHA_PLUGIN_JAR: "reCaptcha-auth-flow.jar"
-
 # Build, test, and generate resources for the KeyCloak plugin.
 plugin_pipeline:
   stage: triggers
@@ -29,5 +25,8 @@ release_pipeline:
   stage: triggers
   trigger:
     include: "/.gitlab/ci/release_pipeline.yml"
+    forward:
+      pipeline_variables: true
+      yaml_variables: true
   rules:
     - when: manual
