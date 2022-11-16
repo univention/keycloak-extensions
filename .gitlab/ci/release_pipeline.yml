@@ -22,7 +22,6 @@ build_jar:
   stage: build
   trigger:
     include: "/.gitlab/ci/plugin_pipeline.yml"
-    strategy: depend
     forward:
       pipeline_variables: true
       yaml_variables: true
@@ -31,7 +30,6 @@ build_theme:
   stage: build
   trigger:
     include: "/.gitlab/ci/theme_pipeline.yml"
-    strategy: depend
     forward:
       pipeline_variables: true
       yaml_variables: true

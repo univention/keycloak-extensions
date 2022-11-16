@@ -26,6 +26,5 @@ release_pipeline:
   stage: release
   trigger:
     include: "/.gitlab/ci/release_pipeline.yml"
-    strategy: depend
   rules:
     - when: manual
