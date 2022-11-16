@@ -3,12 +3,12 @@ stages:
   - upload
   - release
 
-variables:
-  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/reCaptcha-auth-flow/${VERSION_TAG}"
-
 include:
   - local: "/.gitlab/ci/maven_pipeline.yml"
   - local: "/.gitlab/ci/theme_pipeline.yml"
+
+variables:
+  PACKAGE_REGISTRY_URL_BASE: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/reCaptcha-auth-flow"
 
 # This uploads the built artifacts to the GitLab registry as a generic package.
 # Taken from: https://gitlab.com/gitlab-org/release-cli/-/tree/master/docs/examples/release-assets-as-generic-package/
@@ -18,6 +18,8 @@ upload:
   needs:
     - "maven_clean_install"
     - "archive_theme_files"
+  variables:
+    PACKAGE_REGISTRY_URL: "${PACKAGE_REGISTRY_URL_BASE}/${MAVEN_PROJECT_VERSION}"
   script:
     - ls -la
     - >
@@ -39,8 +41,10 @@ release_version_package:
   needs:
     - "retrieve_maven_version"
     - "upload"
+  variables:
+    PACKAGE_REGISTRY_URL: "${PACKAGE_REGISTRY_URL_BASE}/${MAVEN_PROJECT_VERSION}"
   script:
-    - 'echo "Running release job for: v$MAVEN_PROJECT_VERSION"'
+    - 'echo "Running release job for: $MAVEN_PROJECT_VERSION"'
     - >
       release-cli
       create
