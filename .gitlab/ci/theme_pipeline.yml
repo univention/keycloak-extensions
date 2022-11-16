@@ -1,13 +1,11 @@
 ---
-stages:
-  - prepare
-  - build
-
 archive_theme_files:
-  stage: build
   image: "artifacts.knut.univention.de/dockerhub_proxy_cache/library/busybox"
+  stage: build
   script:
     - 'tar -cvzf reCaptcha-theme.tar.gz ./reCaptcha-theme'
   artifacts:
+    expose_as: "KeyCloak Theme"
+    name: theme
     paths:
       - "./*.tar.gz"
