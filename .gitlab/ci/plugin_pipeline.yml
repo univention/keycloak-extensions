@@ -1,23 +1,32 @@
 ---
+image: "artifacts.knut.univention.de/dockerhub_proxy_cache/library/maven:3.8.6-openjdk-18"
+
+cache:
+  - key:
+      files:
+        - "reCaptcha-auth-flow/pom.xml"
+    paths:
+      - ".m2/repository"
+
+propagate_variables_maven:
+  stage: build
+  script:
+    - echo "MAVEN_PROJECT_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> maven.env
+    - echo "$FILENAME_RECAPTCHA_PLUGIN_JAR=reCaptcha-auth-flow.jar" >> maven.env
+  artifacts:
+    reports:
+      dotenv: maven.env
+
 # Inspired by: https://gitlab.com/gitlab-org/gitlab-ci-yml/-/blob/master/Maven.gitlab-ci.yml
 maven_clean_install:
-  image: "artifacts.knut.univention.de/dockerhub_proxy_cache/library/maven:3.8.6-openjdk-18"
   stage: build
-  cache:
-    - key:
-        files:
-          - "reCaptcha-auth-flow/pom.xml"
-      paths:
-        - ".m2/repository"
   variables:
     MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
     MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
   script:
     - cd reCaptcha-auth-flow
     - mvn clean install
-    - mv target/reCaptcha-auth-flow.jar ..
+    - mv target/$$FILENAME_RECAPTCHA_PLUGIN_JAR ..
   artifacts:
-    expose_as: "KeyCloak ReCaptcha Plugin"
-    name: plugin
     paths:
-      - "reCaptcha-auth-flow.jar"
+      - "$$FILENAME_RECAPTCHA_PLUGIN_JAR"
