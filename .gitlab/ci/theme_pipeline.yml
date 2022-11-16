@@ -1,18 +1,7 @@
 ---
-propagate_variables_theme:
-  image: "artifacts.knut.univention.de/dockerhub_proxy_cache/library/busybox"
-  stage: build
-  script:
-    - echo "FILENAME_RECAPTCHA_PLUGIN_THEME=reCaptcha-theme.tar.gz" >> theme.env
-  artifacts:
-    reports:
-      dotenv: "theme.env"
-
 archive_theme_files:
   image: "artifacts.knut.univention.de/dockerhub_proxy_cache/library/busybox"
   stage: build
-  needs:
-    - "propagate_variables_theme"
   script:
     - 'tar -cvzf $FILENAME_RECAPTCHA_PLUGIN_THEME ./reCaptcha-theme'
   artifacts:

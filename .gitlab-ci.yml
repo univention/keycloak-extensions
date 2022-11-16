@@ -2,11 +2,15 @@
 stages:
   - triggers
 
+variables:
+  FILENAME_RECAPTCHA_PLUGIN_THEME: "reCaptcha-theme.tar.gz"
+  FILENAME_RECAPTCHA_PLUGIN_JAR: "reCaptcha-auth-flow.jar"
+
 # Build, test, and generate resources for the KeyCloak plugin.
 plugin_pipeline:
   stage: triggers
   trigger:
-    include: "/.gitlab/ci/plugin_pipeline.yml"
+    include: "/.gitlab/ci/maven_pipeline.yml"
   rules:
     - changes:
         - "reCaptcha-auth-flow/*"

@@ -7,8 +7,17 @@ stages:
 variables:
   PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/reCaptcha-auth-flow/${VERSION_TAG}"
 
+workflow:
+  rules:
+    - if: '$FILENAME_RECAPTCHA_PLUGIN_THEME == null'
+      variables:
+        FILENAME_RECAPTCHA_PLUGIN_THEME: "reCaptcha-theme.tar.gz"
+    - if: '$FILENAME_RECAPTCHA_PLUGIN_JAR == null'
+      variables:
+        FILENAME_RECAPTCHA_PLUGIN_JAR: "reCaptcha-auth-flow.jar"
+
 include:
-  - local: "/.gitlab/ci/plugin_pipeline.yml"
+  - local: "/.gitlab/ci/maven_pipeline.yml"
   - local: "/.gitlab/ci/theme_pipeline.yml"
 
 # This uploads the built artifacts to the GitLab registry as a generic package.
@@ -17,6 +26,7 @@ upload:
   stage: upload
   image: "curlimages/curl:latest"
   needs:
+    - "retrieve_maven_version"
     - "maven_clean_install"
     - "archive_theme_files"
   script:
@@ -39,11 +49,11 @@ release_version_package:
   image: "registry.gitlab.com/gitlab-org/release-cli:latest"
   variables:
     VERSION_TAG: "v$MAVEN_PROJECT_VERSION"
+  needs:
+    - "upload"
   script:
     - 'echo "Running release job for: $VERSION_TAG"'
   release:
     tag_name: "$VERSION_TAG"
     name: 'KeyCloak reCaptcha Auth-Flow Plugin ($VERSION_TAG)'
     description: 'JAR file and theme archive for the KeyCloak reCaptcha Auth-Flow plugin.'
-  needs:
-    - "upload"
