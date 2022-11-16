@@ -1,11 +1,10 @@
 ---
 stages:
-  - build
-  - release
+  - triggers
 
 # Build, test, and generate resources for the KeyCloak plugin.
 plugin_pipeline:
-  stage: build
+  stage: triggers
   trigger:
     include: "/.gitlab/ci/plugin_pipeline.yml"
   rules:
@@ -14,7 +13,7 @@ plugin_pipeline:
 
 # Build, test, and generate resources for the KeyCloak theme.
 theme_pipeline:
-  stage: build
+  stage: triggers
   trigger:
     include: "/.gitlab/ci/theme_pipeline.yml"
   rules:
@@ -23,7 +22,7 @@ theme_pipeline:
 
 # A release can be triggered manually, from the GitLab CI web UI.
 release_pipeline:
-  stage: release
+  stage: triggers
   trigger:
     include: "/.gitlab/ci/release_pipeline.yml"
   rules:
