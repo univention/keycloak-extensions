@@ -17,7 +17,7 @@ retrieve_maven_version:
   script:
     - 'version="$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)"'
     - 'echo "MAVEN_PROJECT_VERSION=$version" >> maven.env'
-    - 'echo "Extracted Maven artifact version: $MAVEN_PROJECT_VERSION"'
+    - 'echo "Extracted Maven artifact version: $version"'
   artifacts:
     reports:
       dotenv: "maven.env"
