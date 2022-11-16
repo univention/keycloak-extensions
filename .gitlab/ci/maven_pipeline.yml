@@ -1,4 +1,3 @@
----
 .maven_job_template: &maven_job
   image: "artifacts.knut.univention.de/dockerhub_proxy_cache/library/maven:3.8.6-openjdk-18"
   cache:
@@ -15,9 +14,9 @@ retrieve_maven_version:
   <<: *maven_job
   stage: build
   script:
-    - 'version="$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)"'
-    - 'echo "MAVEN_PROJECT_VERSION=$version" >> maven.env'
-    - 'echo "Extracted Maven artifact version: $version"'
+    - 'VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)'
+    - 'echo "MAVEN_PROJECT_VERSION=$VERSION" >> maven.env'
+    - 'echo "Extracted Maven artifact version: $VERSION"'
   artifacts:
     reports:
       dotenv: "maven.env"
