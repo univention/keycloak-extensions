@@ -20,7 +20,7 @@ retrieve_maven_version:
     - 'echo "Extracted Maven artifact version: $VERSION"'
   artifacts:
     reports:
-      dotenv: "maven.env"
+      dotenv: "reCaptcha-auth-flow/maven.env"
 
 # Inspired by: https://gitlab.com/gitlab-org/gitlab-ci-yml/-/blob/master/Maven.gitlab-ci.yml
 maven_clean_install:
