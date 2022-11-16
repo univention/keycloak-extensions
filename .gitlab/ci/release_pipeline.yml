@@ -50,6 +50,7 @@ release_version_package:
   variables:
     VERSION_TAG: "v$MAVEN_PROJECT_VERSION"
   needs:
+    - "retrieve_maven_version"
     - "upload"
   script:
     - 'echo "Running release job for: $VERSION_TAG"'
