@@ -10,6 +10,8 @@ propagate_variables_theme:
 archive_theme_files:
   image: "artifacts.knut.univention.de/dockerhub_proxy_cache/library/busybox"
   stage: build
+  needs:
+    - "propagate_variables_theme"
   script:
     - 'tar -cvzf $FILENAME_RECAPTCHA_PLUGIN_THEME ./reCaptcha-theme'
   artifacts:
