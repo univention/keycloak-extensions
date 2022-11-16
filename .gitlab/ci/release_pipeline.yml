@@ -22,17 +22,21 @@ build_jar:
   stage: build
   trigger:
     include: "/.gitlab/ci/plugin_pipeline.yml"
-    forward:
-      pipeline_variables: true
-      yaml_variables: true
+  artifacts:
+    expose_as: "KeyCloak Plugin"
+    name: plugin
+    paths:
+      - "./*.jar"
 
 build_theme:
   stage: build
   trigger:
     include: "/.gitlab/ci/theme_pipeline.yml"
-    forward:
-      pipeline_variables: true
-      yaml_variables: true
+  artifacts:
+    expose_as: "KeyCloak Theme"
+    name: theme
+    paths:
+      - "./*.tar.gz"
 
 # This uploads the built artifacts to the GitLab registry as a generic package.
 # Taken from: https://gitlab.com/gitlab-org/release-cli/-/tree/master/docs/examples/release-assets-as-generic-package/
@@ -40,9 +44,9 @@ upload:
   stage: upload
   image: "curlimages/curl:latest"
   needs:
-    - job: "build_jar"
+    - job: build_jar
       artifacts: true
-    - job: "build_theme"
+    - job: build_theme
       artifacts: true
   script:
     - ls -la
