@@ -8,4 +8,4 @@ archive_theme_files:
     expose_as: "KeyCloak ReCaptcha Theme"
     name: theme
     paths:
-      - "./*.tar.gz"
+      - "reCaptcha-theme.tar.gz"
