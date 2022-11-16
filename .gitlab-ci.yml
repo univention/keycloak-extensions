@@ -3,29 +3,29 @@ stages:
   - build
   - release
 
-build_jar:
+# Build, test, and generate resources for the KeyCloak plugin.
+plugin_pipeline:
   stage: build
   trigger:
-    include: "/.gitlab/ci/build_jar.yml"
-    strategy: depend
-    forward:
-      pipeline_variables: true
-      yaml_variables: true
+    include: "/.gitlab/ci/plugin_pipeline.yml"
+  rules:
+    - changes:
+        - "reCaptcha-auth-flow/*"
 
-build_theme:
+# Build, test, and generate resources for the KeyCloak theme.
+theme_pipeline:
   stage: build
   trigger:
-    include: "/.gitlab/ci/build_theme.yml"
-    strategy: depend
-    forward:
-      pipeline_variables: true
-      yaml_variables: true
+    include: "/.gitlab/ci/theme_pipeline.yml"
+  rules:
+    - changes:
+        - "reCaptcha-theme/*"
 
-release_package:
+# This release job can be triggered manually, from the GitLab CI web UI.
+release_pipeline:
   stage: release
-  variables:
-    UPSTREAM_PIPELINE_ID: $CI_PIPELINE_ID
   trigger:
-    include: "/.gitlab/ci/release.yml"
+    include: "/.gitlab/ci/release_pipeline.yml"
     strategy: depend
-  when: manual
+  rules:
+    - when: manual

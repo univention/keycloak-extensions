@@ -1,5 +1,6 @@
 ---
 stages:
+  - build
   - upload
   - release
 
@@ -17,18 +18,32 @@ variables:
   RECAPTCHA_FILENAME_THEME: "reCaptcha-theme.tar.gz"
   RECAPTCHA_FILENAME_JAR: "reCaptcha-auth-flow.jar"
 
+build_jar:
+  stage: build
+  trigger:
+    include: "/.gitlab/ci/plugin_pipeline.yml"
+    strategy: depend
+    forward:
+      pipeline_variables: true
+      yaml_variables: true
+
+build_theme:
+  stage: build
+  trigger:
+    include: "/.gitlab/ci/theme_pipeline.yml"
+    strategy: depend
+    forward:
+      pipeline_variables: true
+      yaml_variables: true
+
 # This uploads the built artifacts to the GitLab registry as a generic package.
 # Taken from: https://gitlab.com/gitlab-org/release-cli/-/tree/master/docs/examples/release-assets-as-generic-package/
 upload:
   stage: upload
   image: "curlimages/curl:latest"
   needs:
-    - pipeline: $UPSTREAM_PIPELINE_ID
-      job: "build_jar"
-      artifacts: true
-    - pipeline: $UPSTREAM_PIPELINE_ID
-      job: "build_theme"
-      artifacts: true
+    - build_jar
+    - build_theme
   script:
     - ls -la
     - >

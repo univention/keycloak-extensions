@@ -1,3 +1,8 @@
+---
+stages:
+  - prepare
+  - build
+
 archive_theme_files:
   stage: build
   image: "artifacts.knut.univention.de/dockerhub_proxy_cache/library/busybox"
