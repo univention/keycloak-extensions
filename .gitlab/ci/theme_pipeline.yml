@@ -1,4 +1,6 @@
 ---
+image: "artifacts.knut.univention.de/dockerhub_proxy_cache/library/busybox"
+
 propagate_variables_theme:
   stage: build
   script:
@@ -8,7 +10,6 @@ propagate_variables_theme:
       dotenv: theme.env
 
 archive_theme_files:
-  image: "artifacts.knut.univention.de/dockerhub_proxy_cache/library/busybox"
   stage: build
   needs:
     - "propagate_variables_theme"
