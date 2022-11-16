@@ -14,6 +14,8 @@ workflow:
 
 variables:
   PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/reCaptcha-auth-flow/${VERSION_TAG}"
+  RECAPTCHA_FILENAME_THEME: "reCaptcha-theme.tar.gz"
+  RECAPTCHA_FILENAME_JAR: "reCaptcha-auth-flow.jar"
 
 # This uploads the built artifacts to the GitLab registry as a generic package.
 # Taken from: https://gitlab.com/gitlab-org/release-cli/-/tree/master/docs/examples/release-assets-as-generic-package/
@@ -32,13 +34,13 @@ upload:
     - >
       curl
       --header "JOB-TOKEN: ${CI_JOB_TOKEN}"
-      --upload-file "reCaptcha-theme.tar.gz"
-      $PACKAGE_REGISTRY_URL/reCaptcha-theme.tar.gz
+      --upload-file "$RECAPTCHA_FILENAME_THEME"
+      "$PACKAGE_REGISTRY_URL/$RECAPTCHA_FILENAME_THEME"
     - >
       curl
       --header "JOB-TOKEN: ${CI_JOB_TOKEN}"
-      --upload-file "reCaptcha-auth-flow.jar"
-      $PACKAGE_REGISTRY_URL/reCaptcha-auth-flow.jar
+      --upload-file "$RECAPTCHA_FILENAME_JAR"
+      "$PACKAGE_REGISTRY_URL/$RECAPTCHA_FILENAME_JAR"
 
 # The Release Job is triggered manually.
 # This happens in the Gitlab CI pipeline web UI.
