@@ -18,3 +18,5 @@ archive_theme_files:
   artifacts:
     paths:
       - "$FILENAME_RECAPTCHA_PLUGIN_THEME"
+    reports:
+      dotenv: "theme.env"
