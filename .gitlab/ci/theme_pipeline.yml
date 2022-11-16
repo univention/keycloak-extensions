@@ -5,7 +5,7 @@ archive_theme_files:
   script:
     - 'tar -cvzf reCaptcha-theme.tar.gz ./reCaptcha-theme'
   artifacts:
-    expose_as: "KeyCloak Theme"
+    expose_as: "KeyCloak ReCaptcha Theme"
     name: theme
     paths:
       - "./*.tar.gz"

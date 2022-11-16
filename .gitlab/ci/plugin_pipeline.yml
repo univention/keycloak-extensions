@@ -17,7 +17,7 @@ maven_clean_install:
     - mvn clean install
     - mv target/reCaptcha-auth-flow.jar ..
   artifacts:
-    expose_as: "KeyCloak Plugin"
+    expose_as: "KeyCloak ReCaptcha Plugin"
     name: plugin
     paths:
-      - "./*.jar"
+      - "./reCaptcha-auth-flow.jar"
