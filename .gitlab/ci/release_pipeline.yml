@@ -19,19 +19,9 @@ variables:
   FILENAME_RECAPTCHA_PLUGIN_JAR: "reCaptcha-auth-flow.jar"
   CI_DEBUG_TRACE: "true"
 
-build_jar:
-  stage: build
-  trigger:
-    strategy: depend
-    include:
-      - local: "/.gitlab/ci/plugin_pipeline.yml"
-
-build_theme:
-  stage: build
-  trigger:
-    strategy: depend
-    include:
-      - local: "/.gitlab/ci/theme_pipeline.yml"
+include:
+  - local: "/.gitlab/ci/plugin_pipeline.yml"
+  - local: "/.gitlab/ci/theme_pipeline.yml"
 
 # This uploads the built artifacts to the GitLab registry as a generic package.
 # Taken from: https://gitlab.com/gitlab-org/release-cli/-/tree/master/docs/examples/release-assets-as-generic-package/
@@ -39,13 +29,9 @@ upload:
   stage: upload
   image: "curlimages/curl:latest"
   needs:
-    - project: $CI_PROJECT_NAME
-      ref: $CI_COMMIT_REF_NAME
-      job: "build_theme"
+    - job: "maven_clean_install"
       artifacts: true
-    - project: $CI_PROJECT_NAME
-      ref: $CI_COMMIT_REF_NAME
-      job: "build_jar"
+    - job: "archive_theme_files"
       artifacts: true
   script:
     - ls -la
