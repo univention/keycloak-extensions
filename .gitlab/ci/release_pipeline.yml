@@ -53,5 +53,5 @@ release_version_package:
       create
       --name "KeyCloak reCaptcha Auth-Flow Plugin (v$MAVEN_PROJECT_VERSION)"
       --tag-name "release-v$MAVEN_PROJECT_VERSION"
-      --assets-link "{\"name\":\"reCaptcha-theme.tar.gz\",\"url\":\"${PACKAGE_REGISTRY_URL}/${PACKAGE_NAME}-theme.tar.gz\"}"
-      --assets-link "{\"name\":\"reCaptcha-auth-flow.jar\",\"url\":\"${PACKAGE_REGISTRY_URL}/${PACKAGE_NAME}-plugin.jar\"}"
+      --assets-link "{\"name\":\"${PACKAGE_NAME}-theme.tar.gz\",\"url\":\"${PACKAGE_REGISTRY_URL}/${PACKAGE_NAME}-theme.tar.gz\"}"
+      --assets-link "{\"name\":\"${PACKAGE_NAME}-plugin.jar\",\"url\":\"${PACKAGE_REGISTRY_URL}/${PACKAGE_NAME}-plugin.jar\"}"
