@@ -11,7 +11,7 @@ include:
 # Global pipeline variables
 variables:
   PACKAGE_NAME: "reCaptcha-auth-flow"
-  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${PACKAGE_NAME}"
+  PACKAGE_REGISTRY_URL_BASE: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${PACKAGE_NAME}"
 
 # Uploads the theme and jar artifacts as a generic package.
 # From: https://gitlab.com/gitlab-org/release-cli/-/tree/master/docs/examples/release-assets-as-generic-package/
