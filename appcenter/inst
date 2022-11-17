@@ -1,0 +1,57 @@
+#!/bin/bash
+#
+# App join script
+#
+# Copyright 2022 Univention GmbH
+#
+# http://www.univention.de/
+#
+# All rights reserved.
+#
+# The source code of this program is made available
+# under the terms of the GNU Affero General Public License version 3
+# (GNU AGPL V3) as published by the Free Software Foundation.
+#
+# Binary versions of this program provided by Univention to you as
+# well as other copyrighted, protected or trademarked materials like
+# Logos, graphics, fonts, specific documentations and configurations,
+# cryptographic keys etc. are subject to a license agreement between
+# you and Univention and not subject to the GNU AGPL V3.
+#
+# In the case you use this program under the terms of the GNU AGPL V3,
+# the program is provided in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License with the Debian GNU/Linux or Univention distribution in file
+# /usr/share/common-licenses/AGPL-3; if not, see
+# <http://www.gnu.org/licenses/>.
+
+## joinscript api: bindpwdfile
+
+VERSION="1"
+
+. /usr/share/univention-lib/all.sh || exit 1
+. /usr/share/univention-appcenter/joinscripthelper.sh || exit 1
+
+
+
+APP_ID="keycloak-extensions"
+
+joinscript_init
+
+ucs_addServiceToLocalhost "$APP_ID" "$@"
+
+eval "$(ucr shell)"
+
+# FIXME: should not tamper with an existing installed app on UCS
+# Also probably we should modify the theme that UCS Keycloak is shipping
+docker cp /var/lib/univention-appcenter/apps/keycloak-extensions/data/reCaptcha-auth-flow.jar keycloak:/opt/keycloak/providers
+docker cp /var/lib/univention-appcenter/apps/keycloak-extensions/data/reCaptcha-theme keycloak:/opt/keycloak/themes/reCaptcha-theme
+docker exec -it keycloak /opt/keycloak/bin/kc.sh build
+docker restart keycloak
+
+joinscript_save_current_version
+exit 0
