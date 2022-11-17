@@ -10,24 +10,10 @@
     MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
     MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
 
-retrieve_maven_version:
-  <<: *maven_job
-  stage: build
-  script:
-    - 'cd reCaptcha-auth-flow'
-    - 'VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)'
-    - 'echo "MAVEN_PROJECT_VERSION=$VERSION" >> maven.env'
-    - 'echo "Extracted Maven artifact version: $VERSION"'
-  artifacts:
-    reports:
-      dotenv: "reCaptcha-auth-flow/maven.env"
-
 # Inspired by: https://gitlab.com/gitlab-org/gitlab-ci-yml/-/blob/master/Maven.gitlab-ci.yml
 maven_clean_install:
   <<: *maven_job
   stage: build
-  needs:
-    - "retrieve_maven_version"
   script:
     - cd reCaptcha-auth-flow
     - mvn clean install

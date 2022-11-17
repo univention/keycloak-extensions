@@ -1,25 +1,6 @@
 ---
 stages:
-  - build
   - release
-
-# Build, test, and generate resources for the KeyCloak plugin.
-plugin_pipeline:
-  stage: build
-  trigger:
-    include: "/.gitlab/ci/maven/maven_jobs.yml"
-  rules:
-    - changes:
-        - "reCaptcha-auth-flow/*"
-
-# Build, test, and generate resources for the KeyCloak theme.
-theme_pipeline:
-  stage: build
-  trigger:
-    include: "/.gitlab/ci/theme/theme_jobs.yml"
-  rules:
-    - changes:
-        - "reCaptcha-theme/*"
 
 # A release is only possible from a semantic version tag,
 # and must be triggered manually, from the GitLab CI web UI.

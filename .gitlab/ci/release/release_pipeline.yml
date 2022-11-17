@@ -11,7 +11,7 @@ include:
 # Global pipeline variables
 variables:
   PACKAGE_NAME: "reCaptcha-auth-flow"
-  PACKAGE_REGISTRY_URL_BASE: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${PACKAGE_NAME}"
+  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${PACKAGE_NAME}"
 
 # Uploads the theme and jar artifacts as a generic package.
 # From: https://gitlab.com/gitlab-org/release-cli/-/tree/master/docs/examples/release-assets-as-generic-package/
@@ -19,11 +19,10 @@ upload:
   stage: upload
   image: "curlimages/curl:latest"
   needs:
-    - "retrieve_maven_version"
     - "maven_clean_install"
     - "archive_theme_files"
-  variables:
-    PACKAGE_REGISTRY_URL: "${PACKAGE_REGISTRY_URL_BASE}/${MAVEN_PROJECT_VERSION}"
+  before_script:
+    - export PACKAGE_REGISTRY_URL=${PACKAGE_REGISTRY_URL_BASE}/${CI_COMMIT_TAG:1}
   script:
     - ls -la
     - >
@@ -42,16 +41,15 @@ release_version_package:
   stage: release
   image: "registry.gitlab.com/gitlab-org/release-cli:latest"
   needs:
-    - "retrieve_maven_version"
     - "upload"
-  variables:
-    PACKAGE_REGISTRY_URL: "${PACKAGE_REGISTRY_URL_BASE}/${MAVEN_PROJECT_VERSION}"
+  before_script:
+    - export PACKAGE_REGISTRY_URL=${PACKAGE_REGISTRY_URL_BASE}/${CI_COMMIT_TAG:1}
   script:
-    - 'echo "Running release job for: $MAVEN_PROJECT_VERSION"'
+    - 'echo "Running release job for: ${CI_COMMIT_TAG}'
     - >
       release-cli
       create
-      --name "KeyCloak reCaptcha Auth-Flow Plugin (v$MAVEN_PROJECT_VERSION)"
-      --tag-name "release-v$MAVEN_PROJECT_VERSION"
+      --name "KeyCloak reCaptcha Auth-Flow Plugin (${CI_COMMIT_TAG})"
+      --tag-name "release-${CI_COMMIT_TAG}"
       --assets-link "{\"name\":\"${PACKAGE_NAME}-theme.tar.gz\",\"url\":\"${PACKAGE_REGISTRY_URL}/${PACKAGE_NAME}-theme.tar.gz\"}"
       --assets-link "{\"name\":\"${PACKAGE_NAME}-plugin.jar\",\"url\":\"${PACKAGE_REGISTRY_URL}/${PACKAGE_NAME}-plugin.jar\"}"
