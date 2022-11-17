@@ -17,6 +17,7 @@ upload:
   stage: upload
   image: "curlimages/curl:latest"
   needs:
+    - "retrieve_maven_version"
     - "maven_clean_install"
     - "archive_theme_files"
   variables:
