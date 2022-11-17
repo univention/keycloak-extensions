@@ -4,8 +4,8 @@ stages:
   - release
 
 include:
-  - local: "/.gitlab/ci/maven_pipeline.yml"
-  - local: "/.gitlab/ci/theme_pipeline.yml"
+  - local: "/.gitlab/ci/maven_jobs.yml"
+  - local: "/.gitlab/ci/theme_jobs.yml"
 
 variables:
   # TODO : Check if this upload path is using only numeric ID, beacuse, apparently, the project name does NOT work.
@@ -22,7 +22,6 @@ upload:
     - "archive_theme_files"
   variables:
     PACKAGE_REGISTRY_URL: "${PACKAGE_REGISTRY_URL_BASE}/${MAVEN_PROJECT_VERSION}"
-    CI_DEBUG_TRACE: "true"
   script:
     - ls -la
     - >
@@ -51,7 +50,7 @@ release_version_package:
     - >
       release-cli
       create
-      --name "KeyCloak reCaptcha Auth-Flow Plugin ($MAVEN_PROJECT_VERSION)"
-      --tag-name "v$MAVEN_PROJECT_VERSION"
+      --name "KeyCloak reCaptcha Auth-Flow Plugin (v$MAVEN_PROJECT_VERSION)"
+      --tag-name "release-v$MAVEN_PROJECT_VERSION"
       --assets-link "{\"name\":\"reCaptcha-theme.tar.gz\",\"url\":\"${PACKAGE_REGISTRY_URL}/reCaptcha-theme.tar.gz\"}"
       --assets-link "{\"name\":\"reCaptcha-auth-flow.jar\",\"url\":\"${PACKAGE_REGISTRY_URL}/reCaptcha-auth-flow.jar\"}"
