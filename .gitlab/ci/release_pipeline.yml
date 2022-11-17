@@ -3,16 +3,18 @@ stages:
   - upload
   - release
 
+# Job dependencies
 include:
   - local: "/.gitlab/ci/maven_jobs.yml"
   - local: "/.gitlab/ci/theme_jobs.yml"
 
+# Global pipeline variables
 variables:
-  # TODO : Check if this upload path is using only numeric ID, beacuse, apparently, the project name does NOT work.
-  PACKAGE_REGISTRY_URL_BASE: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/reCaptcha-auth-flow"
+  PACKAGE_NAME: "reCaptcha-auth-flow"
+  PACKAGE_REGISTRY_URL_BASE: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${PACKAGE_NAME}"
 
-# This uploads the built artifacts to the GitLab registry as a generic package.
-# Taken from: https://gitlab.com/gitlab-org/release-cli/-/tree/master/docs/examples/release-assets-as-generic-package/
+# Uploads the theme and jar artifacts as a generic package.
+# From: https://gitlab.com/gitlab-org/release-cli/-/tree/master/docs/examples/release-assets-as-generic-package/
 upload:
   stage: upload
   image: "curlimages/curl:latest"
@@ -28,15 +30,14 @@ upload:
       curl
       --header "JOB-TOKEN: ${CI_JOB_TOKEN}"
       --upload-file reCaptcha-theme.tar.gz
-      "$PACKAGE_REGISTRY_URL/reCaptcha-theme.tar.gz"
+      "$PACKAGE_REGISTRY_URL/${PACKAGE_NAME}-theme.tar.gz"
     - >
       curl
       --header "JOB-TOKEN: ${CI_JOB_TOKEN}"
       --upload-file reCaptcha-auth-flow.jar
-      "$PACKAGE_REGISTRY_URL/reCaptcha-auth-flow.jar"
+      "$PACKAGE_REGISTRY_URL/${PACKAGE_NAME}-plugin.jar"
 
-# The Release Job is triggered manually.
-# This happens in the Gitlab CI pipeline web UI.
+# Creates a Gitlab release with the appropriate versioned release tag, and attached artifacts.
 release_version_package:
   stage: release
   image: "registry.gitlab.com/gitlab-org/release-cli:latest"
@@ -52,5 +53,5 @@ release_version_package:
       create
       --name "KeyCloak reCaptcha Auth-Flow Plugin (v$MAVEN_PROJECT_VERSION)"
       --tag-name "release-v$MAVEN_PROJECT_VERSION"
-      --assets-link "{\"name\":\"reCaptcha-theme.tar.gz\",\"url\":\"${PACKAGE_REGISTRY_URL}/reCaptcha-theme.tar.gz\"}"
-      --assets-link "{\"name\":\"reCaptcha-auth-flow.jar\",\"url\":\"${PACKAGE_REGISTRY_URL}/reCaptcha-auth-flow.jar\"}"
+      --assets-link "{\"name\":\"reCaptcha-theme.tar.gz\",\"url\":\"${PACKAGE_REGISTRY_URL}/${PACKAGE_NAME}-theme.tar.gz\"}"
+      --assets-link "{\"name\":\"reCaptcha-auth-flow.jar\",\"url\":\"${PACKAGE_REGISTRY_URL}/${PACKAGE_NAME}-plugin.jar\"}"
