@@ -1,10 +1,11 @@
 ---
 stages:
-  - triggers
+  - build
+  - release
 
 # Build, test, and generate resources for the KeyCloak plugin.
 plugin_pipeline:
-  stage: triggers
+  stage: build
   trigger:
     include: "/.gitlab/ci/maven_jobs.yml"
   rules:
@@ -13,7 +14,7 @@ plugin_pipeline:
 
 # Build, test, and generate resources for the KeyCloak theme.
 theme_pipeline:
-  stage: triggers
+  stage: build
   trigger:
     include: "/.gitlab/ci/theme_jobs.yml"
   rules:
@@ -23,7 +24,7 @@ theme_pipeline:
 # A release is only possible from a semantic version tag,
 # and must be triggered manually, from the GitLab CI web UI.
 release_pipeline:
-  stage: triggers
+  stage: release
   trigger:
     include: "/.gitlab/ci/release_pipeline.yml"
   rules:
