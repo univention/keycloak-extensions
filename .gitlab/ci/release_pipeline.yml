@@ -8,6 +8,7 @@ include:
   - local: "/.gitlab/ci/theme_pipeline.yml"
 
 variables:
+  # TODO : Check if this upload path is using only numeric ID, beacuse, apparently, the project name does NOT work.
   PACKAGE_REGISTRY_URL_BASE: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/reCaptcha-auth-flow"
 
 # This uploads the built artifacts to the GitLab registry as a generic package.
@@ -20,17 +21,18 @@ upload:
     - "archive_theme_files"
   variables:
     PACKAGE_REGISTRY_URL: "${PACKAGE_REGISTRY_URL_BASE}/${MAVEN_PROJECT_VERSION}"
+    CI_DEBUG_TRACE: "true"
   script:
     - ls -la
     - >
       curl
       --header "JOB-TOKEN: ${CI_JOB_TOKEN}"
-      --upload-file "reCaptcha-theme.tar.gz"
+      --upload-file reCaptcha-theme.tar.gz
       "$PACKAGE_REGISTRY_URL/reCaptcha-theme.tar.gz"
     - >
       curl
       --header "JOB-TOKEN: ${CI_JOB_TOKEN}"
-      --upload-file "reCaptcha-auth-flow.jar"
+      --upload-file reCaptcha-auth-flow.jar
       "$PACKAGE_REGISTRY_URL/reCaptcha-auth-flow.jar"
 
 # The Release Job is triggered manually.
