@@ -5,8 +5,8 @@ stages:
 
 # Job dependencies
 include:
-  - local: "/.gitlab/ci/maven_jobs.yml"
-  - local: "/.gitlab/ci/theme_jobs.yml"
+  - local: "/.gitlab/ci/maven/maven_jobs.yml"
+  - local: "/.gitlab/ci/theme/theme_jobs.yml"
 
 # Global pipeline variables
 variables:

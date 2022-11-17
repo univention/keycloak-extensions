@@ -7,7 +7,7 @@ stages:
 plugin_pipeline:
   stage: build
   trigger:
-    include: "/.gitlab/ci/maven_jobs.yml"
+    include: "/.gitlab/ci/maven/maven_jobs.yml"
   rules:
     - changes:
         - "reCaptcha-auth-flow/*"
@@ -16,7 +16,7 @@ plugin_pipeline:
 theme_pipeline:
   stage: build
   trigger:
-    include: "/.gitlab/ci/theme_jobs.yml"
+    include: "/.gitlab/ci/theme/theme_jobs.yml"
   rules:
     - changes:
         - "reCaptcha-theme/*"
@@ -26,7 +26,7 @@ theme_pipeline:
 release_pipeline:
   stage: release
   trigger:
-    include: "/.gitlab/ci/release_pipeline.yml"
+    include: "/.gitlab/ci/release/release_pipeline.yml"
   rules:
     - if: '$CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+/'
       when: manual
