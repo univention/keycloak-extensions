@@ -10,7 +10,7 @@ import sys
 import uuid
 import smtplib
 import logging
-import http.HTTPStatus as status
+from http import HTTPStatus
 
 from sqlalchemy import Column, String, or_
 from flask_sqlalchemy import SQLAlchemy
@@ -30,62 +30,62 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.sqlite'
 db = SQLAlchemy(app)
 
 
-def handleApiCall(frequest):
+def handle_api_call(frequest):
 
     if flask.request.method == "GET":
-        r = flask.Response(json.dumps(app.config["ACTIONS"], indent=2), status.OK,
+        r = flask.Response(json.dumps(app.config["ACTIONS"], indent=2), HTTPStatus.OK,
                            headers=CONTENT_TYPE_APPLICATION_JSON)
         return r
 
-    jsonDict = frequest.json
-    if not jsonDict:
-        return ("API Requested without application/json", status.BAD_REQUEST)
+    json_dict = frequest.json
+    if not json_dict:
+        return ("API Requested without application/json", HTTPStatus.BAD_REQUEST)
 
-    condition = jsonDict["condition"]        # device_id, ip
-    action = jsonDict["action"]              # block, set-header
-    value = jsonDict.get("value")            # the ip or device id to check for
-    validUntil = jsonDict.get("validUntil")  # time at which this rule expires
+    condition = json_dict["condition"]        # device_id, ip
+    action = json_dict["action"]              # block, set-header
+    value = json_dict.get("value")            # the ip or device id to check for
+    valid_until = json_dict.get("valid_until")  # time at which this rule expires
 
-    actionUuid = action + condition + value + validUntil
+    action_uuid = action + condition + value + valid_until
 
     if flask.request.method == "POST":
 
-        if actionUuid in app.config["ACTIONS"]:
-            return ("Action already exists", status.CONFLICT)
-        app.config["ACTIONS"].update({actionUuid: dict(jsonDict)})
+        if action_uuid in app.config["ACTIONS"]:
+            return ("Action already exists", HTTPStatus.CONFLICT)
+        app.config["ACTIONS"].update({action_uuid: dict(json_dict)})
 
         if value not in app.config["INDEX"]:
-            app.config["INDEX"].update({value: [actionUuid]})
+            app.config["INDEX"].update({value: [action_uuid]})
         else:
-            app.config["INDEX"][value].append(actionUuid)
+            app.config["INDEX"][value].append(action_uuid)
 
     elif flask.request.method == "DELETE":
 
-        app.config["ACTIONS"].pop(actionUuid)
+        app.config["ACTIONS"].pop(action_uuid)
         actions = app.config["INDEX"][value]
 
         if len(actions) == 1:
             app.config["INDEX"].pop(value)
         else:
-            app.config["INDEX"][value].remove(actionUuid)
+            app.config["INDEX"][value].remove(action_uuid)
 
     else:
-        return ("Method Not Allowed", status.METHOD_NOT_ALLOWED)
+        return ("Method Not Allowed", HTTPStatus.METHOD_NOT_ALLOWED)
 
-    return ("OK", status.OK)
+    return ("OK", HTTPStatus.OK)
 
 
-def checkIp(frequest):
+def check_ip(frequest):
 
     ip = frequest.headers.get("X-Forwarded-For")
     if not ip:
         ip = frequest.remote_addr
 
-    actionUuidIpList = app.config["INDEX"].get(ip)
-    if actionUuidIpList:
-        for actionUuidIp in actionUuidIpList:
-            if actionUuidIp:
-                action = app.config["ACTIONS"].get(actionUuidIp)
+    action_uuid_ip_list = app.config["INDEX"].get(ip)
+    if action_uuid_ip_list:
+        for action_uuid_ip in action_uuid_ip_list:
+            if action_uuid_ip:
+                action = app.config["ACTIONS"].get(action_uuid_ip)
                 if action["condition"] != "ip":
                     continue
                 if action["action"] == "set-header":
@@ -96,24 +96,24 @@ def checkIp(frequest):
     return []
 
 
-def checkCookie(frequest, cookieName):
+def check_cookie(frequest, cookie_name):
 
     # just in case flask ever changes cookie behaviour
-    cookieContent = frequest.cookies.get(cookieName)
-    if not cookieContent and len(frequest.cookies) > 0:
+    cookie_content = frequest.cookies.get(cookie_name)
+    if not cookie_content and len(frequest.cookies) > 0:
         return []
-    elif not cookieContent:
-        cookieContent = frequest.cookies[0].get(cookieName)
+    elif not cookie_content:
+        cookie_content = frequest.cookies[0].get(cookie_name)
 
     # sanity check
-    if not cookieContent:
+    if not cookie_content:
         return []
 
-    actionUuidValueList = app.config["INDEX"].get(cookieContent)
-    if actionUuidValueList:
-        for actionUuidValue in actionUuidValueList:
-            if actionUuidValue:
-                action = app.config["ACTIONS"].get(actionUuidValue)
+    action_uuid_value_list = app.config["INDEX"].get(cookie_content)
+    if action_uuid_value_list:
+        for action_uuid_value in action_uuid_value_list:
+            if action_uuid_value:
+                action = app.config["ACTIONS"].get(action_uuid_value)
                 if action["condition"] != "cookie_contains":
                     continue
                 if action["action"] == "set-header":
@@ -130,7 +130,7 @@ def checkCookie(frequest, cookieName):
 def proxy(path):
 
     if path == "flask-redirect-api":
-        return handleApiCall(flask.request)
+        return handle_api_call(flask.request)
     elif path == "fingerprintjs/v3":
         return flask.send_from_directory("static", "fingerprint.js")
 
@@ -138,40 +138,40 @@ def proxy(path):
     data = flask.request.get_data()
 
     # find correct request method #
-    requestFunction = getattr(requests, flask.request.method.lower())
+    request_function = getattr(requests, flask.request.method.lower())
 
     # make request #
     fullpath = flask.request.full_path
-    requestUrl = app.config["BACKEND"] + fullpath
-    incomingHeaders = flask.request.headers
+    request_url = app.config["BACKEND"] + fullpath
+    incoming_headers = flask.request.headers
 
     # check ip block actions #
-    checkResult = checkIp(flask.request)
-    if checkResult is None:
-        return ("Too Many Requests from this IP", status.TOO_MANY_REQUESTS)
-    if checkResult:
-        incomingHeaders.update(checkResult)
+    check_result = check_ip(flask.request)
+    if check_result is None:
+        return ("Too Many Requests from this IP", HTTPStatus.TOO_MANY_REQUESTS)
+    if check_result:
+        incoming_headers.update(check_result)
 
     # check cookie block actions #
-    checkResult = checkCookie(flask.request, KEYCLOAK_SESSION_ID_COOKIE)
-    if checkResult is None:
-        return ("This Device has made too many requests", status.TOO_MANY_REQUESTS)
-    if checkResult:
-        incomingHeaders.update(checkResult)
+    check_result = check_cookie(flask.request, KEYCLOAK_SESSION_ID_COOKIE)
+    if check_result is None:
+        return ("This Device has made too many requests", HTTPStatus.TOO_MANY_REQUESTS)
+    if check_result:
+        incoming_headers.update(check_result)
 
-    r = requestFunction(requestUrl, headers=incomingHeaders,
-                        cookies=flask.request.cookies, data=data,
-                        auth=flask.request.authorization,
-                        allow_redirects=False)
+    r = request_function(request_url, headers=incoming_headers,
+                         cookies=flask.request.cookies, data=data,
+                         auth=flask.request.authorization,
+                         allow_redirects=False)
 
     # filter response headers #
-    backendHeaders = []
-    contentType = ""
+    backend_headers = []
+    content_type = ""
     for k, v in r.headers.items():
         if not k.lower() in INHERENT_HEADERS:
             if k == "Content-Type":
-                contentType = v
-            backendHeaders.append((k, v))
+                content_type = v
+            backend_headers.append((k, v))
 
     # inject fingerprint #
     html = '''<script>
@@ -191,18 +191,18 @@ def proxy(path):
     </script> '''.encode()
 
     response = None
-    if "text/html" in contentType and "openid-connect/auth" in path:
+    if "text/html" in content_type and "openid-connect/auth" in path:
         print("Injecting JS..:")
-        response = flask.Response(r.content + html, r.status_code, headers=backendHeaders)
+        response = flask.Response(r.content + html, r.status_code, headers=backend_headers)
     else:
-        response = flask.Response(r.content, r.status_code, headers=backendHeaders)
+        response = flask.Response(r.content, r.status_code, headers=backend_headers)
 
     for c in r.cookies:
         response.set_cookie(c.name, c.value)
 
     if "login-actions" in path:
 
-        failCounter = 0
+        fail_counter = 0
         ua = flask.request.headers.get('User-Agent')
         ip = flask.request.headers.get("X-Forwarded-For")
         if not ip:
@@ -212,57 +212,57 @@ def proxy(path):
         result = db.session.query(File).filter(or_(File.agent == ua, File.ip == ip)).first()
         if not result:
             print("Unknown {} on {}".format(ua, ip))
-            failCounter += 1
+            fail_counter += 1
 
         # persistent cookie #
         # check if cookie exists & valid #
-        uuidString = None
-        uuidStringFp = None
+        uuid_string = None
+        uuid_string_fp = None
         result = None
-        resultFp = None
+        result_fp = None
 
         #print(flask.request.cookies)
         if IDENTIFIER_COOKIE_NAME in flask.request.cookies:
-            uuidString = flask.request.cookies.get(IDENTIFIER_COOKIE_NAME)
-            print("Cookie ID:", uuidString)
+            uuid_string = flask.request.cookies.get(IDENTIFIER_COOKIE_NAME)
+            print("Cookie ID:", uuid_string)
         if DEVICE_FINGERPRINT_COOKIE in flask.request.cookies:
-            uuidStringFp = flask.request.cookies.get(DEVICE_FINGERPRINT_COOKIE)
-            print("Device Fingerprint:", uuidStringFp)
-        if uuidString:
-            result = db.session.query(File).filter(File.uuid == uuidString).first()
+            uuid_string_fp = flask.request.cookies.get(DEVICE_FINGERPRINT_COOKIE)
+            print("Device Fingerprint:", uuid_string_fp)
+        if uuid_string:
+            result = db.session.query(File).filter(File.uuid == uuid_string).first()
             if not result:
                 print("Bad Device ID, Overwriting")
 
-        if uuidStringFp:
-            resultFp = db.session.query(File).filter(File.uuid == uuidStringFp).first()
+        if uuid_string_fp:
+            result_fp = db.session.query(File).filter(File.uuid == uuid_string_fp).first()
 
         # if not valid
-        # if not result and not resultFp
-        print("Result fp", uuidStringFp, resultFp)
-        print("Result nofp", uuidString, result)
-        if not resultFp:
+        # if not result and not result_fp
+        print("Result fp", uuid_string_fp, result_fp)
+        print("Result nofp", uuid_string, result)
+        if not result_fp:
             print("New device mail")
-            uuidString = str(uuid.uuid4())
+            uuid_string = str(uuid.uuid4())
             expiry = datetime.datetime.now() + datetime.timedelta(days=10000)
-            response.set_cookie(IDENTIFIER_COOKIE_NAME.encode(), uuidString.encode(),
+            response.set_cookie(IDENTIFIER_COOKIE_NAME.encode(), uuid_string.encode(),
                                 expires=expiry)
-            db.session.merge(File(uuid=uuidString, agent=ua,
+            db.session.merge(File(uuid=uuid_string, agent=ua,
                                   ip=ip))
             db.session.commit()
 
-            sendMail(user_agent=ua, ip=ip, cookieId=uuidString, fingerprint=uuidStringFp)
+            send_mail(user_agent=ua, ip=ip, cookie_id=uuid_string, fingerprint=uuid_string_fp)
         else:
-            print("Known Device: " + "\n".join(str(x) for x in [ua, ip, uuidString, uuidStringFp]))
+            print("Known Device: " + "\n".join(str(x) for x in [ua, ip, uuid_string, uuid_string_fp]))
 
-        if uuidStringFp and not resultFp:
+        if uuid_string_fp and not result_fp:
             print("Bad Device ID FP, Overwriting")
-            db.session.merge(File(uuid=uuidStringFp, agent=ua, ip=ip))
+            db.session.merge(File(uuid=uuid_string_fp, agent=ua, ip=ip))
             db.session.commit()
 
     return response
 
 
-def sendMail(**kwargs):
+def send_mail(**kwargs):
 
     if os.path.isfile("last_mail"):
         with open("last_mail") as f:
@@ -284,21 +284,21 @@ def sendMail(**kwargs):
     # Create a secure SSL context
     context = ssl.create_default_context()
     targets = os.environ["TARGET_EMAILS"]
-    senderMail = os.environ["SENDER_MAIL"]
-    senderServer = os.environ["SMTP_SERVER"]
-    senderPassword = os.environ["SMTP_PASSWORD"]
+    sender_mail = os.environ["SENDER_MAIL"]
+    sender_server = os.environ["SMTP_SERVER"]
+    sender_password = os.environ["SMTP_PASSWORD"]
 
-    for targetMail in targets:
+    for target_mail in targets:
 
-        with smtplib.SMTP_SSL(senderServer, port, context=context) as server:
-            server.login(senderMail, senderPassword)
+        with smtplib.SMTP_SSL(sender_server, port, context=context) as server:
+            server.login(sender_mail, sender_password)
 
             output = []
             for k, v in kwargs.items():
                 output.append("{}: {}".format(k, v))
             message = "Subject: New Device Login\n\n\nLogin from New Device:\n\n"
             message += "\n\n".join(output)
-            server.sendmail(senderMail, targetMail, message)
+            server.sendmail(sender_mail, target_mail, message)
 
 
 @app.before_first_request
@@ -317,6 +317,7 @@ class File(db.Model):
     uuid = Column(String, primary_key=True)
     agent = Column(String)
     ip = Column(String)
+
 
 # keep this for debugging
 if __name__ == "__main__":
