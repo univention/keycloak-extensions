@@ -1,16 +1,14 @@
+---
 stages:
-  - build
+  - release
 
-build_jar:
-  stage: build
-  image: maven:3.8.6-openjdk-18
+# A release is only possible from a semantic version tag,
+# and must be triggered manually, from the GitLab CI web UI.
+release_pipeline:
+  stage: release
+  trigger:
+    include: "/.gitlab/ci/release/release_pipeline.yml"
   rules:
-    - changes:
-      - reCaptcha-auth-flow/*
-  artifacts:
-      paths:
-        - reCaptcha-auth-flow/target
-  script:
-    - cd reCaptcha-auth-flow
-    - mvn clean install
-
+    - if: '$CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+/'
+      when: always
+    - when: never
