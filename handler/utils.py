@@ -22,4 +22,4 @@ def filter_events_by_type(events, type_string):
 
 
 def filter_out_token_errors(events, field, not_value):
-    return filter(lambda e: e.get("details").get(field) != not_value, events)
+    return [e for e  in events if e.get("details").get(field) != not_value]

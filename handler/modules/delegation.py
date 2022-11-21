@@ -64,8 +64,7 @@ class Delegation:
         delegations = []
         for event, count, condition in required_actions:
             for ad in self.actions_delegates:
-                # TODO: Args shall not be passed
-                delegations += [ad(event, args, count, condition)]
+                delegations += [ad(event, count, condition)]
         return delegations
 
     def trigger_actions(self, delegations):
@@ -89,7 +88,6 @@ class Delegation:
                 d.trigger()
                 session.merge(save_state)
                 session.commit()
-        return
 
     def cleanup_expired_actions(self):
         cleanup_list = session.query(ActiveDelegate).filter(
@@ -101,4 +99,3 @@ class Delegation:
             d.cleanup()
             da = getattr(actions, s.classname)(json.loads(s.args), args, 0, "code_id")
             da.cleanup()
-        return

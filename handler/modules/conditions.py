@@ -7,7 +7,6 @@ import logging
 class Condition:
 
     def __init__(self, threshold, timeframe):
-
         # Configure logging
         log_level = os.environ.get('LOG_LEVEL', 'INFO')
         logging.basicConfig(
@@ -26,7 +25,6 @@ class Condition:
 class ConditionFieldSpecificLimit(Condition):
 
     def check(self, events, field=None, **kwargs):
-
         login_errors = list(utils.filter_events_by_type(events, "LOGIN_ERROR"))
         self.logger.info(f"{field} - Login errors: {len(login_errors)}")
         timestamp_to_events = utils.build_timestamp_to_event_dict(login_errors)
@@ -54,7 +52,7 @@ class ConditionFieldSpecificLimit(Condition):
 
         self.logger.debug(f"Count Map: {count_map}")
         above_values = [x for x in count_map if count_map[x] > self.threshold]
-        results = []
-        for v in above_values:
-            results.append((field_content_to_any_event[v], count_map[v], field))
-        return results
+        return [
+            (field_content_to_any_event[v], count_map[v], field)
+            for v in above_values
+        ]

@@ -2,7 +2,6 @@ import datetime
 import os
 import logging
 import time
-import sys
 
 from utils import parse_event_date
 
@@ -29,9 +28,10 @@ class KeycloakPoller:
                 realm_name=os.environ.get("KC_REALM", None),
                 verify=True
             )
-        except Exception:
+        # FIXME: more fine granular exception handling
+        except Exception as e:
             self.logger.error("Could not connect to Keycloak")
-            sys.exit(1)
+            self.logger.error(e)
 
         
     def get_all_events(self):
@@ -39,7 +39,7 @@ class KeycloakPoller:
             "dateFrom": datetime.datetime.now().strftime("%y-%d-%m"),
             "dateTo": datetime.datetime.now().strftime("%y-%d-%m"),
             "max": 11
-            }
+        }
 
         all_events = []
         events_uuids = []
@@ -66,5 +66,5 @@ class KeycloakPoller:
                 time.sleep(1)
         self.logger.debug(f"Found {len(all_events)} unique events in {counter} queries")
         self.logger.debug(f"Run delegates: {run_delegates}")
-        events_time_parsed = map(parse_event_date, all_events)
+        events_time_parsed = [parse_event_date(event) for event in all_events]
         return (events_time_parsed, run_delegates)

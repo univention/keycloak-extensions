@@ -12,7 +12,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class ActionDelegate:
 
-    def __init__(self, state, args, fails, condition):
+    def __init__(self, state, fails, condition):
         # Configure logging
         log_level = os.environ.get('LOG_LEVEL', 'INFO')
         logging.basicConfig(
@@ -25,9 +25,15 @@ class ActionDelegate:
         self.udm_rest_user =  os.environ.get("UDM_REST_USER")
         self.udm_rest_password =  os.environ.get("UDM_REST_PASSWORD")
 
+        self.kc_proxy = os.environ.get("KC_PROXY")
+
+        self.mail_user = os.environ.get("MAIL_USER")
+        self.mail_pass = os.environ.get("MAIL_PASS")
+        self.mail_server = os.environ.get("MAIL_SERVER")
+        self.admin_mail = os.environ.get("ADMIN_MAIL")
+
         self.state = state
-        self.args = args
-        self.proxy = "http://{}/flask-redirect-api".format(args.kc_proxy)
+        self.proxy = f"http://{self.kc_proxy}/flask-redirect-api"
         self.udm_rest_base_url = "https://{user}:{password}@{uri}".format(
             user=self.udm_rest_user, password=self.udm_rest_password, uri=self.ucs_udm_rest)
         self.fails = fails
@@ -105,13 +111,13 @@ class ActionSendMail(ActionDelegate):
         # Create a secure SSL context
         context = ssl.create_default_context()
         return
-        with smtplib.SMTP_SSL(self.args.mail_server, port, context=context) as server:
-            sender = self.args.mail_user + "@" + self.args.mail_server
-            server.login(sender, self.args.mail_pass)
+        with smtplib.SMTP_SSL(self.mail_server, port, context=context) as server:
+            sender = f'{self.mail_user}@{self.mail_server}'
+            server.login(sender, self.mail_pass)
 
             message = f"Subject: Brute Force Detected\n\n{self.state}\n\nCondition: {self.condition}"
 
-            server.sendmail(sender, self.args.admin_mail, message)
+            server.sendmail(sender, self.admin_mail, message)
 
         return True
 
