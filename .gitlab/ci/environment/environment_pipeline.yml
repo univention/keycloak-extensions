@@ -1,6 +1,8 @@
 ---
 # This pipeline uses Terraform to manage machine state, and GitLab to manage that state.
 # Documentation: https://docs.gitlab.com/ee/user/infrastructure/iac/terraform_state.html
+stages:
+  - infrastructure
 
 # Define pipeline-global variables.
 variables:
@@ -27,6 +29,7 @@ variables:
 
 setup_environment:
   extends: .environment_setup_template
+  stage: infrastructure
   environment:
     name: ${TARGET_ENVIRONMENT}
     on_stop: teardown_environment
@@ -54,6 +57,7 @@ setup_environment:
 # Maintainer permissions are needed for this task to complete successfully.
 teardown_environment:
   extends: .environment_setup_template
+  stage: infrastructure
   environment:
     name: ${TARGET_ENVIRONMENT}
     action: stop
