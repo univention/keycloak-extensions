@@ -5,7 +5,6 @@
 # Define pipeline-global variables.
 variables:
   TF_LOCAL_ROOT: "${CI_PROJECT_DIR}/terraform"
-  # TODO: What documentation is available, or whom can I ask for more information?
   TF_ADDRESS: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${TARGET_ENVIRONMENT}"
 
 # Template job for setting up the environment
@@ -61,7 +60,6 @@ teardown_environment:
   script:
     - terraform refresh
     - terraform destroy -auto-approve
-#    TODO: If `maintainer` is required to delete environments, who can help us set this?
     - >
       curl
       --insecure
