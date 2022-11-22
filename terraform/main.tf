@@ -44,12 +44,12 @@ data "aws_route53_zone" "at-univention_de" {
   private_zone = false
 }
 
-resource "aws_route53_record" "master" {
+resource "aws_route53_record" "primary" {
   # Control if a DNS record should be created.
   count = var.create-dns-record ? 1 : 0
 
   # The name of the record [string].
-  name = "master.${var.dns-domain}.${data.aws_route53_zone.at-univention_de.name}"
+  name = "primary.${var.dns-domain}.${data.aws_route53_zone.at-univention_de.name}"
 
   # The record type [string].
   # Possible values: "A", "AAAA", "NS", "TXT", ...

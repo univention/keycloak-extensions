@@ -1,1 +1,70 @@
 ---
+# This pipeline uses Terraform to manage machine state, and GitLab to manage that state.
+# Documentation: https://docs.gitlab.com/ee/user/infrastructure/iac/terraform_state.html
+
+# Define pipeline-global variables.
+variables:
+  TF_LOCAL_ROOT: "${CI_PROJECT_DIR}/terraform"
+  # TODO: What documentation is available, or whom can I ask for more information?
+  TF_ADDRESS: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${TARGET_ENVIRONMENT}"
+
+# Template job for setting up the environment
+.environment_setup_template:
+  image: artifacts.knut.univention.de/upx/container-tooling/automation-terraform:main-857e10e8
+  before_script:
+    - cd ${TF_LOCAL_ROOT}
+    - >
+      terraform
+      init
+      -backend-config="address=${TF_ADDRESS}"
+      -backend-config="lock_address=${TF_ADDRESS}/lock"
+      -backend-config="unlock_address=${TF_ADDRESS}/lock"
+      -backend-config="username=gitlab-ci-token"
+      -backend-config="password=${CI_JOB_TOKEN}"
+      -backend-config="lock_method=POST"
+      -backend-config="unlock_method=DELETE"
+      -backend-config="retry_wait_min=5"
+      -backend-config="skip_cert_verification=true"
+
+setup_environment:
+  extends: .environment_setup_template
+  environment:
+    name: ${TARGET_ENVIRONMENT}
+    on_stop: teardown_environment
+  resource_group: ${CI_COMMIT_REF_SLUG}
+  script:
+    - terraform refresh
+    - terraform destroy -auto-approve
+    - >
+      terraform
+      apply
+      -auto-approve
+      -var ci_target_environment=${TARGET_ENVIRONMENT}
+      -var ci_commit_ref_name=${CI_COMMIT_REF_SLUG}
+      -var dns-domain=keycloak-extensions-${TARGET_ENVIRONMENT}
+      -var create-dns-record=true
+  after_script:
+    - cd ${TF_LOCAL_ROOT}
+    - SERVER_IP=$(terraform output server_ip | sed -e 's/^"//' -e 's/"$//')
+    - echo "SERVER_IP=${SERVER_IP}" > ${CI_PROJECT_DIR}/deploy.env
+  artifacts:
+    reports:
+      dotenv: "${CI_PROJECT_DIR}/deploy.env"
+
+# This job stops the environment and deletes the Terraform state from the GitLab storage backend.
+# Maintainer permissions are needed for this task to complete successfully.
+teardown_environment:
+  extends: .environment_setup_template
+  environment:
+    name: ${TARGET_ENVIRONMENT}
+    action: stop
+  script:
+    - terraform refresh
+    - terraform destroy -auto-approve
+#    TODO: If `maintainer` is required to delete environments, who can help us set this?
+    - >
+      curl
+      --insecure
+      --header "Private-Token: ${CI_JOB_TOKEN}"
+      --request DELETE "${TF_ADDRESS}"
+  when: manual
