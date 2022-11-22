@@ -42,3 +42,8 @@ variable "ci_commit_ref_name" {
   default = "missing-ci-commit-ref-name"
   type = string
 }
+
+variable "ci_target_environment" {
+  default = "default"
+  type = string
+}
