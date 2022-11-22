@@ -1,6 +1,33 @@
 ---
 stages:
+  - infrastructure
   - release
+
+# Handles setup and updates of the VM for `production`.
+environment_pipeline_production:
+  stage: infrastructure
+  trigger:
+    include: "/.gitlab/ci/environment/environment_pipeline.yml"
+  variables:
+    TARGET_ENVIRONMENT: "production"
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'main'
+      when: always
+    - if: $CI_COMMIT_BRANCH != 'main'
+      when: manual
+
+# Handles setup and updates of the VM for `staging`.
+environment_pipeline_staging:
+  stage: infrastructure
+  trigger:
+    include: "/.gitlab/ci/environment/environment_pipeline.yml"
+  variables:
+    TARGET_ENVIRONMENT: "staging"
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'develop'
+      when: always
+    - if: $CI_COMMIT_BRANCH != 'develop'
+      when: manual
 
 # A release is only possible from a semantic version tag,
 # and must be triggered manually, from the GitLab CI web UI.
