@@ -1,21 +1,21 @@
 terraform {
   required_providers {
     hcloud = {
-      source = "hetznercloud/hcloud"
+      source  = "hetznercloud/hcloud"
       version = "1.32.2"
     }
     aws = {
-      source = "hashicorp/aws"
+      source  = "hashicorp/aws"
       version = "3.7.0"
-    } 
+    }
   }
   backend "http" {
   }
 }
 
 provider "aws" {
-  region                  = "eu-west-1"
-  profile                 = "univention"
+  region  = "eu-west-1"
+  profile = "univention"
 }
 
 provider "hcloud" {
@@ -29,13 +29,13 @@ resource "hcloud_server" "main" {
   ssh_keys    = var.server-ssh-keys
   keep_disk   = true
 
-  labels           = {
-    dns_record     = var.dns-domain
-    project_id     = var.project-id
-    project_name   = var.project-name
-    purpose        = "primary"
+  labels = {
+    dns_record   = var.dns-domain
+    project_id   = var.project-id
+    project_name = var.project-name
+    purpose      = "primary"
   }
- 
+
   backups = false
 }
 

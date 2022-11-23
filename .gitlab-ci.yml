@@ -33,7 +33,7 @@ setup_environment_commit:
   trigger:
     include: "/.gitlab/ci/environment/environment_pipeline.yml"
   variables:
-    TARGET_ENVIRONMENT: "${CI_COMMIT_REF_SLUG}"
+      TARGET_ENVIRONMENT: "commit-${CI_COMMIT_REF_SLUG}"
   rules:
     - if: $CI_COMMIT_BRANCH != 'develop' && $CI_COMMIT_BRANCH != 'main'
       when: manual
