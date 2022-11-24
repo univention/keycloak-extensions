@@ -26,4 +26,3 @@
       --dockerfile "${DOCKER_BUILD_FOLDER}/Dockerfile"
       --destination "${CI_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_ENVIRONMENT_TAG}"
       --destination "${CI_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_VERSION_TAG}"
-
