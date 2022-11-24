@@ -24,7 +24,7 @@ stages:
     - mkdir -p /kaniko/.docker
     - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
     - cd "$DOCKER_BUILD_FOLDER"
-    - echo "Preparing to push Docker image `${DOCKER_IMAGE_NAME}`, with tags `${DOCKER_IMAGE_ENVIRONMENT_TAG}` and `${DOCKER_IMAGE_VERSION_TAG}`"
+    - echo "Preparing to push Docker image “${DOCKER_IMAGE_NAME}”, with tags “${DOCKER_IMAGE_ENVIRONMENT_TAG}” and “${DOCKER_IMAGE_VERSION_TAG}”"
     - /kaniko/executor
       --force
       --context "${DOCKER_BUILD_FOLDER}"
