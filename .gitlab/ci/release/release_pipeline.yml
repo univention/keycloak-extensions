@@ -7,7 +7,6 @@ stages:
 include:
   - local: "/.gitlab/ci/maven/maven_jobs.yml"
   - local: "/.gitlab/ci/theme/theme_jobs.yml"
-  - local: "/.gitlab/ci/docker/docker_jobs.yml"
 
 # Global pipeline variables
 variables:
@@ -42,8 +41,6 @@ release_version_package:
   stage: release
   image: "registry.gitlab.com/gitlab-org/release-cli:latest"
   needs:
-    - "build_and_publish_docker_image_proxy"
-    - "build_and_publish_docker_image_handler"
     - "upload"
   before_script:
     - 'export PACKAGE_REGISTRY_URL=$GENERIC_PACKAGE_REGISTRY_URL_BASE/${CI_COMMIT_TAG:1}'
