@@ -14,26 +14,6 @@ variables:
   PACKAGE_NAME: "reCaptcha-auth-flow"
   GENERIC_PACKAGE_REGISTRY_URL_BASE: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${PACKAGE_NAME}"
 
-# Use the included Kaniko job to build docker images for `keycloak-proxy`
-build_and_publish_docker_image_proxy:
-  stage: build
-  extends: ".kaniko_build_image"
-  variables:
-    DOCKER_BUILD_FOLDER: "${CI_PROJECT_DIR}/proxy"
-    DOCKER_IMAGE_NAME: "keycloak-proxy"
-    DOCKER_IMAGE_VERSION_TAG: "${CI_COMMIT_TAG}"
-    DOCKER_IMAGE_ENVIRONMENT_TAG: "${CI_COMMIT_TAG}"
-
-# Use the included Kaniko job to build docker images for `keycloak-handler`
-build_and_publish_docker_image_handler:
-  stage: build
-  extends: ".kaniko_build_image"
-  variables:
-    DOCKER_BUILD_FOLDER: "${CI_PROJECT_DIR}/handler"
-    DOCKER_IMAGE_NAME: "keycloak-handler"
-    DOCKER_IMAGE_VERSION_TAG: "${CI_COMMIT_TAG}"
-    DOCKER_IMAGE_ENVIRONMENT_TAG: "${CI_COMMIT_TAG}"
-
 # Uploads the theme and jar artifacts as a generic package.
 # From: https://gitlab.com/gitlab-org/release-cli/-/tree/master/docs/examples/release-assets-as-generic-package/
 upload:

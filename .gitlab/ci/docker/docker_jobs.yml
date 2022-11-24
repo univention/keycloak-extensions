@@ -26,3 +26,23 @@
       --dockerfile "${DOCKER_BUILD_FOLDER}/Dockerfile"
       --destination "${CI_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_ENVIRONMENT_TAG}"
       --destination "${CI_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_VERSION_TAG}"
+
+# Use the included Kaniko job to build docker images for `keycloak-proxy`
+build_and_publish_docker_image_proxy:
+  stage: build
+  extends: ".kaniko_build_image"
+  variables:
+    DOCKER_BUILD_FOLDER: "${CI_PROJECT_DIR}/proxy"
+    DOCKER_IMAGE_NAME: "keycloak-proxy"
+    DOCKER_IMAGE_VERSION_TAG: "${CI_COMMIT_TAG}"
+    DOCKER_IMAGE_ENVIRONMENT_TAG: "${CI_COMMIT_TAG}"
+
+# Use the included Kaniko job to build docker images for `keycloak-handler`
+build_and_publish_docker_image_handler:
+  stage: build
+  extends: ".kaniko_build_image"
+  variables:
+    DOCKER_BUILD_FOLDER: "${CI_PROJECT_DIR}/handler"
+    DOCKER_IMAGE_NAME: "keycloak-handler"
+    DOCKER_IMAGE_VERSION_TAG: "${CI_COMMIT_TAG}"
+    DOCKER_IMAGE_ENVIRONMENT_TAG: "${CI_COMMIT_TAG}"
