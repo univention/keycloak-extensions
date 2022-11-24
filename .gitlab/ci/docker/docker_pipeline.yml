@@ -1,3 +1,6 @@
+stages:
+  - build
+
 .kaniko_build_image:
   image:
     name: gcr.io/kaniko-project/executor:debug
