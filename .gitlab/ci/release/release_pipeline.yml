@@ -63,7 +63,7 @@ release_version_package:
   image: "registry.gitlab.com/gitlab-org/release-cli:latest"
   needs:
     - "build_and_publish_docker_image_proxy"
-    - "build_and_publish_docker_image_handlers"
+    - "build_and_publish_docker_image_handler"
     - "upload"
   before_script:
     - 'export PACKAGE_REGISTRY_URL=$GENERIC_PACKAGE_REGISTRY_URL_BASE/${CI_COMMIT_TAG:1}'
