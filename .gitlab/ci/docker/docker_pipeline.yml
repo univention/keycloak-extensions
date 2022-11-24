@@ -13,9 +13,9 @@ stages:
     - if: '$CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH'
       variables:
         DOCKER_IMAGE_ENVIRONMENT_TAG: "develop"
-    - if: '$DOCKER_IMAGE_VERSION_TAG == null'
+    - if: '$DOCKER_IMAGE_VERSION_TAG == null || $DOCKER_IMAGE_VERSION_TAG == ""'
       variables:
-        DOCKER_IMAGE_VERSION_TAG: "$CI_COMMIT_SHORT_SHA"
+        DOCKER_IMAGE_VERSION_TAG: $CI_COMMIT_SHORT_SHA
     - when: always
   script:
     # install KNUT CA (not needed if publishing to quay.io)
@@ -39,7 +39,6 @@ build_and_publish_docker_image_proxy:
     DOCKER_BUILD_FOLDER: "${CI_PROJECT_DIR}/proxy"
     DOCKER_IMAGE_NAME: "keycloak-proxy"
     DOCKER_IMAGE_VERSION_TAG: "${CI_COMMIT_TAG}"
-    DOCKER_IMAGE_ENVIRONMENT_TAG: "${CI_COMMIT_TAG}"
     CI_DEBUG_TRACE: "true"
 
 # Use the included Kaniko job to build docker images for `keycloak-handler`
@@ -49,4 +48,3 @@ build_and_publish_docker_image_handler:
     DOCKER_BUILD_FOLDER: "${CI_PROJECT_DIR}/handler"
     DOCKER_IMAGE_NAME: "keycloak-handler"
     DOCKER_IMAGE_VERSION_TAG: "${CI_COMMIT_TAG}"
-    DOCKER_IMAGE_ENVIRONMENT_TAG: "${CI_COMMIT_TAG}"
