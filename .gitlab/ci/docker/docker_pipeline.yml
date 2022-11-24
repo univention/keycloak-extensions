@@ -1,24 +1,22 @@
 stages:
   - build
 
-workflow:
+.kaniko_build_image:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [ "" ]
   rules:
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $DOCKER_IMAGE_ENVIRONMENT_TAG == null'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
       variables:
         DOCKER_IMAGE_ENVIRONMENT_TAG: "latest"
-    - if: '$CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH && $DOCKER_IMAGE_ENVIRONMENT_TAG == null'
+    - if: '$CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH'
       variables:
         DOCKER_IMAGE_ENVIRONMENT_TAG: "develop"
     - if: '$DOCKER_IMAGE_VERSION_TAG == null'
       variables:
         DOCKER_IMAGE_VERSION_TAG: "$CI_COMMIT_SHORT_SHA"
     - when: always
-
-.kaniko_build_image:
-  stage: build
-  image:
-    name: gcr.io/kaniko-project/executor:debug
-    entrypoint: [ "" ]
   script:
     # install KNUT CA (not needed if publishing to quay.io)
     - install -m 644 "$KNUT_CA" /kaniko/ssl/certs/knut.pem
