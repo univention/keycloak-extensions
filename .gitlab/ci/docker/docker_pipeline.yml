@@ -2,6 +2,7 @@ stages:
   - build
 
 .kaniko_build_image:
+  stage: build
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: [ "" ]
@@ -31,7 +32,6 @@ stages:
 
 # Use the included Kaniko job to build docker images for `keycloak-proxy`
 build_and_publish_docker_image_proxy:
-  stage: build
   extends: ".kaniko_build_image"
   variables:
     DOCKER_BUILD_FOLDER: "${CI_PROJECT_DIR}/proxy"
@@ -41,7 +41,6 @@ build_and_publish_docker_image_proxy:
 
 # Use the included Kaniko job to build docker images for `keycloak-handler`
 build_and_publish_docker_image_handler:
-  stage: build
   extends: ".kaniko_build_image"
   variables:
     DOCKER_BUILD_FOLDER: "${CI_PROJECT_DIR}/handler"
