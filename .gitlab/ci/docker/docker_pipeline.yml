@@ -3,7 +3,7 @@ stages:
 
 variables:
   # Set default value for the Docker image tag. This can (and should) be overridden in the job call.
-  DOCKER_IMAGE_VERSION_TAG: $CI_COMMIT_SHORT_SHA
+  DOCKER_IMAGE_VERSION_TAG: "commit-$CI_COMMIT_SHORT_SHA"
 
 # Kaniko Docker image build and publish template job.
 .kaniko_build_and_publish_image:
@@ -40,7 +40,7 @@ build_and_publish_docker_image_proxy:
   variables:
     DOCKER_BUILD_FOLDER: "${CI_PROJECT_DIR}/proxy"
     DOCKER_IMAGE_NAME: "keycloak-proxy"
-#    DOCKER_IMAGE_VERSION_TAG: "${CI_COMMIT_TAG}"
+    DOCKER_IMAGE_VERSION_TAG: "${CI_COMMIT_TAG}"
     CI_DEBUG_TRACE: "true"
 
 # Use the included Kaniko job to build docker images for `keycloak-handler`
@@ -49,4 +49,4 @@ build_and_publish_docker_image_handler:
   variables:
     DOCKER_BUILD_FOLDER: "${CI_PROJECT_DIR}/handler"
     DOCKER_IMAGE_NAME: "keycloak-handler"
-#    DOCKER_IMAGE_VERSION_TAG: "${CI_COMMIT_TAG}"
+    DOCKER_IMAGE_VERSION_TAG: "${CI_COMMIT_TAG}"
