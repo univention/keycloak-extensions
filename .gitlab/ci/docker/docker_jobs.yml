@@ -1,0 +1,29 @@
+.kaniko_build_image:
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [ "" ]
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $DOCKER_IMAGE_ENVIRONMENT_TAG == null'
+      variables:
+        DOCKER_IMAGE_ENVIRONMENT_TAG: "latest"
+    - if: '$CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH && $DOCKER_IMAGE_ENVIRONMENT_TAG == null'
+      variables:
+        DOCKER_IMAGE_ENVIRONMENT_TAG: "develop"
+    - if: '$DOCKER_IMAGE_VERSION_TAG == null'
+      variables:
+        DOCKER_IMAGE_VERSION_TAG: "$CI_COMMIT_SHORT_SHA"
+  script:
+    # install KNUT CA (not needed if publishing to quay.io)
+    - install -m 644 "$KNUT_CA" /kaniko/ssl/certs/knut.pem
+    - cat /kaniko/ssl/certs/knut.pem >> /kaniko/ssl/certs/ca-certificates.crt
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"${CI_REGISTRY}\":{\"auth\":\"$(printf "%s:%s" "${CI_REGISTRY_USER}" "${CI_REGISTRY_PASSWORD}" | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+    - cd "$DOCKER_BUILD_FOLDER"
+    - >
+      /kaniko/executor
+      --force
+      --context "${DOCKER_BUILD_FOLDER}"
+      --dockerfile "${DOCKER_BUILD_FOLDER}/Dockerfile"
+      --destination "${CI_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_ENVIRONMENT_TAG}"
+      --destination "${CI_REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_VERSION_TAG}"
+
