@@ -1,7 +1,13 @@
 stages:
   - build
 
-.kaniko_build_image:
+
+variables:
+  # Set default value for the Docker image tag. This can (and should) be overridden in the job call.
+  DOCKER_IMAGE_VERSION_TAG: $CI_COMMIT_SHORT_SHA
+
+# Kaniko Docker image build and publish template job.
+.kaniko_build_and_publish_image:
   stage: build
   image:
     name: gcr.io/kaniko-project/executor:debug
@@ -13,9 +19,6 @@ stages:
     - if: '$CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH'
       variables:
         DOCKER_IMAGE_ENVIRONMENT_TAG: "develop"
-    - if: '$DOCKER_IMAGE_VERSION_TAG == null || $DOCKER_IMAGE_VERSION_TAG == ""'
-      variables:
-        DOCKER_IMAGE_VERSION_TAG: $CI_COMMIT_SHORT_SHA
     - when: always
   script:
     # install KNUT CA (not needed if publishing to quay.io)
@@ -34,7 +37,7 @@ stages:
 
 # Use the included Kaniko job to build docker images for `keycloak-proxy`
 build_and_publish_docker_image_proxy:
-  extends: .kaniko_build_image
+  extends: .kaniko_build_and_publish_image
   variables:
     DOCKER_BUILD_FOLDER: "${CI_PROJECT_DIR}/proxy"
     DOCKER_IMAGE_NAME: "keycloak-proxy"
@@ -43,7 +46,7 @@ build_and_publish_docker_image_proxy:
 
 # Use the included Kaniko job to build docker images for `keycloak-handler`
 build_and_publish_docker_image_handler:
-  extends: .kaniko_build_image
+  extends: .kaniko_build_and_publish_image
   variables:
     DOCKER_BUILD_FOLDER: "${CI_PROJECT_DIR}/handler"
     DOCKER_IMAGE_NAME: "keycloak-handler"
