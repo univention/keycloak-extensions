@@ -4,7 +4,7 @@ services:
     container_name: keycloak-extensions-proxy
     image: docker-registry.knut.univention.de/phoenix/keycloak-proxy:develop
     ports:
-      - 8421:5000
+      - 8181:5000
     environment: 
       KEYCLOAK_SERVER: @%@keycloak-extensions/proxy/keycloak-server@%@
       KEYCLOAK_PROTOCOL: @%@keycloak-extensions/proxy/keycloak-protocol@%@
