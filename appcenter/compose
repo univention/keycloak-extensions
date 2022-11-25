@@ -13,13 +13,13 @@ services:
       SMTP_SERVER: @%@keycloak-extensions/notifications/mail-server@%@
       SMTP_PASSWORD: @!@
 import os
-pwdfile="/etc/keycloak-extensions-mail.secret"
-with open(pwdfile, 'r') as fd:
+pwdfile = "/etc/keycloak-extensions-mail.secret"
+with open(pwdfile) as fd:
     print(fd.read().strip())@!@
       API_SECRET: @!@
 import os
-pwdfile="/etc/keycloak-api.secret"
-with open(pwdfile, 'r') as fd:
+pwdfile = "/etc/keycloak-api.secret"
+with open(pwdfile) as fd:
     print(fd.read().strip())@!@
 
   handler:
@@ -31,14 +31,14 @@ with open(pwdfile, 'r') as fd:
       KC_USER: @%@keycloak-extensions/handler/keycloak/admin-user@%@
       KC_PASS: @!@
 import os
-pwdfile="/etc/keycloak-admin.secret"
-with open(pwdfile, 'r') as fd:
+pwdfile = "/etc/keycloak-admin.secret"
+with open(pwdfile) as fd:
     print(fd.read().strip())@!@
       MAIL_USER: @%@keycloak-extensions/notifications/mail-user@%@
       MAIL_PASS: @!@
 import os
-pwdfile="/etc/keycloak-extensions-mail.secret"
-with open(pwdfile, 'r') as fd:
+pwdfile = "/etc/keycloak-extensions-mail.secret"
+with open(pwdfile) as fd:
     print(fd.read().strip())@!@
       MAIL_SERVER: @%@keycloak-extensions/notifications/mail-server@%@
       ADMIN_MAIL: @%@keycloak-extensions/notifications/admin-mail@%@
@@ -46,8 +46,8 @@ with open(pwdfile, 'r') as fd:
       UDM_REST_USER: @%@keycloak-extensions/handler/udm/rest-user@%@
       UDM_REST_PASSWORD: @!@
 import os
-pwdfile="/etc/keycloak-extensions-udm-rest.secret"
-with open(pwdfile, 'r') as fd:
+pwdfile = "/etc/keycloak-extensions-udm-rest.secret"
+with open(pwdfile) as fd:
     print(fd.read().strip())@!@
       KC_PROXY: proxy:5000
       RATE_MINUTES: @%@keycloak-extensions/handler/minutes-rate-limit@%@
