@@ -42,15 +42,15 @@ APP_ID="keycloak-extensions"
 
 joinscript_init
 
-ucs_addServiceToLocalhost "$APP_ID" "$@"
+ucs_addServiceToLocalhost "$APP_ID" "$@" || die
 
 eval "$(ucr shell)"
 
 # FIXME: should not tamper with an existing installed app on UCS
 # Also probably we should modify the theme that UCS Keycloak is shipping
-docker cp /var/lib/univention-appcenter/apps/keycloak-extensions/data/reCaptcha-auth-flow.jar keycloak:/opt/keycloak/providers
-docker cp /var/lib/univention-appcenter/apps/keycloak-extensions/data/reCaptcha-theme keycloak:/opt/keycloak/themes/reCaptcha-theme
-docker exec -it keycloak /opt/keycloak/bin/kc.sh build
+docker cp /var/lib/univention-appcenter/apps/keycloak-extensions/data/reCaptcha-auth-flow.jar keycloak:/opt/keycloak/providers || die
+docker cp /var/lib/univention-appcenter/apps/keycloak-extensions/data/reCaptcha-theme keycloak:/opt/keycloak/themes/reCaptcha-theme || die
+docker exec -it keycloak /opt/keycloak/bin/kc.sh build || die
 docker restart keycloak
 
 joinscript_save_current_version
