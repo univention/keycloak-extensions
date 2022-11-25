@@ -1,0 +1,53 @@
+version: "3.7"
+services:
+  proxy:
+    container_name: keycloak-extensions-proxy
+    image: docker-registry.knut.univention.de/phoenix/keycloak-proxy:develop
+    ports:
+      - 8421:5000
+    environment: 
+      KEYCLOAK_SERVER: @%@keycloak-extensions/proxy/keycloak-server@%@
+      KEYCLOAK_PROTOCOL: @%@keycloak-extensions/proxy/keycloak-protocol@%@
+      TARGET_EMAILS: @%@keycloak-extensions/notifications/admin-mail@%@
+      SENDER_MAIL: @%@keycloak-extensions/notifications/mail-user@%@
+      SMTP_SERVER: @%@keycloak-extensions/notifications/mail-server@%@
+      SMTP_PASSWORD: @!@
+import os
+pwdfile = "/etc/keycloak-extensions-mail.secret"
+with open(pwdfile) as fd:
+    print(fd.read().strip())@!@
+      API_SECRET: @!@
+import os
+pwdfile = "/etc/keycloak-api.secret"
+with open(pwdfile) as fd:
+    print(fd.read().strip())@!@
+
+  handler:
+    container_name: keycloak-extensions-handler
+    image: docker-registry.knut.univention.de/phoenix/keycloak-handler:develop
+    environment:
+      KC_REALM: @%@keycloak-extensions/handler/keycloak/realm@%@
+      KC_AUTH_URL: @%@keycloak-extensions/handler/keycloak/admin-auth-url@%@
+      KC_USER: @%@keycloak-extensions/handler/keycloak/admin-user@%@
+      KC_PASS: @!@
+import os
+pwdfile = "/etc/keycloak-admin.secret"
+with open(pwdfile) as fd:
+    print(fd.read().strip())@!@
+      MAIL_USER: @%@keycloak-extensions/notifications/mail-user@%@
+      MAIL_PASS: @!@
+import os
+pwdfile = "/etc/keycloak-extensions-mail.secret"
+with open(pwdfile) as fd:
+    print(fd.read().strip())@!@
+      MAIL_SERVER: @%@keycloak-extensions/notifications/mail-server@%@
+      ADMIN_MAIL: @%@keycloak-extensions/notifications/admin-mail@%@
+      UDM_REST_BASE_URL: @%@keycloak-extensions/handler/udm/rest-base-url@%@
+      UDM_REST_USER: @%@keycloak-extensions/handler/udm/rest-user@%@
+      UDM_REST_PASSWORD: @!@
+import os
+pwdfile = "/etc/keycloak-extensions-udm-rest.secret"
+with open(pwdfile) as fd:
+    print(fd.read().strip())@!@
+      KC_PROXY: proxy:5000
+      RATE_MINUTES: @%@keycloak-extensions/handler/minutes-rate-limit@%@
