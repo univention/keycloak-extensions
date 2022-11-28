@@ -34,6 +34,8 @@ setup_environment:
     name: ${TARGET_ENVIRONMENT}
     on_stop: teardown_environment
   resource_group: ${CI_COMMIT_REF_SLUG}
+  rules:
+    - when: always
   script:
     - terraform refresh
     - terraform destroy -auto-approve
@@ -61,6 +63,8 @@ teardown_environment:
   environment:
     name: ${TARGET_ENVIRONMENT}
     action: stop
+  rules:
+    - when: manual
   script:
     - terraform refresh
     - terraform destroy -auto-approve
@@ -69,4 +73,3 @@ teardown_environment:
       --insecure
       --header "Private-Token: ${CI_JOB_TOKEN}"
       --request DELETE "${TF_ADDRESS}"
-  when: manual
