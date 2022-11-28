@@ -27,16 +27,16 @@ setup_environment_staging:
       when: always
     - when: never
 
-# Handles setup and updates of the environment for this commit, based on the CI_COMMIT_REF_SLUG.
-setup_environment_commit:
+# Handles setup and updates of the environment for an MR commit, based on the merge request numerical ID.
+setup_environment_mr:
   stage: infrastructure
   trigger:
     include: "/.gitlab/ci/environment/environment_pipeline.yml"
   variables:
-      TARGET_ENVIRONMENT: "commit-${CI_COMMIT_REF_SLUG}"
+      TARGET_ENVIRONMENT: "mr-${CI_MERGE_REQUEST_IID}"
   rules:
-    - if: $CI_COMMIT_BRANCH != 'develop' && $CI_COMMIT_BRANCH != 'main'
-      when: manual
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      when: always
     - when: never
 
 # A GitLab Release is done upon semantic version tag push.
