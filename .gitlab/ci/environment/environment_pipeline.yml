@@ -51,7 +51,6 @@ setup_environment:
     - SERVER_HTTPS_URL_PRIMARY=$(terraform output server_https_url_primary | sed -e 's/^"//' -e 's/"$//')
     - echo "SERVER_IP=${SERVER_IP}" >> ${CI_PROJECT_DIR}/deploy.env
     - echo "SERVER_HTTPS_URL_PRIMARY=${SERVER_HTTPS_URL_PRIMARY}" >> ${CI_PROJECT_DIR}/deploy.env
-    - cat ${CI_PROJECT_DIR}/deploy.env
   artifacts:
     reports:
       dotenv: "${CI_PROJECT_DIR}/deploy.env"

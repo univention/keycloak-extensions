@@ -21,7 +21,7 @@ setup_environment_staging:
   variables:
     TARGET_ENVIRONMENT: "staging"
   rules:
-    - if: $CI_COMMIT_BRANCH == 'develop'
+    - if: $CI_COMMIT_BRANCH == 'development'
 
 # Handles setup and updates of the environment for an MR commit, based on the merge request numerical ID.
 setup_environment_mr:
