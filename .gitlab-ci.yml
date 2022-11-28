@@ -66,7 +66,7 @@ provision_environment_mr:
   variables:
     TARGET_ENVIRONMENT: "mr-${CI_MERGE_REQUEST_IID}"
   rules:
-    - if: $CI_COMMIT_BRANCH == 'main'
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
   needs:
     - "setup_environment_mr"
 
