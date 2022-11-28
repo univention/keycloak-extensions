@@ -19,6 +19,7 @@ provision_ucs_vm:
   resource_group: $TARGET_ENVIRONMENT
   script:
     - ansible-playbook -i root@${SERVER_IP}, playbook.yml -e "hostname=master" -e "domain_name=bfa-${CI_COMMIT_REF_SLUG}.at-univention.de" -e "basedn=dc=bfa-${CI_COMMIT_REF_SLUG},dc=at-univention,dc=de"
-
+  rules:
+    - when: always
 
 
