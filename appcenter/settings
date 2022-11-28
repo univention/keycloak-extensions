@@ -1,0 +1,128 @@
+[keycloak-extensions/handler/keycloak/admin-user]
+Type = String
+Required = True
+Show = Install
+ShowReadOnly = Settings
+InitialValue = admin
+Scope = outside
+Description = Name of a Keycloak admin user to retrieve events
+Description[de] = Name eines Keycloak administrativen Nutzers um Ereignisse abzufragen
+Group = Administration
+Group[de] = Administration
+
+
+[keycloak-extensions/handler/keycloak/realm]
+Type = String
+Required = True
+Show = Install
+ShowReadOnly = Settings
+InitialValue = ucs
+Scope = outside
+Description = Name of the realm to retrieve events from
+Description[de] = Name des Realms um Ereignisse abzufragen
+Group = Administration
+Group[de] = Administration
+
+[keycloak-extensions/handler/keycloak/admin-auth-url]
+Type = String
+Required = True
+Show = Install
+ShowReadOnly = Settings
+InitialValue = admin
+Scope = outside
+Description = Admin authentication URL for the target keycloaks (usually https://server/admin)
+Description[de] = URL zur Authentifizierung eines administrativen Nutzers gegenüber der Ziel-Keycloak Instanz (gewöhnlich https://server/admin)
+Group = Administration
+Group[de] = Administration
+
+[keycloak-extensions/notifications/mail-user]
+Type = String
+Required = True
+Show = Install
+ShowReadOnly = Settings
+InitialValue = keycloak
+Scope = outside
+Description = User for SMTP-login and sending notifications
+Description[de] = Keycloak Nutzer bei SMTP-Login und Versand von Benachrichtigungen
+Group = Administration
+Group[de] = Administration
+
+[keycloak-extensions/notifications/admin-mail]
+Type = String
+Required = True
+Show = Install
+ShowReadOnly = Settings
+InitialValue = keycloak
+Scope = outside
+Description = Admin e-mail to notify on triggered events
+Description[de] = Emailaddresse eines administrativen Nutzers zur Benachrichtigung über registrierte Ereignisse
+Group = Administration
+Group[de] = Administration
+
+
+[keycloak-extensions/notifications/mail-server]
+Type = String
+Required = False
+Show = Install
+ShowReadOnly = Settings
+InitialValue = keycloak
+Scope = outside
+Description = Mail server to for sending out notifactions
+Description[de] = Emailserver zum Versand von Benachrichtigungen
+Group = Administration
+Group[de] = Administration
+
+[keycloak-extensions/handler/debug-target-proxy-overwrite]
+Type = String
+Required = False
+Show = Install, Settings
+InitialValue = -server
+Scope = outside
+Description = Overwrite the address of the associated bfa-proxy to use an external proxy for debugging purposes
+Description[de] = Überschreibt die URL des assoziierten BFA-Proxy, z.B. um Debugging über einen externen Proxy zu erlauben
+Group = Administration
+Group[de] = Administration
+
+[keycloak-extensions/handler/udm/rest-base-url]
+Type = String
+Required = False
+Show = Install, Settings
+InitialValue = -server
+Scope = outside
+Description = Base URL for UDM-REST queries
+Description[de] = Basis URL-Pfad für UDM-REST API-Requests
+Group = Administration
+Group[de] = Administration
+
+[keycloak-extensions/handler/udm/rest-user]
+Type = String
+Required = False
+Show = Install, Settings
+InitialValue = -server
+Scope = outside
+Description = User to perform UDM REST queries
+Description[de] =
+Group = Administration
+Group[de] = Administration
+
+[keycloak-extensions/proxy/keycloak-server]
+Type = String
+Required = True
+Show = Install, Settings
+InitialValue = -server
+Scope = outside
+Description = Keycloak server to target with this proxy
+Description[de] =
+Group = Administration
+Group[de] = Administration
+
+[keycloak-extensions/proxy/keycloak-protocol]
+Type = String
+Required = False
+Show = Install, Settings
+InitialValue = http
+Scope = outside
+Description = Internal protocol to use
+Description[de] = Spezifiziert das intern verwendete Protokoll
+Group = Administration
+Group[de] = Administration

@@ -1,0 +1,51 @@
+[Application]
+ID = keycloak-extensions
+Code = 43
+Version = 0.9-ucs1
+Name = Keycloak Extensions
+Vendor = Univention
+DockerScriptRestoreDataAfterSetup =
+DockerScriptStoreData =
+DockerScriptUpdateAvailable =
+DockerScriptRestoreDataBeforeSetup =
+DockerScriptUpdatePackages =
+DockerScriptUpdateAppVersion =
+DockerScriptUpdateRelease =
+DockerScriptSetup =
+DockerShellCommand = /bin/sh
+DockerMainService = handler
+ServerRole = domaincontroller_master, domaincontroller_backup
+PortsRedirection =
+PortsExclusive =
+Maintainer = Univention GmbH
+Description = Extension, protection and customization companion app for Keycloak
+WebsiteMaintainer = https://www.univention.de/
+AppCategories = Identity Management, Infrastructure
+LongDescription = <div>
+        <div>
+            Keycloak Extension is a companion app for Keycloak, intended to extend its functionality, protect it against brute force attacks, new device login notifications and much more.
+        </div>
+        <div>
+            <br>
+        </div>
+        <div>
+            Some functionality, such as reCAPTCHA on multiple failed attempts, need some prerequisites and configuration. <b>Please consult the documentation after the installation!</b>
+        </div>
+    </div>
+[de]
+Maintainer = Univention GmbH
+WebsiteMaintainer = https://www.univention.de/
+Name = Keycloak Extensions
+Description = Erweitert Keycloak um zusätzliche Sicherheits- und Konfigurationsoptionen
+LongDescription = <div>
+		<div>
+            Die UCS Keycloak Erweiterung bietet neben vielen weiteren Features zusätzlichen Schutz gegen Brute-Force Attacken und ermöglicht Benachrichtigungen bei Login über ein weiteres Endgerät.
+		</div>
+		<div>
+			<br>
+		</div>
+		<div>
+        </div>
+	</div>
+	
+

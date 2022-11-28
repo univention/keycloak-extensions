@@ -1,0 +1,70 @@
+#!/bin/bash
+
+set -e
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        "--error-file")
+            shift
+            errorfile="$1"
+            shift
+            ;;
+        "--old-version")
+            shift
+            old_version="$1"
+            shift
+            ;;
+        "--version")
+            shift
+            version="$1"
+            shift
+            ;;
+        *)
+            shift
+            ;;
+    esac
+done
+
+# Check files exist
+FILE=/etc/keycloak-admin.secret
+if [ ! -f "$FILE" ]; then
+    echo "$FILE does not exists"
+    exit 1
+fi
+
+# Check files exist
+FILE=/etc/keycloak-api.secret
+if [ ! -f "$FILE" ]; then
+    echo "$FILE does not exists"
+    exit 1
+fi
+
+FILE=/etc/keycloak-extensions-mail.secret
+if [ ! -f "$FILE" ]; then
+    echo "$FILE does not exists"
+    exit 1
+fi
+
+FILE=/etc/keycloak-extensions-udm-rest.secret
+if [ ! -f "$FILE" ]; then
+    echo "$FILE does not exists"
+    exit 1
+fi
+
+# reCaptcha theme
+echo "Installing Keycloak reCaptcha theme"
+base64 -d <<%EOF  | tar xjf - --one-top-level=/var/lib/univention-appcenter/apps/keycloak-extensions/data/
+%ARCHIVE_CONTENT%
+%EOF
+
+# reCaptcha jar file
+jar_file_path=/var/lib/univention-appcenter/apps/keycloak-extensions/data/reCaptcha-auth-flow.jar
+echo "Copying reCaptcha jar file"
+base64 -d <<%EOF >"$jar_file_path"
+%KEYCLOAK_RECAPTCHA_JAR%
+%EOF
+
+
+
+exit 0
+

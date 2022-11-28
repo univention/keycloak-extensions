@@ -1,0 +1,4 @@
+[Application]
+ID = keycloak-extensions
+Detailpageoncatalogue = True
+Teaserpageoncatalogue = True
