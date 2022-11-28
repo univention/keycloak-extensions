@@ -42,6 +42,7 @@ variable "server-snapshot" {
 
 variable "ci_target_environment" {
   type = string
+  default = "default"
   description = "The name for this environment. Used in domain names as well."
   validation {
     condition     = length(var.ci_target_environment) > 255
