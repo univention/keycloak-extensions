@@ -17,7 +17,7 @@ variables:
 # From: https://gitlab.com/gitlab-org/release-cli/-/tree/master/docs/examples/release-assets-as-generic-package/
 upload:
   stage: upload
-  image: "curlimages/curl:latest"
+  image: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/curlimages/curl:latest"
   needs:
     - "maven_clean_install"
     - "archive_theme_files"

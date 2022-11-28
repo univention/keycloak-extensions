@@ -1,0 +1,24 @@
+---
+# This pipeline uses Ansible to provision machines from a previous step.
+stages:
+  - provision
+
+provision_ucs_vm:
+  image: artifacts.knut.univention.de/upx/container-tooling/automation-ansible:main-0ff77d38
+  stage: provision
+  before_script:
+    - echo "${ID_RSA_UCS_KVM_IMAGE}" > ${CI_PROJECT_DIR}/id_rsa
+    - chown 0400 ${CI_PROJECT_DIR}/id_rsa
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - chmod -R o-w .
+    - chmod -R ug+rw .
+    - cat "${AUTHORIZED_KEYS_FILE}" > ansible/files/authorized_keys
+    - cd ansible
+    - ansible-galaxy install -r collections/requirements.yml
+  resource_group: $TARGET_ENVIRONMENT
+  script:
+    - ansible-playbook -i root@${SERVER_IP}, playbook.yml -e "hostname=master" -e "domain_name=bfa-${CI_COMMIT_REF_SLUG}.at-univention.de" -e "basedn=dc=bfa-${CI_COMMIT_REF_SLUG},dc=at-univention,dc=de"
+
+
+
