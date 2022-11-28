@@ -1,0 +1,12 @@
+- name: "Run UCS join"
+  ansible.builtin.include_role:
+    name: "univention.ucs_roles.ucs_join"
+  vars:
+    ucs_join_server_type: "master"
+    ucs_join_admin_user_name: "Administrator"
+    ucs_join_root_password: "univention"
+    ucs_join_hostname: "{{ hostname }}"
+    ucs_join_domain_name: "{{ domain_name }}"
+    ucs_join_basedn: "{{ basedn }}"
+  tags:
+    - "ucs_join"

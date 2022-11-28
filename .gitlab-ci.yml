@@ -39,12 +39,21 @@ setup_environment_commit:
       when: manual
     - when: never
 
-# A release is only possible from a semantic version tag,
-# and must be triggered manually, from the GitLab CI web UI.
+# A GitLab Release is done upon semantic version tag push.
 release_pipeline:
   stage: release
   trigger:
     include: "/.gitlab/ci/release/release_pipeline.yml"
+  rules:
+    - if: '$CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+/'
+      when: always
+    - when: never
+
+# The Docker images for `proxy` and `handler` are published upon semantic version tag push as well.
+docker_pipeline:
+  stage: release
+  trigger:
+    include: "/.gitlab/ci/docker/docker_pipeline.yml"
   rules:
     - if: '$CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+/'
       when: always
