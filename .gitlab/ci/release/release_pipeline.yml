@@ -1,0 +1,56 @@
+stages:
+  - build
+  - upload
+  - release
+
+# Job dependencies
+include:
+  - local: "/.gitlab/ci/maven/maven_jobs.yml"
+  - local: "/.gitlab/ci/theme/theme_jobs.yml"
+
+# Global pipeline variables
+variables:
+  PACKAGE_NAME: "reCaptcha-auth-flow"
+  GENERIC_PACKAGE_REGISTRY_URL_BASE: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${PACKAGE_NAME}"
+
+# Uploads the theme and jar artifacts as a generic package.
+# From: https://gitlab.com/gitlab-org/release-cli/-/tree/master/docs/examples/release-assets-as-generic-package/
+upload:
+  stage: upload
+  image: "curlimages/curl:latest"
+  needs:
+    - "maven_clean_install"
+    - "archive_theme_files"
+  before_script:
+    - 'export PACKAGE_REGISTRY_URL=$GENERIC_PACKAGE_REGISTRY_URL_BASE/${CI_COMMIT_TAG:1}'
+  script:
+    - ls -la
+    - >
+      curl
+      --header "JOB-TOKEN: ${CI_JOB_TOKEN}"
+      --upload-file reCaptcha-theme.tar.gz
+      "$PACKAGE_REGISTRY_URL/${PACKAGE_NAME}-theme.tar.gz"
+    - >
+      curl
+      --header "JOB-TOKEN: ${CI_JOB_TOKEN}"
+      --upload-file reCaptcha-auth-flow.jar
+      "$PACKAGE_REGISTRY_URL/${PACKAGE_NAME}-plugin.jar"
+
+# Creates a Gitlab release with the appropriate versioned release tag, and attached artifacts.
+release_version_package:
+  stage: release
+  image: "registry.gitlab.com/gitlab-org/release-cli:latest"
+  needs:
+    - "upload"
+  before_script:
+    - 'export PACKAGE_REGISTRY_URL=$GENERIC_PACKAGE_REGISTRY_URL_BASE/${CI_COMMIT_TAG:1}'
+  script:
+    - 'echo "Running release job for $CI_COMMIT_TAG"'
+    - >
+      release-cli
+      create
+      --name "KeyCloak reCaptcha Auth-Flow Plugin $CI_COMMIT_TAG"
+      --description "This is the KeyCloak reCaptcha Auth-Flow Plugin, release version $CI_COMMIT_TAG"
+      --tag-name "release-$CI_COMMIT_TAG"
+      --assets-link "{\"name\":\"${PACKAGE_NAME}-theme.tar.gz\",\"url\":\"${PACKAGE_REGISTRY_URL}/${PACKAGE_NAME}-theme.tar.gz\"}"
+      --assets-link "{\"name\":\"${PACKAGE_NAME}-plugin.jar\",\"url\":\"${PACKAGE_REGISTRY_URL}/${PACKAGE_NAME}-plugin.jar\"}"

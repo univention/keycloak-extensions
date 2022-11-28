@@ -1,114 +1,24 @@
 ---
-
 stages:
-  - build
-  - env
-  - deploy
+  - release
 
-.environment-common:
-  before_script:
-    - cd ${TF_ROOT}
-    - |
-      terraform init \
-      -backend-config="address=${TF_ADDRESS}" \
-      -backend-config="lock_address=${TF_ADDRESS}/lock" \
-      -backend-config="unlock_address=${TF_ADDRESS}/lock" \
-      -backend-config="username=gitlab-ci-token" \
-      -backend-config="password=${CI_JOB_TOKEN}" \
-      -backend-config="lock_method=POST" \
-      -backend-config="unlock_method=DELETE" \
-      -backend-config="retry_wait_min=5" \
-      -backend-config="skip_cert_verification=true"
-  image: artifacts.knut.univention.de/upx/container-tooling/automation-terraform:main-857e10e8
-  variables:
-    TF_ROOT: ${CI_PROJECT_DIR}/terraform
-
-
-.remove-env-instance: &remove-env-instance
-  - |
-    if [[ ${CI_COMMIT_BRANCH} != "main" ]];
-    then
-      terraform refresh
-      terraform destroy -auto-approve
-    fi
-
-env:
-  after_script:
-    - cd ${TF_ROOT}
-    - SERVER_IP=$(terraform output server_ip | sed -e 's/^"//' -e 's/"$//')
-    - echo "SERVER_IP=${SERVER_IP}" > ${CI_PROJECT_DIR}/deploy.env
-    - cat ${CI_PROJECT_DIR}/deploy.env
-  artifacts:
-    reports:
-      dotenv: ${CI_PROJECT_DIR}/deploy.env
-  environment:
-    name: ${CI_COMMIT_REF_NAME}
-    on_stop: stop-env
-    auto_stop_in: 3 hours
-  extends: .environment-common
-  resource_group: ${CI_COMMIT_REF_SLUG}
-  script:
-    - terraform refresh
-    - terraform destroy -auto-approve
-    - terraform apply -auto-approve -var ci_commit_ref_name=${CI_COMMIT_REF_SLUG} -var dns-domain=bfa-${CI_COMMIT_REF_SLUG} -var create-dns-record=true
-  stage: env
-  variables:
-    TF_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${CI_COMMIT_REF_SLUG}
-
-stop-env:
-  environment:
-    name: ${CI_COMMIT_REF_NAME}
-    action: stop
-  extends: .environment-common
-  script:
-    - terraform refresh
-    - terraform destroy -auto-approve
-    # Delete terraform state (maintainer permission needed)
-    - curl -k --header "Private-Token:${GL_TOKEN}" --request DELETE ${TF_ADDRESS}
-  stage: env
-  variables:
-    TF_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${CI_COMMIT_REF_SLUG}
-  when: manual
-
-
-.prepare_ansible: &prepare_ansible
-  # Donwload ssh key
-  - echo "${ID_RSA_UCS_KVM_IMAGE}" > ${CI_PROJECT_DIR}/id_rsa
-  - chown 0400 ${CI_PROJECT_DIR}/id_rsa
-
-  - mkdir -p ~/.ssh
-  - chmod 700 ~/.ssh
-  - chmod -R o-w .
-  - chmod -R ug+rw .
-
-  # copy public key file #
-  - cat "${AUTHORIZED_KEYS_FILE}" > ansible/files/authorized_keys
-
-  # Install dependencies
-  - cd ansible
-  - ansible-galaxy install -r collections/requirements.yml
-
-deploy-hetzner:
-  before_script:
-    - *prepare_ansible
-  dependencies:
-    - env
-  image: artifacts.knut.univention.de/upx/container-tooling/automation-ansible:main-0ff77d38
-  resource_group: ${CI_COMMIT_REF_SLUG}
-  script:
-    - ansible-playbook -i root@${SERVER_IP}, playbook.yml -e "hostname=master" -e "domain_name=bfa-${CI_COMMIT_REF_SLUG}.at-univention.de" -e "basedn=dc=bfa-${CI_COMMIT_REF_SLUG},dc=at-univention,dc=de"
-  stage: deploy
-
-build_jar:
-  stage: build
-  image: maven:3.8.6-openjdk-18
+# A release is only possible from a semantic version tag,
+# and must be triggered manually, from the GitLab CI web UI.
+release_pipeline:
+  stage: release
+  trigger:
+    include: "/.gitlab/ci/release/release_pipeline.yml"
   rules:
-    - changes:
-      - reCaptcha-auth-flow/*
-  artifacts:
-      paths:
-        - reCaptcha-auth-flow/target
-  script:
-    - cd reCaptcha-auth-flow
-    - mvn clean install
+    - if: '$CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+/'
+      when: always
+    - when: never
 
+# The Docker images for `proxy` and `handler` are published upon semantic version tag push as well.
+docker_pipeline:
+  stage: release
+  trigger:
+    include: "/.gitlab/ci/docker/docker_pipeline.yml"
+  rules:
+    - if: '$CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+/'
+      when: always
+    - when: never
