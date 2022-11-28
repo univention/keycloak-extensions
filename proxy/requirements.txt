@@ -1,0 +1,6 @@
+Flask>=2.2
+Flask-SQLAlchemy==3.0.2
+python-keycloak @ git+https://github.com/marcospereirampj/python-keycloak@a63982188ae14e1a0948f324bb3e9a8387650e65
+requests==2.25.1
+urllib3==1.26.5
+waitress==1.4.4
