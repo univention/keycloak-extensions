@@ -2,6 +2,7 @@ import datetime
 import os
 import logging
 import time
+import sys
 
 from utils import parse_event_date
 
@@ -18,6 +19,7 @@ class KeycloakPoller:
             datefmt='%d/%m/%Y %I:%M:%S',
             level=log_level)
         self.logger = logging.getLogger(__name__)
+        self.kc_admin = None
 
         # Connect to Keycloak admin interface
         try:
@@ -32,8 +34,8 @@ class KeycloakPoller:
         except Exception as e:
             self.logger.error("Could not connect to Keycloak")
             self.logger.error(e)
+            sys.exit(1)
 
-        
     def get_all_events(self):
         filterDate = {
             "dateFrom": datetime.datetime.now().strftime("%y-%d-%m"),
@@ -49,7 +51,8 @@ class KeycloakPoller:
 
         while found_new:
             found_new = False
-            events = self.kc_admin.get_events(filterDate.update({"first": counter * 10}))
+            events = self.kc_admin.get_events(
+                filterDate.update({"first": counter * 10}))
             counter += 1
             for e in events:
                 event_uuid = e["time"]
@@ -64,7 +67,8 @@ class KeycloakPoller:
                 break
             else:
                 time.sleep(1)
-        self.logger.debug(f"Found {len(all_events)} unique events in {counter} queries")
+        self.logger.debug(
+            f"Found {len(all_events)} unique events in {counter} queries")
         self.logger.debug(f"Run delegates: {run_delegates}")
         events_time_parsed = [parse_event_date(event) for event in all_events]
         return (events_time_parsed, run_delegates)
