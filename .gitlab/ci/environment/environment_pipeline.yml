@@ -31,8 +31,9 @@ setup_environment:
   extends: .environment_setup_template
   stage: infrastructure
   environment:
-    name: ${TARGET_ENVIRONMENT}
+    name: "mr/$CI_COMMIT_REF_SLUG"
     on_stop: teardown_environment
+    url: "https://primary.keycloak-extensions-${TARGET_ENVIRONMENT}.at-univention.de"
   resource_group: ${CI_COMMIT_REF_SLUG}
   rules:
     - when: always
@@ -44,7 +45,6 @@ setup_environment:
       apply
       -auto-approve
       -var ci_target_environment=${TARGET_ENVIRONMENT}
-      -var ci_commit_ref_name=${CI_COMMIT_REF_SLUG}
       -var dns-domain=keycloak-extensions-${TARGET_ENVIRONMENT}
       -var create-dns-record=true
   after_script:

@@ -23,6 +23,7 @@ variable "project-name" {
   type    = string
 }
 
+# TODO: Clean this up, for obvious security reasons.
 variable "server-ssh-keys" {
   default = [
     "4820687", # ucs
@@ -32,18 +33,13 @@ variable "server-ssh-keys" {
   type    = list(string)
 }
 
+# TODO: Find out where a list of these images can be found.
 variable "server-snapshot" {
   #UCS 5.0
   default = "53389185"
   type    = string
 }
 
-variable "ci_commit_ref_name" {
-  default = "missing-ci-commit-ref-name"
-  type = string
-}
-
 variable "ci_target_environment" {
-  default = "default"
   type = string
 }
