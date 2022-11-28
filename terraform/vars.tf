@@ -42,4 +42,9 @@ variable "server-snapshot" {
 
 variable "ci_target_environment" {
   type = string
+  description = "The name for this environment. Used in domain names as well."
+  validation {
+    condition     = length(var.ci_target_environment) > 255
+    error_message = "The length of var.ci_target_environment cannot exceed 255 characters."
+  }
 }
