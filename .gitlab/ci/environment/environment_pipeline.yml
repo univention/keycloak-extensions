@@ -8,7 +8,6 @@ stages:
 variables:
   TF_LOCAL_ROOT: "${CI_PROJECT_DIR}/terraform"
   TF_ADDRESS: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${TARGET_ENVIRONMENT}"
-  ENVIRONMENT_NAME: "mr/$CI_COMMIT_REF_SLUG"
 
 # Template job for setting up the environment
 .environment_setup_template:
@@ -55,7 +54,7 @@ setup_environment:
     reports:
       dotenv: "${CI_PROJECT_DIR}/deploy.env"
   environment:
-    name: "${ENVIRONMENT_NAME}"
+    name: $TARGET_ENVIRONMENT
     on_stop: teardown_environment
     url: "https://${SERVER_HTTPS_URL_PRIMARY}"
 
@@ -64,7 +63,7 @@ setup_environment:
 teardown_environment:
   extends: .environment_setup_template
   environment:
-    name: "${ENVIRONMENT_NAME}"
+    name: $TARGET_ENVIRONMENT
     action: stop
   rules:
     - when: manual
