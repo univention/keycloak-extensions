@@ -35,6 +35,7 @@ setup_environment:
   rules:
     - when: always
   script:
+    - terraform version
     - terraform refresh
     - terraform destroy -auto-approve
     - >
