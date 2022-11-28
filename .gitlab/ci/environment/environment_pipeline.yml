@@ -51,6 +51,7 @@ setup_environment:
     - cd ${TF_LOCAL_ROOT}
     - SERVER_IP=$(terraform output server_ip | sed -e 's/^"//' -e 's/"$//')
     - echo "SERVER_IP=${SERVER_IP}" > ${CI_PROJECT_DIR}/deploy.env
+    - cat ${CI_PROJECT_DIR}/deploy.env
   artifacts:
     reports:
       dotenv: "${CI_PROJECT_DIR}/deploy.env"
