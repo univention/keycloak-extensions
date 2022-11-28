@@ -52,6 +52,6 @@ variable "ci_target_environment" {
 
   validation {
     condition     = ( length(var.ci_target_environment) < 1 )
-    error_message = "var.ci_target_environment cannot be empty."
+    error_message = "The variable var.ci_target_environment must not be empty."
   }
 }
