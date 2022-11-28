@@ -30,7 +30,7 @@ variable "server-ssh-keys" {
     "4872327", # arequate
     "5715204"  # yschmidt
   ]
-  type    = list(string)
+  type = list(string)
 }
 
 # TODO: Find out where a list of these images can be found.
@@ -41,11 +41,17 @@ variable "server-snapshot" {
 }
 
 variable "ci_target_environment" {
-  type = string
-  default = "default"
+  type        = string
+  default     = "default"
   description = "The name for this environment. Used in domain names as well."
+
   validation {
-    condition     = length(var.ci_target_environment) > 255
+    condition     = ( length(var.ci_target_environment) < 255 )
     error_message = "The length of var.ci_target_environment cannot exceed 255 characters."
+  }
+
+  validation {
+    condition     = ( length(var.ci_target_environment) < 1 )
+    error_message = "var.ci_target_environment cannot be empty."
   }
 }
