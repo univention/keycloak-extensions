@@ -4,16 +4,16 @@ output "server_ip" {
 }
 
 output "server_https_url_primary" {
-  value = aws_route53_record.primary.name[count.index]
+  value = aws_route53_record.primary.name[0]
   description = "The domain name for the primary server for this environment."
 }
 
 output "server_https_url_portal" {
-  value = aws_route53_record.portal.name[count.index]
+  value = aws_route53_record.portal.name[0]
   description = "The domain name for the portal server for this environment."
 }
 
 output "server_https_url_ucs-sso" {
-  value = aws_route53_record.ucs-sso.name[count.index]
+  value = aws_route53_record.ucs-sso.name[0]
   description = "The domain name for the ucs-sso server for this environment."
 }
