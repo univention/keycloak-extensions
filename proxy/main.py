@@ -15,7 +15,8 @@ from http import HTTPStatus
 from sqlalchemy import Column, String, or_
 from flask_sqlalchemy import SQLAlchemy
 
-INHERENT_HEADERS = ["content-encoding", "content-length", "transfer-encoding", "connection"]
+INHERENT_HEADERS = ["content-encoding",
+                    "content-length", "transfer-encoding", "connection"]
 IDENTIFIER_COOKIE_NAME = "UNIVENTION_DEVICE"
 SUSPICIOUS_REQUEST_HEADER = "X-SUSPICIOUS-REQUEST"
 KEYCLOAK_SESSION_ID_COOKIE = "AUTH_SESSION_ID"
@@ -43,8 +44,10 @@ def handle_api_call(frequest):
 
     condition = json_dict["condition"]        # device_id, ip
     action = json_dict["action"]              # block, set-header
-    value = json_dict.get("value")            # the ip or device id to check for
-    valid_until = json_dict.get("valid_until")  # time at which this rule expires
+    # the ip or device id to check for
+    value = json_dict.get("value")
+    # time at which this rule expires
+    valid_until = json_dict.get("valid_until")
 
     action_uuid = action + condition + value + valid_until
 
@@ -126,6 +129,20 @@ def check_cookie(frequest, cookie_name):
     return []
 
 
+@app.route("/fingerprintjs/v3", methods=["GET"])
+def fingerprint():
+    return flask.send_from_directory("static", "fingerprint.js")
+
+
+@app.route("/proxy-api", methods=["GET"])
+def proxy_api_passthrough():
+    returnflask.Response(
+        json.dumps(app.config["ACTIONS"], indent=2),
+        HTTPStatus.OK,
+        headers=CONTENT_TYPE_APPLICATION_JSON
+    )
+
+
 @app.route("/<path:path>", methods=["GET", "POST", "DELETE", "PUT"])
 def proxy(path):
 
@@ -193,9 +210,11 @@ def proxy(path):
     response = None
     if "text/html" in content_type and "openid-connect/auth" in path:
         print("Injecting JS..:")
-        response = flask.Response(r.content + html, r.status_code, headers=backend_headers)
+        response = flask.Response(
+            r.content + html, r.status_code, headers=backend_headers)
     else:
-        response = flask.Response(r.content, r.status_code, headers=backend_headers)
+        response = flask.Response(
+            r.content, r.status_code, headers=backend_headers)
 
     for c in r.cookies:
         response.set_cookie(c.name, c.value)
@@ -209,7 +228,8 @@ def proxy(path):
             ip = flask.request.remote_addr
 
         # ip / ua #
-        result = db.session.query(File).filter(or_(File.agent == ua, File.ip == ip)).first()
+        result = db.session.query(File).filter(
+            or_(File.agent == ua, File.ip == ip)).first()
         if not result:
             print("Unknown {} on {}".format(ua, ip))
             fail_counter += 1
@@ -221,20 +241,23 @@ def proxy(path):
         result = None
         result_fp = None
 
-        #print(flask.request.cookies)
+        # print(flask.request.cookies)
         if IDENTIFIER_COOKIE_NAME in flask.request.cookies:
             uuid_string = flask.request.cookies.get(IDENTIFIER_COOKIE_NAME)
             print("Cookie ID:", uuid_string)
         if DEVICE_FINGERPRINT_COOKIE in flask.request.cookies:
-            uuid_string_fp = flask.request.cookies.get(DEVICE_FINGERPRINT_COOKIE)
+            uuid_string_fp = flask.request.cookies.get(
+                DEVICE_FINGERPRINT_COOKIE)
             print("Device Fingerprint:", uuid_string_fp)
         if uuid_string:
-            result = db.session.query(File).filter(File.uuid == uuid_string).first()
+            result = db.session.query(File).filter(
+                File.uuid == uuid_string).first()
             if not result:
                 print("Bad Device ID, Overwriting")
 
         if uuid_string_fp:
-            result_fp = db.session.query(File).filter(File.uuid == uuid_string_fp).first()
+            result_fp = db.session.query(File).filter(
+                File.uuid == uuid_string_fp).first()
 
         # if not valid
         # if not result and not result_fp
@@ -250,9 +273,11 @@ def proxy(path):
                                   ip=ip))
             db.session.commit()
 
-            send_mail(user_agent=ua, ip=ip, cookie_id=uuid_string, fingerprint=uuid_string_fp)
+            send_mail(user_agent=ua, ip=ip, cookie_id=uuid_string,
+                      fingerprint=uuid_string_fp)
         else:
-            print("Known Device: " + "\n".join(str(x) for x in [ua, ip, uuid_string, uuid_string_fp]))
+            print("Known Device: " + "\n".join(str(x)
+                  for x in [ua, ip, uuid_string, uuid_string_fp]))
 
         if uuid_string_fp and not result_fp:
             print("Bad Device ID FP, Overwriting")
@@ -269,7 +294,8 @@ def send_mail(**kwargs):
             now = datetime.datetime.now()
             content = f.read()
             if content:
-                dif = now - datetime.datetime.fromtimestamp(int(float(content)))
+                dif = now - \
+                    datetime.datetime.fromtimestamp(int(float(content)))
                 if dif < datetime.timedelta(seconds=os.environ["MAIL_BACKOFF_TIME"]):
                     print("Not sending Mail - still in backoff time!")
                     return True
