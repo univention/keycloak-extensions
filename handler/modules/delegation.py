@@ -17,8 +17,6 @@ Base = declarative_base()
 Session = sessionmaker(bind=engine)
 session = Session()
 
-Base.metadata.create_all(bind=engine)
-
 
 class ActiveDelegate(Base):
     __tablename__ = "active"
@@ -27,6 +25,9 @@ class ActiveDelegate(Base):
     created = Column(Integer)
     delete_after = Column(Integer)
     args = Column(String, primary_key=True)
+
+
+Base.metadata.create_all(bind=engine)
 
 
 class Delegation:
@@ -47,13 +48,18 @@ class Delegation:
 
     def evaluate_required_actions(self, events):
         actions_required = []
-        t_delta = datetime.timedelta(minutes=int(os.environ.get("RATE_MINUTES")))
+        t_delta = datetime.timedelta(
+            minutes=int(os.environ.get("RATE_MINUTES")))
 
-        ip_conditions_limit = conditions.ConditionFieldSpecificLimit(5, t_delta)
-        device_id_conditions_limit = conditions.ConditionFieldSpecificLimit(3, t_delta)
+        ip_conditions_limit = conditions.ConditionFieldSpecificLimit(
+            5, t_delta)
+        device_id_conditions_limit = conditions.ConditionFieldSpecificLimit(
+            3, t_delta)
 
-        actions_required += ip_conditions_limit.check(events, field="ipAddress")
-        actions_required += device_id_conditions_limit.check(events, field="code_id")
+        actions_required += ip_conditions_limit.check(
+            events, field="ipAddress")
+        actions_required += device_id_conditions_limit.check(
+            events, field="code_id")
 
         self.logger.debug("ACTIONS REQUIRED")
         self.logger.debug(actions_required)
@@ -91,11 +97,13 @@ class Delegation:
 
     def cleanup_expired_actions(self):
         cleanup_list = session.query(ActiveDelegate).filter(
-        ActiveDelegate.delete_after < datetime.datetime.now().timestamp()).all()
+            ActiveDelegate.delete_after < datetime.datetime.now().timestamp()).all()
 
         self.logger.debug("Cleaning up expired actions")
         for s in cleanup_list:
-            d = getattr(actions, s.classname)(json.loads(s.args), args, 0, "ipAddress")
+            d = getattr(actions, s.classname)(
+                json.loads(s.args), args, 0, "ipAddress")
             d.cleanup()
-            da = getattr(actions, s.classname)(json.loads(s.args), args, 0, "code_id")
+            da = getattr(actions, s.classname)(
+                json.loads(s.args), args, 0, "code_id")
             da.cleanup()
