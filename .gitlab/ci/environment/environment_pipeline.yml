@@ -8,6 +8,7 @@ stages:
 variables:
   TF_LOCAL_ROOT: "${CI_PROJECT_DIR}/terraform"
   TF_ADDRESS: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${TARGET_ENVIRONMENT}"
+  DNS_DOMAIN: "keycloak-extensions-${TARGET_ENVIRONMENT}"
 
 # Template job for setting up the environment
 .environment_setup_template:
@@ -28,9 +29,9 @@ variables:
       -backend-config="retry_wait_min=5"
       -backend-config="skip_cert_verification=true"
 
+# Setup of the VM for the target environment
 setup_environment:
   extends: .environment_setup_template
-  resource_group: $TARGET_ENVIRONMENT
   rules:
     - when: always
   script:
@@ -42,7 +43,7 @@ setup_environment:
       apply
       -auto-approve
       -var ci_target_environment=${TARGET_ENVIRONMENT}
-      -var dns-domain=keycloak-extensions-${TARGET_ENVIRONMENT}
+      -var dns-domain=${DNS_DOMAIN}
       -var create-dns-record=true
   after_script:
     - cd ${TF_LOCAL_ROOT}
@@ -57,6 +58,7 @@ setup_environment:
     name: $TARGET_ENVIRONMENT
     on_stop: teardown_environment
     url: "https://${SERVER_HTTPS_URL_PRIMARY}"
+  resource_group: $TARGET_ENVIRONMENT
 
 # This job stops the environment and deletes the Terraform state from the GitLab storage backend.
 # Maintainer permissions are needed for this task to complete successfully.
@@ -75,3 +77,36 @@ teardown_environment:
       --insecure
       --header "Private-Token: ${CI_JOB_TOKEN}"
       --request DELETE "${TF_ADDRESS}"
+
+# Provisioing of the VM for the target environment
+# This runs UCS join, so that a hostname can be set.
+# TODO: Find out where this is documented.
+provision_ucs_vm:
+  image: artifacts.knut.univention.de/upx/container-tooling/automation-ansible:main-0ff77d38
+  stage: provision
+  rules:
+    - when: always
+  before_script:
+    - echo "${ID_RSA_UCS_KVM_IMAGE}" > ${CI_PROJECT_DIR}/id_rsa
+    - chown 0400 ${CI_PROJECT_DIR}/id_rsa
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - chmod -R o-w .
+    - chmod -R ug+rw .
+    - cat "${AUTHORIZED_KEYS_FILE}" > ansible/files/authorized_keys
+    - cd ansible
+    - ansible-galaxy install -r collections/requirements.yml
+  needs:
+    - "setup_environment"
+  environment:
+    name: $TARGET_ENVIRONMENT
+    on_stop: teardown_environment
+    url: "https://${SERVER_HTTPS_URL_PRIMARY}"
+  resource_group: $TARGET_ENVIRONMENT
+  script:
+    - >
+      ansible-playbook
+      -i root@${SERVER_IP}, playbook.yml
+      -e "hostname=master"
+      -e "domain_name=$SERVER_HTTPS_URL_PRIMARY"
+      -e "basedn=dc=${DNS_DOMAIN},dc=at-univention,dc=de"
