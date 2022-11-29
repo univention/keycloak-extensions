@@ -32,8 +32,7 @@ class KeycloakPoller:
             )
         # FIXME: more fine granular exception handling
         except Exception as e:
-            self.logger.error("Could not connect to Keycloak")
-            self.logger.error(e)
+            self.logger.error("Could not connect to Keycloak: %s", e)
             sys.exit(1)
 
     def get_all_events(self):
