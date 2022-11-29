@@ -1,21 +1,21 @@
 terraform {
   required_providers {
     hcloud = {
-      source = "hetznercloud/hcloud"
+      source  = "hetznercloud/hcloud"
       version = "1.32.2"
     }
     aws = {
-      source = "hashicorp/aws"
+      source  = "hashicorp/aws"
       version = "3.7.0"
-    } 
+    }
   }
   backend "http" {
   }
 }
 
 provider "aws" {
-  region                  = "eu-west-1"
-  profile                 = "univention"
+  region  = "eu-west-1"
+  profile = "univention"
 }
 
 provider "hcloud" {
@@ -29,13 +29,13 @@ resource "hcloud_server" "main" {
   ssh_keys    = var.server-ssh-keys
   keep_disk   = true
 
-  labels           = {
-    dns_record     = var.dns-domain
-    project_id     = var.project-id
-    project_name   = var.project-name
-    purpose        = "primary"
+  labels = {
+    dns_record   = var.dns-domain
+    project_id   = var.project-id
+    project_name = var.project-name
+    purpose      = "primary"
   }
- 
+
   backups = false
 }
 
@@ -44,12 +44,12 @@ data "aws_route53_zone" "at-univention_de" {
   private_zone = false
 }
 
-resource "aws_route53_record" "master" {
+resource "aws_route53_record" "primary" {
   # Control if a DNS record should be created.
   count = var.create-dns-record ? 1 : 0
 
   # The name of the record [string].
-  name = "master.${var.dns-domain}.${data.aws_route53_zone.at-univention_de.name}"
+  name = "primary.${var.dns-domain}.${data.aws_route53_zone.at-univention_de.name}"
 
   # The record type [string].
   # Possible values: "A", "AAAA", "NS", "TXT", ...

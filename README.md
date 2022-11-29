@@ -4,6 +4,28 @@
 
 This is the repository for the KeyCloak Brute-Force Protection add-on.
 
+## Deployments
+
+This project offers a pipeline for deploying to a Hetzner VM.
+
+The first stage (`infrastructure`) in which the setup of the infrastructure takes place sets up a Hetzner VM.
+This stage also creates an *AWS Route53* DNS record pointing to the server IP via a DNS A record. 
+
+The second stage (`provision`), runs an Ansible playbook which joins the newly created server to the designated domain.
+
+### Triggered Automated Deployments
+Automated deployments to the `staging` and `production` environments are
+triggered by commits to `staging` and `main` branches respectively.
+
+All other branches require a manual action for their deployments to work.
+
+### Teardown of environments
+
+To remove an environment from GitLab, we have a CI job available.
+To trigger this job, and have Terraform remove both the Hetzner VM and the DNS record from Route53,
+you can use the GitLab web UI: Within the project, navigate to:
+**Deployments** > **Environments** and click the **Stop** button for the selected environment.
+
 ## Releases and Packages
 
 To release a package into the GitLab package registry,
