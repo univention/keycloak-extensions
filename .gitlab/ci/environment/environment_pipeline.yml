@@ -3,6 +3,7 @@
 # Documentation: https://docs.gitlab.com/ee/user/infrastructure/iac/terraform_state.html
 stages:
   - infrastructure
+  - provision
 
 # Define pipeline-global variables.
 variables:
