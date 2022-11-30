@@ -1,0 +1,2 @@
+.. |UCS| replace:: :abbr:`UCS (Univention Corporate Server)`
+.. |SPI| replace:: :abbr:`Service Provider Interfaces`
