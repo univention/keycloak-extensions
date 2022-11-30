@@ -18,17 +18,25 @@ variables:
 
 link_check:
   extends: .sphinx-linkcheck-template
+  rules:
+    - when: always
 
 spelling:
   extends: .sphinx-spelling-template
+  rules:
+    - when: always
 
 html:
   extends: .sphinx-html-template
+  rules:
+    - when: always
 
 pdf:
   extends: .sphinx-pdf-template
+  rules:
+    - when: always
 
-docs-merge:
+docs_merge:
   extends: .sphinx-merge-template
   needs:
     - job: "html"
@@ -39,6 +47,8 @@ docs-merge:
       artifacts: false
     - job: "link_check"
       artifacts: false
+  rules:
+    - when: always
 
 # When GitLab Pages are activated for the repo,
 # everything that lands in `public` folder, wil be
@@ -49,7 +59,7 @@ pages:
   stage: deploy
   image: $GIT_SYNC
   needs:
-    - job: "docs-merge"
+    - job: docs_merge
       artifacts: true
   script:
     # You probably must adjust this line depending on your desired directory structure.
@@ -58,6 +68,8 @@ pages:
     paths:
       - "public"
     expire_in: 1 week
+  rules:
+    - when: always
 
 # This job only runs when it is manually triggered,
 # so as to always have a human contributor doing the deployment of the docs.
@@ -66,8 +78,6 @@ pages:
 # See: https://hutten.knut.univention.de/mediawiki/index.php/Docs/Automated_build_and_deployment
 docs_production:
   stage: deploy
-  rules:
-    - when: manual
   cache:
     key: docs-$CI_COMMIT_REF_SLUG
     paths:
@@ -103,3 +113,5 @@ docs_production:
     - git add -- .
     - git commit -m "Automatic doc deployment from $CI_PROJECT_PATH by GitLab commit $CI_COMMIT_SHA"
     - git push
+  rules:
+    - when: manual
