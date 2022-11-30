@@ -59,7 +59,7 @@ pages:
   stage: deploy
   image: $GIT_SYNC
   needs:
-    - job: docs_merge
+    - job: "docs_merge"
       artifacts: true
   script:
     # You probably must adjust this line depending on your desired directory structure.
@@ -90,7 +90,7 @@ docs_production:
     GIT_COMMITTER_NAME: $GITLAB_USER_NAME
     GIT_COMMITTER_EMAIL: $GITLAB_USER_EMAIL
   needs:
-    - job: "docs-merge"
+    - job: "docs_merge"
       artifacts: true
   resource_group: prod
   image: $GIT_SYNC
