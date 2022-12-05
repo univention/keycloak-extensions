@@ -20,7 +20,7 @@ Considerations
 --------------
 
 - A legitimate user will always be assigned the same fingerprint, but normal actions,
-  such as clearing browser cache or certain add-ons may cause new *AUTH_SESSION_ID*'s.
+  such as clearing browser cache or certain browser extensions may cause new *AUTH_SESSION_ID*'s.
 
 - An illegitimate user/attacker may fake his fingerprint or *AUTH_SESSION_ID*, but 
   - unless he already has privileged access to your network - will not be able to fake his IP.
@@ -35,7 +35,6 @@ Example scenario 1
 ------------------
 
 .. admonition:: Description
-
    A user repeatedly fails his authentication, because he is trying to remember his password.
    As he is not trying to conceal his identity his IP and fingerprint will constant.
 
@@ -44,8 +43,7 @@ This *legitimate* user should be blocked or CAPTCHA-ed via his fingerprint, befo
 Example scenario 2
 ------------------
 
-.. tab:: Description
-
+.. admonition:: Description
    A user repeatably sends bad authentication requests without any fingerprint.
 
 Fingerprinting may be be blocked by some browser extensions. While the fingerprint-ID
@@ -55,8 +53,7 @@ of a bad actor, rules should fall back on *AUTH_SESSION_ID* first.
 Example scenario 3
 ------------------
 
-.. tab:: Description
-
+.. admonition:: Description
    A user repeatably sends bad authentication requests without any fingerprint or device ID.
 
 This scenario is not possible without deliberate effort by an attacker. Repeated, requests like this

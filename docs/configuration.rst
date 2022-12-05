@@ -22,9 +22,10 @@ Configuration to use the proxy container
 
 .. warning::
 
-   This app doesn't (yet) configure public facing proxies. To use the functionality
-   of this app, in the case of UCS, the Apache needs to be configured to forward requests
-   to the proxy container, instead of Keycloak directly. 
+   This app doesn't configure public facing proxies.
+   To use the functionality of this app within UCS, the Apache web server must
+   be configured to forward requests to the proxy container,
+   instead of directly to *Keycloak*.
 
 When using the Keycloak App with Apache2, this means adding:
 
@@ -32,9 +33,9 @@ When using the Keycloak App with Apache2, this means adding:
 
    ProxyPass /login-actions/ http://127.0.0.1:5000
 
-into the Keycloak vServer.
+into the *Keycloak vServer*.
 
-For HA-Proxy, assuming a backend *Keycloak* already exists, add:
+For HA-Proxy, assuming a back end *Keycloak* already exists, add:
 
 .. code-block::
 
@@ -54,7 +55,7 @@ The app *Keycloak Extensions* requires an API secret, which is automatically
 generated. This secret is stored in:
 
 :file:`/etc/keycloak-extension-api.secret`
-    The shared secret used by the handler-container to authenticate with the proxy-container-api.
+    The shared secret used by the handler-container to authenticate with the proxy container’s API.
 
 .. _app-settings:
 
@@ -280,13 +281,13 @@ By default the following rules are configured (fails per hour):
    Keycloak's internal so called "code_id", which it uses to identify devices
    is based on the "AUTH_SESSION_ID" cookie.
 
-* **CAPTCHA** for **fingerprint** after 5 failed logins
-* **CAPTCHA** for **AUTH_SESSION_ID** after 5 failed logins
-* Block **fingerprint** after 10 failed login attempts per user
-* Block **AUTH_SESSION_ID** after 10 failed login attempts per user
-* Block **fingerprint** after 15 failed login attempts (regardless of user)
-* Block **AUTH_SESSION_ID** after 15 failed login attempts (regardless of user)
-* Block **IP** after 20 failed attempts per user
+* ``CAPTCHA`` for ``fingerprint`` after 5 failed logins
+* ``CAPTCHA`` for ``AUTH_SESSION_ID`` after 5 failed logins
+* Block ``fingerprint`` after 10 failed login attempts per user
+* Block ``AUTH_SESSION_ID`` after 10 failed login attempts per user
+* Block ``fingerprint`` after 15 failed login attempts (regardless of user)
+* Block ``AUTH_SESSION_ID`` after 15 failed login attempts (regardless of user)
+* Block ``IP`` after 20 failed attempts per user
 
 CAPTCHAs are done by the included Keycloak |SPI|, based on *X-SUSPICIOUS-REQUEST*
 headers set in the proxy.

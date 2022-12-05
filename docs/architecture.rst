@@ -12,7 +12,7 @@ The *Keycloak Extension App* architecture consists of the following elements:
 * The *Keycloak Identity Access Management*, which is either running as part 
   of |UCS| via the *Keycloak App* or externally.
 
-* The *Handler*-container retrieving events from the Keycloak event-api,
+* The *Handler*-container retrieving events from the Keycloak *Event API*,
   checking conditions and running actions based on this information.
 
 * The *Rule*-configuration configuring conditions and actions.
@@ -28,9 +28,9 @@ The *Keycloak Extension App* architecture consists of the following elements:
 Design decisions
 ================
 
-Keycloak enables some brute force protection internally. This App is intended
+*Keycloak* enables some brute force protection internally. This App is intended
 to provide fine-granular decision making based on information available in
-and outside of Keycloak itself.
+and outside of *Keycloak* itself.
 
 Overview
 ========

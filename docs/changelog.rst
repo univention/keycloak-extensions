@@ -16,4 +16,4 @@ Released: 22. November 2022
 Added
 -----
 
-* Inital release
+* Initial release

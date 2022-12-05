@@ -28,7 +28,7 @@ The app *Keycloak Extensions* produces different logging information in differen
    Contains log information from join processes. When the App Center installs
    *Keycloak Extensions*, the app also joins the domain.
 
-*Docker containers*
+Docker containers
    The app uses two custom built Python images. The App Center runs the container.
    You can view log information from the *Keycloak Extensions* Docker container with the
    following command:
