@@ -34,7 +34,7 @@ Considerations
 Example scenario 1
 ------------------
 
-.. tab:: Description
+.. admonition:: Description
 
    A user repeatedly fails his authentication, because he is trying to remember his password.
    As he is not trying to conceal his identity his IP and fingerprint will constant.
