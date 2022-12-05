@@ -10,7 +10,7 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
+import os
 import sys
 
 # sys.path.insert(0, os.path.abspath('.'))
@@ -18,47 +18,26 @@ import sys
 from datetime import date
 from sphinx.locale import _
 
+
 # -- Project information -----------------------------------------------------
+def read_version_from_env_var() -> str:
+    return os.environ.get("DOC_TARGET_VERSION")
 
 
-def read_version_from_ci() -> str:
-    """Read the version for the documentation from the pipeline definition
+def read_doc_name_from_env_var() -> str:
+    return os.environ.get("DOC_TARGET_NAME")
 
-    To not maintain the documentation version in different places, just define
-    at one place and use it in different places.
 
-    The documentation version influences the version shown in the content of
-    the document and the path of the published documentation.
+version = read_version_from_env_var()
+basename = read_doc_name_from_env_var()
 
-    :returns: The version number for the documentation as defined in the CI/CD
-        pipeline.
-
-    :rtype: str
-    """
-
-    import yaml
-
-    return "0.9"
-
-def read_doc_name_from_ci() -> str:
-    import yaml
-
-    return "keycloak-extensions"
-
-release = read_version_from_ci()
-version = release
-
-project = f"UCS Keycloak Extensions app {release}"
-
-if "latexpdf" in sys.argv:
-    project = "UCS Keycloak Extensions app"
-
-copyright = "{}, Univention GmbH".format(date.today().year)
-author = "Univention GmbH"
-html_show_copyright = True
-language = "en"
-
+release = version
+project = "Keycloak Extensions {}".format(release)
+copyright = '{}, Univention GmbH'.format(date.today().year)
+author = 'Univention GmbH'
+language = 'en'
 html_title = project
+doc_basename = basename
 
 # -- General configuration ---------------------------------------------------
 
@@ -84,8 +63,10 @@ bibtex_reference_style = "label"
 
 # For more configuration options of Sphinx-copybutton, see the documentation
 # https://sphinx-copybutton.readthedocs.io/en/latest/index.html
-copybutton_prompt_text = r"\$ |> "
+copybutton_prompt_text = r"\$ "
 copybutton_prompt_is_regexp = True
+copybutton_line_continuation_character = "\\"
+copybutton_here_doc_delimiter = "EOT"
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -100,12 +81,10 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 
-pdf_doc_base = f"{read_doc_name_from_ci()}-app"
-
 html_theme = "univention_sphinx_book_theme"
 
 html_context = {
-    "pdf_download_filename": f"{pdf_doc_base}.pdf",
+    "pdf_download_filename": f"{basename}.pdf",
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
@@ -129,7 +108,6 @@ if "spelling" in sys.argv:
     spelling_word_list_filename = ["spelling_wordlist"]
     suppress_warnings = ["git.too_shallow"]
 
-
 if "linkcheck" in sys.argv:
     suppress_warnings = ["git.too_shallow"]
 
@@ -150,7 +128,7 @@ intersphinx_mapping = {
 latex_engine = "lualatex"
 latex_show_pagerefs = True
 latex_show_urls = "footnote"
-latex_documents = [(root_doc, f"{pdf_doc_base}.tex", project, author, "manual", False)]
+latex_documents = [(root_doc, f"{basename}.tex", project, author, "manual", False)]
 latex_elements = {
     "papersize": "a4paper",
 }
@@ -159,4 +137,4 @@ latex_elements = {
 # feedback link.
 # https://git.knut.univention.de/univention/documentation/univention_sphinx_extension
 univention_feedback = True
-univention_doc_basename = "keycloak-extensions"
+univention_doc_basename = basename

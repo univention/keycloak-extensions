@@ -57,7 +57,7 @@ docs_merge:
 # See: https://docs.gitlab.com/ee/user/project/pages/
 pages:
   stage: deploy
-  image: $GIT_SYNC
+  image: "docker-registry.knut.univention.de/knut/git-sync:latest"
   needs:
     - job: "docs_merge"
       artifacts: true
@@ -68,12 +68,16 @@ pages:
     paths:
       - "public"
     expire_in: 1 week
+  environment:
+    name: "documentation-${DOC_TARGET_VERSION}"
+    url:
   rules:
     - when: always
 
-# This job only runs when it is manually triggered,
-# so as to always have a human contributor doing the deployment of the docs.
+# This job only runs when it is manually triggered, to always have a human
+# contributor doing the deployment of the docs.
 # This job pushes to the repository which then link checks and uploads to the online system.
+#
 # For the deployment to actually go online, one needs to trigger the deployment job in the `docs.univention.de` repository.
 # See: https://hutten.knut.univention.de/mediawiki/index.php/Docs/Automated_build_and_deployment
 docs_production:
