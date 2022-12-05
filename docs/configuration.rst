@@ -36,17 +36,14 @@ into the Keycloak vServer.
 
 For HA-Proxy, assuming a backend *Keycloak* already exists, add:
 
-.. tab:: HA-Proxy ACL
+.. code-block::
 
-   .. code-block::
-      
-      backend keycloak-proxy:
-          mode http
-          http-request add-header X-Forwarded-For
-          
+   backend keycloak-proxy:
+       mode http
+       http-request add-header X-Forwarded-For
    
-      acl keycloak-subdomain.domain.tld hdr(host) -i keycloak_sub_domain
-      use_backend keycloak-proxy if keycloak_sub_domain && { path_beg /login-actions/ }
+   acl keycloak-subdomain.domain.tld hdr(host) -i keycloak_sub_domain
+   use_backend keycloak-proxy if keycloak_sub_domain && { path_beg /login-actions/ }
 
 .. _app-secrets:
 
