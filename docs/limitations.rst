@@ -34,17 +34,17 @@ Considerations
 Example scenario 1
 ------------------
 
-.. admonition:: Description
-   A user repeatedly fails his authentication, because he is trying to remember his password.
-   As he is not trying to conceal his identity his IP and fingerprint will constant.
+Description
+    A user repeatedly fails his authentication, because he is trying to remember his password.
+    As he is not trying to conceal his identity his IP and fingerprint will constant.
 
 This *legitimate* user should be blocked or CAPTCHA-ed via his fingerprint, before action for his IP is taken, otherwise other user behind the same IP maybe unjustly impaired as well.
 
 Example scenario 2
 ------------------
 
-.. admonition:: Description
-   A user repeatably sends bad authentication requests without any fingerprint.
+Description
+    A user repeatably sends bad authentication requests without any fingerprint.
 
 Fingerprinting may be be blocked by some browser extensions. While the fingerprint-ID
 is the preferred identifier, a lack of fingerprint is not necessarily an indicator
@@ -53,7 +53,7 @@ of a bad actor, rules should fall back on *AUTH_SESSION_ID* first.
 Example scenario 3
 ------------------
 
-.. admonition:: Description
+Description
    A user repeatably sends bad authentication requests without any fingerprint or device ID.
 
 This scenario is not possible without deliberate effort by an attacker. Repeated, requests like this
