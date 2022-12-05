@@ -291,38 +291,36 @@ By default the following rules are configured (fails per hour):
 CAPTCHAs are done by the included Keycloak |SPI|, based on *X-SUSPICIOUS-REQUEST*
 headers set in the proxy.
 
-.. tab:: Rule configuration
+Rules are configured via the :file:`rules.json` file.
+All values are case-insensitive.
 
-   Rules are configured via the rules.json file.
-   All values are case-insensitive.
+.. code-block::
 
-   .. code-block::
-    
-      { 
-          "condition" : "fingerprint",
-          "condition-value" : "value-of-fingerprint",
-          "user"      : "username", # or empty
-          "limit"     : "10",
-          "action"    : "add_header",
-          "expiry"    : "1h"
-      }
+   {
+       "condition" : "fingerprint",
+       "condition-value" : "value-of-fingerprint",
+       "user"      : "username", # or empty
+       "limit"     : "10",
+       "action"    : "add_header",
+       "expiry"    : "1h"
+   }
 
-   Possible **conditions** are:
+Possible **conditions** are:
 
-    * IP
-    * fingerprint
-    * AUTH_SESSION_ID
-    * device
+* IP
+* fingerprint
+* AUTH_SESSION_ID
+* device
 
-   The special **condition** *"device"* is a composite condition. It first tries
-   to use fingerprinting to identify a device, with *AUTH_SESSION_ID* as an
-   automatic fallback.
+The special **condition** *"device"* is a composite condition. It first tries
+to use fingerprinting to identify a device, with :envvar:`AUTH_SESSION_ID` as an
+automatic fallback.
 
-   Possible **actions** are:
-    
-    * add_header (add a *X-SUSPICIOUS-REQUEST* header)
-    * block_ip (block an IP)
-    * udm_lock (lock user in UCS via UDM)
+Possible **actions** are:
+
+* ``add_header`` (add a :envvar:`X-SUSPICIOUS-REQUEST` header)
+* ``block_ip`` (block an IP)
+* ``udm_lock`` (lock user in UCS through UDM)
 
 .. warning::
 
