@@ -28,11 +28,9 @@ Configuration to use the proxy container
 
 When using the Keycloak App with Apache2, this means adding:
 
-.. tab:: Apache ProxyPass
+.. code-block::
 
-   .. code-block::
-      
-      ProxyPass /login-actions/ http://127.0.0.1:5000
+   ProxyPass /login-actions/ http://127.0.0.1:5000
 
 into the Keycloak vServer.
 
