@@ -6,10 +6,6 @@
 
 # -- Path setup --------------------------------------------------------------
 
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-#
 import os
 import sys
 
@@ -21,13 +17,14 @@ from sphinx.locale import _
 
 # -- Project information -----------------------------------------------------
 def read_version_from_env_var() -> str:
-    return os.environ.get("DOC_TARGET_VERSION")
+    return os.environ.get("DOC_TARGET_VERSION", "0.0.0")
 
 
 def read_doc_name_from_env_var() -> str:
-    return os.environ.get("DOC_TARGET_NAME")
+    return os.environ.get("DOC_TARGET_NAME", "document-name")
 
 
+#  These variables are required.
 version = read_version_from_env_var()
 basename = read_doc_name_from_env_var()
 
@@ -81,6 +78,8 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 
+pdf_doc_base = basename
+
 html_theme = "univention_sphinx_book_theme"
 
 html_context = {
@@ -90,28 +89,19 @@ html_context = {
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = []  # value is usally ['_static']
+html_static_path: List[str] = []  # value is usally ['_static']
 
 html_last_updated_fmt = "%a, %d. %b %Y at %H:%m (UTC%z)"
 
 numfig = True
-numfig_format = {
-    "figure": _("Figure %s"),
-    "table": _("Table %s"),
-    "code-block": _("Listing %s"),
-    "section": _("Section %s"),
-}
+suppress_warnings = ["git.too_shallow"]
 
 if "spelling" in sys.argv:
     spelling_lang = "en"
     spelling_show_suggestions = True
     spelling_word_list_filename = ["spelling_wordlist"]
-    suppress_warnings = ["git.too_shallow"]
 
-if "linkcheck" in sys.argv:
-    suppress_warnings = ["git.too_shallow"]
-
-linkcheck_ignore = []
+linkcheck_ignore: List[str] = []
 
 root_doc = "index"
 

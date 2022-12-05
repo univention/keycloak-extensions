@@ -27,15 +27,15 @@ Configuration to use the proxy container
    be configured to forward requests to the proxy container,
    instead of directly to *Keycloak*.
 
-When using the Keycloak App with Apache2, this means adding:
+When using the *Keycloak* app with *Apache2*, this means adding:
 
 .. code-block::
 
    ProxyPass /login-actions/ http://127.0.0.1:5000
 
-into the *Keycloak vServer*.
+into the *Keycloak* virtual machine.
 
-For HA-Proxy, assuming a back end *Keycloak* already exists, add:
+For *HA-Proxy*, assuming a back end *Keycloak* already exists, add:
 
 .. code-block::
 
@@ -68,7 +68,7 @@ The following references show the available settings within the app
 .. envvar:: keycloak-bfa/handler/keycloak/admin-auth-url
 
      Defines the *Keycloak* admin authentication URL. This URL is
-     required for retrieving global events from the Keycloak API.
+     required for retrieving global events from the *Keycloak* API.
 
      .. list-table::                                                                                 
          :header-rows: 1
@@ -85,7 +85,7 @@ The following references show the available settings within the app
 .. envvar:: keycloak-bfa/handler/keycloak/admin-user
 
     Defines a *Keycloak* admin user. A privileged user is
-    required for retrieving global events from the Keycloak API.
+    required for retrieving global events from the *Keycloak* API.
 
     .. list-table::
         :header-rows: 1
@@ -234,7 +234,7 @@ The following references show the available settings within the app
 
 .. envvar:: keycloak-bfa/proxy/keycloak-server
 
-   Defines the target Keycloak server to forward requests to.
+   Defines the target *Keycloak* server to forward requests to.
 
    .. list-table::
        :header-rows: 1
@@ -252,7 +252,7 @@ The following references show the available settings within the app
 
    Defines the protocol to use when forwarding requests. On a
    standard setup this will be *http*. Setting this variable 
-   is only required if you run with an external Keycloak.
+   is only required if you run with an external *Keycloak*.
 
    Possible values: ``http``, ``https``.
 
@@ -278,8 +278,8 @@ By default the following rules are configured (fails per hour):
 
 .. note::
 
-   Keycloak's internal so called "code_id", which it uses to identify devices
-   is based on the "AUTH_SESSION_ID" cookie.
+   *Keycloak*'s internal so called ``code_id``, which it uses to identify devices
+   is based on the ``AUTH_SESSION_ID`` cookie.
 
 * ``CAPTCHA`` for ``fingerprint`` after 5 failed logins
 * ``CAPTCHA`` for ``AUTH_SESSION_ID`` after 5 failed logins
@@ -289,7 +289,7 @@ By default the following rules are configured (fails per hour):
 * Block ``AUTH_SESSION_ID`` after 15 failed login attempts (regardless of user)
 * Block ``IP`` after 20 failed attempts per user
 
-CAPTCHAs are done by the included Keycloak |SPI|, based on *X-SUSPICIOUS-REQUEST*
+CAPTCHAs are done by the included *Keycloak* |SPI|, based on ``X-SUSPICIOUS-REQUEST``
 headers set in the proxy.
 
 Rules are configured via the :file:`rules.json` file.
@@ -308,12 +308,12 @@ All values are case-insensitive.
 
 Possible **conditions** are:
 
-* IP
-* fingerprint
-* AUTH_SESSION_ID
-* device
+* ``IP``
+* ``fingerprint``
+* ``AUTH_SESSION_ID``
+* ``device``
 
-The special **condition** *"device"* is a composite condition. It first tries
+The special **condition** ``device`` is a composite condition. It first tries
 to use fingerprinting to identify a device, with :envvar:`AUTH_SESSION_ID` as an
 automatic fallback.
 
@@ -332,5 +332,5 @@ Possible **actions** are:
 
 .. warning::
 
-   UDM can only lock LDAP users. User authenticated via Keycloak from other sources
-   (for example Keycloak internal users), can't be affected by this.
+   UDM can only lock LDAP users. User authenticated via *Keycloak* from other sources
+   (for example *Keycloak* internal users), can't be affected by this.

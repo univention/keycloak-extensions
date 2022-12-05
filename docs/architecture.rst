@@ -12,7 +12,7 @@ The *Keycloak Extension App* architecture consists of the following elements:
 * The *Keycloak Identity Access Management*, which is either running as part 
   of |UCS| via the *Keycloak App* or externally.
 
-* The *Handler*-container retrieving events from the Keycloak *Event API*,
+* The *Handler*-container retrieving events from the *Keycloak Event API*,
   checking conditions and running actions based on this information.
 
 * The *Rule*-configuration configuring conditions and actions.
@@ -38,7 +38,7 @@ Overview
 .. _figure-bfa-overview:
 
 .. figure:: /images/bfa-docs-version.*
-   :alt: Keycloak extension overview.
+   :alt: *Keycloak* extension overview.
 
    Interactions architectural components in and around this app.
    Containers of the app are marked pink.

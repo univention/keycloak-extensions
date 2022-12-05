@@ -1,8 +1,8 @@
 .. _doc-entry:
 
-###########################
-UCS Keycloak Extensions app
-###########################
+#########################
+UCS *Keycloak Extensions*
+#########################
 
 Welcome to the documentation about the Univention app *Keycloak Extensions*.
 The app installs *Keycloak Extensions*, an intermediary and partner app for 
