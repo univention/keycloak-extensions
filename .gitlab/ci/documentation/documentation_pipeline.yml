@@ -70,7 +70,7 @@ pages:
     expire_in: 1 week
   environment:
     name: "documentation-${DOC_TARGET_VERSION}"
-    url:
+    url: "${CI_PAGES_URL}"
   rules:
     - when: always
 
