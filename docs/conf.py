@@ -89,7 +89,7 @@ html_context = {
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path: List[str] = []  # value is usally ['_static']
+html_static_path = []  # value is usally ['_static']
 
 html_last_updated_fmt = "%a, %d. %b %Y at %H:%m (UTC%z)"
 
@@ -101,7 +101,7 @@ if "spelling" in sys.argv:
     spelling_show_suggestions = True
     spelling_word_list_filename = ["spelling_wordlist"]
 
-linkcheck_ignore: List[str] = []
+linkcheck_ignore = []
 
 root_doc = "index"
 
