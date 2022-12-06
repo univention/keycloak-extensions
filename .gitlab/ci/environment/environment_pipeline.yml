@@ -61,9 +61,50 @@ setup_environment:
     url: "https://${SERVER_HTTPS_URL_PRIMARY}"
   resource_group: $TARGET_ENVIRONMENT
 
+# Provisionig of the VM for the target environment
+# This runs UCS join, so that a hostname can be set.
+# See: https://galaxy.ansible.com/univention/ucs_roles
+provision_ucs_vm:
+  image: artifacts.knut.univention.de/upx/container-tooling/automation-ansible:main-0ff77d38
+  stage: provision
+  rules:
+    - when: always
+  before_script:
+    # Run ssh-agent (inside the build environment)
+    - eval $(ssh-agent -s)
+
+    # Pipe SSH key into SSH Agent without carriage returns.
+    # See: https://gitlab.com/gitlab-examples/ssh-private-key/issues/1#note_48526556
+    - echo "${ID_RSA_UCS_KVM_IMAGE}" | tr -d '\r' | ssh-add -
+
+    # Store vault-password
+    - echo ${ANSIBLE_VAULT_PASSWORD} > ${CI_PROJECT_DIR}/ansible/.vault-password
+
+    # Install dependencies
+    - ansible-galaxy install -r ${CI_PROJECT_DIR}/ansible/requirements.yml
+  needs:
+    - "setup_environment"
+  environment:
+    name: $TARGET_ENVIRONMENT
+    on_stop: .teardown_environment
+    url: "https://${SERVER_HTTPS_URL_PRIMARY}"
+  resource_group: $TARGET_ENVIRONMENT
+  script:
+    - >
+      ansible-playbook
+      --inventory ${SERVER_IP},
+      --vault-password-file ${CI_PROJECT_DIR}/.vault-password
+      --become-user root
+      ${CI_PROJECT_DIR}/playbook.yml
+      --extra-vars "hostname=master"
+      --extra-vars "domain_name=${SERVER_HTTPS_URL_PRIMARY}"
+      --extra-vars "basedn=dc=${DNS_DOMAIN},dc=at-univention,dc=de"
+      --extra-vars "server_type=master"
+      --extra-vars "network_config_static_ip_config=${SERVER_IP}/32"
+
 # This job stops the environment and deletes the Terraform state from the GitLab storage backend.
 # Maintainer permissions are needed for this task to complete successfully.
-teardown_environment:
+.teardown_environment:
   extends: .environment_setup_template
   environment:
     name: $TARGET_ENVIRONMENT
@@ -78,64 +119,3 @@ teardown_environment:
       --insecure
       --header "Private-Token: ${CI_JOB_TOKEN}"
       --request DELETE "${TF_ADDRESS}"
-
-# Provisionig of the VM for the target environment
-# This runs UCS join, so that a hostname can be set.
-# See: https://galaxy.ansible.com/univention/ucs_roles
-provision_ucs_vm:
-  image: artifacts.knut.univention.de/upx/container-tooling/automation-ansible:main-0ff77d38
-  stage: provision
-  rules:
-    - when: always
-  before_script:
-#    # Include univention CA certificate
-#    - curl -k https://nissedal.knut.univention.de/ucs-root-ca.crt > /usr/local/share/ca-certificates/ucs-root-ca.crt
-#    - update-ca-certificates
-
-    # Run ssh-agent (inside the build environment)
-    - eval $(ssh-agent -s)
-
-    # Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
-    # We're using tr to fix line endings which makes ed25519 keys work
-    # without extra base64 encoding.
-    # https://gitlab.com/gitlab-examples/ssh-private-key/issues/1#note_48526556
-    - echo "${ID_RSA_UCS_KVM_IMAGE}" | tr -d '\r' | ssh-add -
-
-#    - echo "${ID_RSA_UCS_KVM_IMAGE}" > ${CI_PROJECT_DIR}/ansible/.ssh/id_rsa
-#    - chown 0400 ${CI_PROJECT_DIR}/ansible/.ssh/id_rsa
-
-#    # Create the SSH directory and give it the right permissions
-#    - cat "${AUTHORIZED_KEYS_FILE}" > ${CI_PROJECT_DIR}/ansible/.ssh/authorized_keys
-#    - mkdir -p  ${CI_PROJECT_DIR}/ansible/.ssh
-#    - chmod 700  ${CI_PROJECT_DIR}/ansible/.ssh
-
-    # Store vault-password
-    - echo ${ANSIBLE_VAULT_PASSWORD} > ${CI_PROJECT_DIR}/ansible/.vault-password
-
-#    # Change permission for ansible
-#    # For more information see https://docs.ansible.com/ansible/devel/reference_appendices/config.html#cfg-in-world-writable-dir
-#    - chmod -R o-w .
-#    - chmod -R ug+rw .
-
-    # Install dependencies
-    - ansible-galaxy install -r ${CI_PROJECT_DIR}/ansible/requirements.yml
-  needs:
-    - "setup_environment"
-  environment:
-    name: $TARGET_ENVIRONMENT
-    on_stop: teardown_environment
-    url: "https://${SERVER_HTTPS_URL_PRIMARY}"
-  resource_group: $TARGET_ENVIRONMENT
-  script:
-    - >
-      ansible-playbook
-      --inventory ${SERVER_IP},
-      --vault-password-file ${CI_PROJECT_DIR}/.vault-password
-#      --private-key ${CI_PROJECT_DIR}/ansible/.ssh/id_rsa
-      --become-user root
-      ${CI_PROJECT_DIR}/playbook.yml
-      --extra-vars "hostname=master"
-      --extra-vars "domain_name=${SERVER_HTTPS_URL_PRIMARY}"
-      --extra-vars "basedn=dc=${DNS_DOMAIN},dc=at-univention,dc=de"
-      --extra-vars "server_type=master"
-      --extra-vars "network_config_static_ip_config=${SERVER_IP}/32"
