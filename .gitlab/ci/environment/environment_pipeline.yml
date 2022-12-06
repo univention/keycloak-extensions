@@ -110,7 +110,7 @@ provision_ucs_vm:
 #    - chmod 700  ${CI_PROJECT_DIR}/ansible/.ssh
 
     # Store vault-password
-    - echo $ANSIBLE_VAULT_PASSWORD > ${CI_PROJECT_DIR}/ansible/.vault-password
+    - echo ${ANSIBLE_VAULT_PASSWORD} > ${CI_PROJECT_DIR}/ansible/.vault-password
 
 #    # Change permission for ansible
 #    # For more information see https://docs.ansible.com/ansible/devel/reference_appendices/config.html#cfg-in-world-writable-dir
@@ -129,11 +129,11 @@ provision_ucs_vm:
   script:
     - >
       ansible-playbook
-      --inventory {SERVER_IP}
+      --inventory ${SERVER_IP},
       --vault-password-file ${CI_PROJECT_DIR}/.vault-password
-      --private-key ${CI_PROJECT_DIR}/ansible/.ssh/id_rsa
+#      --private-key ${CI_PROJECT_DIR}/ansible/.ssh/id_rsa
       --become-user root
-      playbook.yml
+      ${CI_PROJECT_DIR}/playbook.yml
       --extra-vars "hostname=master"
       --extra-vars "domain_name=${SERVER_HTTPS_URL_PRIMARY}"
       --extra-vars "basedn=dc=${DNS_DOMAIN},dc=at-univention,dc=de"
