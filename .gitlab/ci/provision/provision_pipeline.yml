@@ -7,12 +7,38 @@ provision_ucs_vm:
   image: artifacts.knut.univention.de/upx/container-tooling/automation-ansible:main-0ff77d38
   stage: provision
   before_script:
+    # Include univention CA certificate
+    - curl -k https://nissedal.knut.univention.de/ucs-root-ca.crt > /usr/local/share/ca-certificates/ucs-root-ca.crt
+    - update-ca-certificates
+
+    # Run ssh-agent (inside the build environment)
+    - eval $(ssh-agent -s)
+
+    # Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
+    # We're using tr to fix line endings which makes ed25519 keys work
+    # without extra base64 encoding.
+    # https://gitlab.com/gitlab-examples/ssh-private-key/issues/1#note_48526556
+    - echo "${ID_RSA_UCS_KVM_IMAGE}" | tr -d '\r' | ssh-add -
     - echo "${ID_RSA_UCS_KVM_IMAGE}" > ${CI_PROJECT_DIR}/id_rsa
     - chown 0400 ${CI_PROJECT_DIR}/id_rsa
+
+    # Create the SSH directory and give it the right permissions
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
+
+    # Store vault-password
+    - echo $ANSIBLE_VAULT_PASSWORD > ~/.vault-password
+
+    # Change permission for ansible
+    # For more information see https://docs.ansible.com/ansible/devel/reference_appendices/config.html#cfg-in-world-writable-dir
     - chmod -R o-w .
     - chmod -R ug+rw .
+
+    # Install dependencies
+    - ansible-galaxy install -r ${CI_PROJECT_DIR}/ansible/requirements.yml
+
+
+    - chown 0400 ${CI_PROJECT_DIR}/id_rsa
     - cat "${AUTHORIZED_KEYS_FILE}" > ansible/files/authorized_keys
     - cd ansible
     - ansible-galaxy install -r collections/requirements.yml
