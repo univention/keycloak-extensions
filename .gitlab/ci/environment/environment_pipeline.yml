@@ -89,6 +89,10 @@ provision_ucs_vm:
   stage: provision
   rules:
     - when: always
+  variables:
+    ANSIBLE_ROOT: "${CI_PROJECT_DIR}/ansible"
+  needs:
+    - "setup_environment"
   before_script:
     # Run ssh-agent (inside the build environment)
     - eval $(ssh-agent -s)
@@ -98,26 +102,24 @@ provision_ucs_vm:
     - echo "${ID_RSA_UCS_KVM_IMAGE}" | tr -d '\r' | ssh-add -
 
     # Store vault-password
-    - echo ${ANSIBLE_VAULT_PASSWORD} > ${CI_PROJECT_DIR}/ansible/.vault-password
+    - echo ${ANSIBLE_VAULT_PASSWORD} > ${ANSIBLE_ROOT}/.vault-password
 
     # Install dependencies
-    - ansible-galaxy install -r ${CI_PROJECT_DIR}/ansible/requirements.yml
-  needs:
-    - "setup_environment"
-  environment:
-    name: $TARGET_ENVIRONMENT
-    on_stop: teardown_environment
-    url: "https://${SERVER_HTTPS_URL_PRIMARY}"
-  resource_group: $TARGET_ENVIRONMENT
+    - ansible-galaxy install -r ${ANSIBLE_ROOT}/requirements.yml
   script:
     - >
       ansible-playbook
       --inventory ${SERVER_IP},
-      --vault-password-file ${CI_PROJECT_DIR}/.vault-password
+      --vault-password-file ${ANSIBLE_ROOT}/.vault-password
       --become-user root
-      ${CI_PROJECT_DIR}/ansible/provision_ucs_environment.yml
+      ${ANSIBLE_ROOT}/provision_ucs_environment.yml
       --extra-vars "hostname=master"
       --extra-vars "domain_name=${SERVER_HTTPS_URL_PRIMARY}"
       --extra-vars "basedn=dc=${DNS_DOMAIN},dc=at-univention,dc=de"
       --extra-vars "server_type=master"
       --extra-vars "network_config_static_ip_config=${SERVER_IP}/32"
+  environment:
+    name: $TARGET_ENVIRONMENT
+    on_stop: teardown_environment
+    url: "https://${SERVER_HTTPS_URL_PRIMARY}"
+  resource_group: $TARGET_ENVIRONMENT
