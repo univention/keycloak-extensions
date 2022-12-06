@@ -9,7 +9,6 @@ stages:
 variables:
   TF_LOCAL_ROOT: "${CI_PROJECT_DIR}/terraform"
   TF_ADDRESS: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/${TARGET_ENVIRONMENT}"
-  DNS_DOMAIN: "keycloak-extensions-${TARGET_ENVIRONMENT}"
 
 # Template job for setting up the environment
 .environment_setup_template:
@@ -29,7 +28,6 @@ variables:
       -backend-config="unlock_method=DELETE"
       -backend-config="retry_wait_min=5"
       -backend-config="skip_cert_verification=true"
-
 
 # This job stops the environment and deletes the Terraform state from the GitLab storage backend.
 # Maintainer permissions are needed for this task to complete successfully.
@@ -51,7 +49,6 @@ teardown_environment:
       --header "Private-Token: ${CI_JOB_TOKEN}"
       --request DELETE "${TF_ADDRESS}"
 
-
 # Setup of the VM for the target environment
 setup_environment:
   extends: .environment_setup_template
@@ -66,13 +63,15 @@ setup_environment:
       apply
       -auto-approve
       -var ci_target_environment=${TARGET_ENVIRONMENT}
-      -var dns-domain=${DNS_DOMAIN}
-      -var create-dns-record=true
+      -var project_name=${CI_PROJECT_ID}
+      -var create_dns_record=true
   after_script:
     - cd ${TF_LOCAL_ROOT}
     - SERVER_IP=$(terraform output server_ip | sed -e 's/^"//' -e 's/"$//')
+    - SERVER_SUBDOMAIN=$(terraform output server_subdomain | sed -e 's/^"//' -e 's/"$//')
     - SERVER_HTTPS_URL_PRIMARY=$(terraform output server_https_url_primary | sed -e 's/^"//' -e 's/"$//')
     - echo "SERVER_IP=${SERVER_IP}" >> ${CI_PROJECT_DIR}/deploy.env
+    - echo "SERVER_SUBDOMAIN=${SERVER_SUBDOMAIN}" >> ${CI_PROJECT_DIR}/deploy.env
     - echo "SERVER_HTTPS_URL_PRIMARY=${SERVER_HTTPS_URL_PRIMARY}" >> ${CI_PROJECT_DIR}/deploy.env
   artifacts:
     reports:
@@ -87,7 +86,7 @@ setup_environment:
 # This runs UCS join, so that a hostname can be set.
 # See: https://galaxy.ansible.com/univention/ucs_roles
 provision_ucs_vm:
-  image: artifacts.knut.univention.de/upx/container-tooling/automation-ansible:main-0ff77d38
+  image: "artifacts.knut.univention.de/upx/container-tooling/automation-ansible:main-0ff77d38"
   stage: provision
   rules:
     - when: always
@@ -115,7 +114,7 @@ provision_ucs_vm:
       ${ANSIBLE_ROOT}/provision_ucs_environment.yml
       --extra-vars "hostname=master"
       --extra-vars "domain_name=${SERVER_HTTPS_URL_PRIMARY}"
-      --extra-vars "basedn=dc=${DNS_DOMAIN},dc=at-univention,dc=de"
+      --extra-vars "basedn=dc=${SERVER_SUBDOMAIN},dc=at-univention,dc=de"
       --extra-vars "server_type=master"
       --extra-vars "network_config_static_ip_config=${SERVER_IP}/32"
   environment:

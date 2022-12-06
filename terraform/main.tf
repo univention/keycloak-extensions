@@ -1,3 +1,6 @@
+# For the AWS resources used in this configuration, please see the docs at:
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_zone
+
 terraform {
   required_providers {
     hcloud = {
@@ -22,17 +25,16 @@ provider "hcloud" {
 }
 
 resource "hcloud_server" "main" {
-  name        = "${var.project-name}-primary-${var.dns-domain}"
-  server_type = var.server-type-ucs
-  image       = var.server-snapshot
+  name        = "${var.project_name}-primary-${var.project_name}-${var.ci_target_environment}"
+  server_type = var.server_type_ucs
+  image       = var.server_snapshot
   location    = "fsn1"
-  ssh_keys    = var.server-ssh-keys
+  ssh_keys    = var.server_ssh_keys
   keep_disk   = true
 
   labels = {
-    dns_record   = var.dns-domain
-    project_id   = var.project-id
-    project_name = var.project-name
+    dns_record   = "${var.project_name}-${var.ci_target_environment}"
+    project_name = var.project_name
     purpose      = "primary"
   }
 
@@ -45,25 +47,15 @@ data "aws_route53_zone" "at-univention_de" {
 }
 
 resource "aws_route53_record" "primary" {
-  # Control if a DNS record should be created.
-  count = var.create-dns-record ? 1 : 0
+  count = var.create_dns_record ? 1 : 0
+  name  = "primary.${var.project_name}-${var.ci_target_environment}.${data.aws_route53_zone.at-univention_de.name}"
+  type  = "A"
 
-  # The name of the record [string].
-  name = "primary.${var.dns-domain}.${data.aws_route53_zone.at-univention_de.name}"
-
-  # The record type [string].
-  # Possible values: "A", "AAAA", "NS", "TXT", ...
-  type = "A"
-
-  # The record content, as a set of strings [list].
   records = [
     hcloud_server.main.ipv4_address
   ]
 
-  # The TTL to set for the records [integer].
-  ttl = 300
-
-  # The ID of the hosted zone to contain this record [string].
+  ttl     = 300
   zone_id = data.aws_route53_zone.at-univention_de.zone_id
 
   depends_on = [
@@ -72,25 +64,15 @@ resource "aws_route53_record" "primary" {
 }
 
 resource "aws_route53_record" "portal" {
-  # Control if a DNS record should be created.
-  count = var.create-dns-record ? 1 : 0
+  count = var.create_dns_record ? 1 : 0
+  name  = "portal.${var.project_name}-${var.ci_target_environment}.${data.aws_route53_zone.at-univention_de.name}"
+  type  = "A"
 
-  # The name of the record [string].
-  name = "portal.${var.dns-domain}.${data.aws_route53_zone.at-univention_de.name}"
-
-  # The record type [string].
-  # Possible values: "A", "AAAA", "NS", "TXT", ...
-  type = "A"
-
-  # The record content, as a set of strings [list].
   records = [
     hcloud_server.main.ipv4_address
   ]
 
-  # The TTL to set for the records [integer].
-  ttl = 300
-
-  # The ID of the hosted zone to contain this record [string].
+  ttl     = 300
   zone_id = data.aws_route53_zone.at-univention_de.zone_id
 
   depends_on = [
@@ -99,23 +81,15 @@ resource "aws_route53_record" "portal" {
 }
 
 resource "aws_route53_record" "ucs-sso" {
-  # Control if a DNS record should be created.
-  count = var.create-dns-record ? 1 : 0
+  count = var.create_dns_record ? 1 : 0
+  name  = "ucs-sso.${var.project_name}-${var.ci_target_environment}.${data.aws_route53_zone.at-univention_de.name}"
+  type  = "A"
 
-  # The name of the record [string].
-  name = "ucs-sso.${var.dns-domain}.${data.aws_route53_zone.at-univention_de.name}"
-
-  type = "A"
-
-  # The record content, as a set of strings [list].
   records = [
     hcloud_server.main.ipv4_address
   ]
 
-  # The TTL to set for the records [integer].
-  ttl = 300
-
-  # The ID of the hosted zone to contain this record [string].
+  ttl     = 300
   zone_id = data.aws_route53_zone.at-univention_de.zone_id
 
   depends_on = [

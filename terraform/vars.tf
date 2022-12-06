@@ -1,30 +1,19 @@
-variable "server-type-ucs" {
+variable "server_type_ucs" {
   default = "cx21"
   type    = string
 }
 
-variable "create-dns-record" {
+variable "create_dns_record" {
   default = false
   type    = bool
 }
 
-variable "dns-domain" {
-  default = "unassigned"
+variable "project_name" {
   type    = string
+  default = "default"
 }
 
-variable "project-id" {
-  default = "0"
-  type    = string
-}
-
-variable "project-name" {
-  default = "keycloak"
-  type    = string
-}
-
-# TODO: Clean this up, for obvious security reasons.
-variable "server-ssh-keys" {
+variable "server_ssh_keys" {
   default = [
     "4820687", # ucs
     "4872327", # arequate
@@ -32,8 +21,7 @@ variable "server-ssh-keys" {
   type = list(string)
 }
 
-# TODO: Find out where a list of these images can be found.
-variable "server-snapshot" {
+variable "server_snapshot" {
   #UCS 5.0
   default = "53389185"
   type    = string
