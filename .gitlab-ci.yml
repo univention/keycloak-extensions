@@ -3,6 +3,7 @@ stages:
   - infrastructure
   - provision
   - release
+  - documentation
 
 # Handles setup and updates of the environment `production`.
 setup_environment_production:
@@ -85,3 +86,14 @@ docker_pipeline:
     include: "/.gitlab/ci/docker/docker_pipeline.yml"
   rules:
     - if: '$CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+/'
+
+# Generates documentation artifacts for the current commit.
+# This pipeline is based on the documentation and coockiecutter project generator at:
+# https://git.knut.univention.de/univention/documentation/docs-template/-/tree/main/
+documentation_pipeline:
+  stage: documentation
+  trigger:
+    include: "/.gitlab/ci/documentation/documentation_pipeline.yml"
+  rules:
+    - if: '$CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+/'
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
