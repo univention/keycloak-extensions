@@ -33,7 +33,7 @@ variables:
 
 # This job stops the environment and deletes the Terraform state from the GitLab storage backend.
 # Maintainer permissions are needed for this task to complete successfully.
-.teardown_environment:
+teardown_environment:
   extends: .environment_setup_template
   environment:
     name: $TARGET_ENVIRONMENT
@@ -77,7 +77,7 @@ setup_environment:
       dotenv: "${CI_PROJECT_DIR}/deploy.env"
   environment:
     name: $TARGET_ENVIRONMENT
-    on_stop: .teardown_environment
+    on_stop: teardown_environment
     url: "https://${SERVER_HTTPS_URL_PRIMARY}"
   resource_group: $TARGET_ENVIRONMENT
 
@@ -106,7 +106,7 @@ provision_ucs_vm:
     - "setup_environment"
   environment:
     name: $TARGET_ENVIRONMENT
-    on_stop: .teardown_environment
+    on_stop: teardown_environment
     url: "https://${SERVER_HTTPS_URL_PRIMARY}"
   resource_group: $TARGET_ENVIRONMENT
   script:
