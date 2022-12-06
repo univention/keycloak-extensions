@@ -61,6 +61,25 @@ setup_environment:
     url: "https://${SERVER_HTTPS_URL_PRIMARY}"
   resource_group: $TARGET_ENVIRONMENT
 
+
+# This job stops the environment and deletes the Terraform state from the GitLab storage backend.
+# Maintainer permissions are needed for this task to complete successfully.
+.teardown_environment:
+  extends: .environment_setup_template
+  environment:
+    name: $TARGET_ENVIRONMENT
+    action: stop
+  rules:
+    - when: manual
+  script:
+    - terraform refresh
+    - terraform destroy -auto-approve
+    - >
+      curl
+      --insecure
+      --header "Private-Token: ${CI_JOB_TOKEN}"
+      --request DELETE "${TF_ADDRESS}"
+
 # Provisionig of the VM for the target environment
 # This runs UCS join, so that a hostname can be set.
 # See: https://galaxy.ansible.com/univention/ucs_roles
@@ -101,21 +120,3 @@ provision_ucs_vm:
       --extra-vars "basedn=dc=${DNS_DOMAIN},dc=at-univention,dc=de"
       --extra-vars "server_type=master"
       --extra-vars "network_config_static_ip_config=${SERVER_IP}/32"
-
-# This job stops the environment and deletes the Terraform state from the GitLab storage backend.
-# Maintainer permissions are needed for this task to complete successfully.
-.teardown_environment:
-  extends: .environment_setup_template
-  environment:
-    name: $TARGET_ENVIRONMENT
-    action: stop
-  rules:
-    - when: manual
-  script:
-    - terraform refresh
-    - terraform destroy -auto-approve
-    - >
-      curl
-      --insecure
-      --header "Private-Token: ${CI_JOB_TOKEN}"
-      --request DELETE "${TF_ADDRESS}"
