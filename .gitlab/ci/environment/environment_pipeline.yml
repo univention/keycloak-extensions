@@ -79,24 +79,45 @@ teardown_environment:
       --header "Private-Token: ${CI_JOB_TOKEN}"
       --request DELETE "${TF_ADDRESS}"
 
-# Provisioing of the VM for the target environment
+# Provisionig of the VM for the target environment
 # This runs UCS join, so that a hostname can be set.
-# TODO: Find out where this is documented.
+# See: https://galaxy.ansible.com/univention/ucs_roles
 provision_ucs_vm:
   image: artifacts.knut.univention.de/upx/container-tooling/automation-ansible:main-0ff77d38
   stage: provision
   rules:
     - when: always
   before_script:
-    - echo "${ID_RSA_UCS_KVM_IMAGE}" > ${CI_PROJECT_DIR}/id_rsa
-    - chown 0400 ${CI_PROJECT_DIR}/id_rsa
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
+    # Include univention CA certificate
+    - curl -k https://nissedal.knut.univention.de/ucs-root-ca.crt > /usr/local/share/ca-certificates/ucs-root-ca.crt
+    - update-ca-certificates
+
+    # Run ssh-agent (inside the build environment)
+    - eval $(ssh-agent -s)
+
+    # Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
+    # We're using tr to fix line endings which makes ed25519 keys work
+    # without extra base64 encoding.
+    # https://gitlab.com/gitlab-examples/ssh-private-key/issues/1#note_48526556
+    - echo "${ID_RSA_UCS_KVM_IMAGE}" | tr -d '\r' | ssh-add -
+    - echo "${ID_RSA_UCS_KVM_IMAGE}" > ${CI_PROJECT_DIR}/ansible/.ssh/id_rsa
+    - chown 0400 ${CI_PROJECT_DIR}/ansible/.ssh/id_rsa
+
+    # Create the SSH directory and give it the right permissions
+    - cat "${AUTHORIZED_KEYS_FILE}" > ${CI_PROJECT_DIR}/ansible/.ssh/authorized_keys
+    - mkdir -p  ${CI_PROJECT_DIR}/ansible/.ssh
+    - chmod 700  ${CI_PROJECT_DIR}/ansible/.ssh
+
+    # Store vault-password
+    - echo $ANSIBLE_VAULT_PASSWORD > ${CI_PROJECT_DIR}/ansible/.vault-password
+
+    # Change permission for ansible
+    # For more information see https://docs.ansible.com/ansible/devel/reference_appendices/config.html#cfg-in-world-writable-dir
     - chmod -R o-w .
     - chmod -R ug+rw .
-    - cat "${AUTHORIZED_KEYS_FILE}" > ansible/files/authorized_keys
-    - cd ansible
-    - ansible-galaxy install -r collections/requirements.yml
+
+    # Install dependencies
+    - ansible-galaxy install -r ${CI_PROJECT_DIR}/ansible/requirements.yml
   needs:
     - "setup_environment"
   environment:
@@ -107,7 +128,13 @@ provision_ucs_vm:
   script:
     - >
       ansible-playbook
-      -i root@${SERVER_IP}, playbook.yml
-      -e "hostname=master"
-      -e "domain_name=$SERVER_HTTPS_URL_PRIMARY"
-      -e "basedn=dc=${DNS_DOMAIN},dc=at-univention,dc=de"
+      --inventory {SERVER_IP}
+      --vault-password-file ${CI_PROJECT_DIR}/.vault-password
+      --private-key ${CI_PROJECT_DIR}/ansible/.ssh/id_rsa
+      --become-user root
+      playbook.yml
+      --extra-vars "hostname=master"
+      --extra-vars "domain_name=${SERVER_HTTPS_URL_PRIMARY}"
+      --extra-vars "basedn=dc=${DNS_DOMAIN},dc=at-univention,dc=de"
+      --extra-vars "server_type=master"
+      --extra-vars "network_config_static_ip_config=${SERVER_IP}/32"
