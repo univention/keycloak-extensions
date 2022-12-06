@@ -5,7 +5,7 @@ stages:
   - release
   - documentation
 
-# Handles setup and updates of the environment `production`.
+# Handles setup and provisioning of the environment `production`.
 setup_environment_production:
   stage: infrastructure
   trigger:
@@ -15,19 +15,7 @@ setup_environment_production:
   rules:
     - if: $CI_COMMIT_BRANCH == 'main'
 
-# Handles provisioning of the environment `production`.
-provision_environment_production:
-  stage: provision
-  trigger:
-    include: "/.gitlab/ci/provision/provision_pipeline.yml"
-  variables:
-    TARGET_ENVIRONMENT: "production"
-  rules:
-    - if: $CI_COMMIT_BRANCH == 'main'
-  needs:
-    - "setup_environment_production"
-
-# Handles setup and updates of the environment `staging`.
+# Handles setup and provisioning of the environment `staging`.
 setup_environment_staging:
   stage: infrastructure
   trigger:
@@ -37,19 +25,7 @@ setup_environment_staging:
   rules:
     - if: $CI_COMMIT_BRANCH == 'development'
 
-# Handles provisioning of the environment `staging`.
-provision_environment_staging:
-  stage: provision
-  trigger:
-    include: "/.gitlab/ci/provision/provision_pipeline.yml"
-  variables:
-    TARGET_ENVIRONMENT: "staging"
-  rules:
-    - if: $CI_COMMIT_BRANCH == 'main'
-  needs:
-    - "setup_environment_staging"
-
-# Handles setup and updates of the environment for an MR commit, based on the merge request numerical ID.
+# Handles setup and provisioning of the environment for an MR commit, based on the merge request numerical ID.
 setup_environment_mr:
   stage: infrastructure
   trigger:
@@ -58,18 +34,6 @@ setup_environment_mr:
       TARGET_ENVIRONMENT: "mr-${CI_MERGE_REQUEST_IID}"
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-
-# Handles provisioning of the environment for an MR commit.
-provision_environment_mr:
-  stage: provision
-  trigger:
-    include: "/.gitlab/ci/provision/provision_pipeline.yml"
-  variables:
-    TARGET_ENVIRONMENT: "mr-${CI_MERGE_REQUEST_IID}"
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-  needs:
-    - "setup_environment_mr"
 
 # A GitLab Release is done upon semantic version tag push.
 release_pipeline:
