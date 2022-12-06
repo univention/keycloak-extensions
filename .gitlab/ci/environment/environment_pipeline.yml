@@ -88,9 +88,9 @@ provision_ucs_vm:
   rules:
     - when: always
   before_script:
-    # Include univention CA certificate
-    - curl -k https://nissedal.knut.univention.de/ucs-root-ca.crt > /usr/local/share/ca-certificates/ucs-root-ca.crt
-    - update-ca-certificates
+#    # Include univention CA certificate
+#    - curl -k https://nissedal.knut.univention.de/ucs-root-ca.crt > /usr/local/share/ca-certificates/ucs-root-ca.crt
+#    - update-ca-certificates
 
     # Run ssh-agent (inside the build environment)
     - eval $(ssh-agent -s)
@@ -100,21 +100,22 @@ provision_ucs_vm:
     # without extra base64 encoding.
     # https://gitlab.com/gitlab-examples/ssh-private-key/issues/1#note_48526556
     - echo "${ID_RSA_UCS_KVM_IMAGE}" | tr -d '\r' | ssh-add -
-    - echo "${ID_RSA_UCS_KVM_IMAGE}" > ${CI_PROJECT_DIR}/ansible/.ssh/id_rsa
-    - chown 0400 ${CI_PROJECT_DIR}/ansible/.ssh/id_rsa
 
-    # Create the SSH directory and give it the right permissions
-    - cat "${AUTHORIZED_KEYS_FILE}" > ${CI_PROJECT_DIR}/ansible/.ssh/authorized_keys
-    - mkdir -p  ${CI_PROJECT_DIR}/ansible/.ssh
-    - chmod 700  ${CI_PROJECT_DIR}/ansible/.ssh
+#    - echo "${ID_RSA_UCS_KVM_IMAGE}" > ${CI_PROJECT_DIR}/ansible/.ssh/id_rsa
+#    - chown 0400 ${CI_PROJECT_DIR}/ansible/.ssh/id_rsa
+
+#    # Create the SSH directory and give it the right permissions
+#    - cat "${AUTHORIZED_KEYS_FILE}" > ${CI_PROJECT_DIR}/ansible/.ssh/authorized_keys
+#    - mkdir -p  ${CI_PROJECT_DIR}/ansible/.ssh
+#    - chmod 700  ${CI_PROJECT_DIR}/ansible/.ssh
 
     # Store vault-password
     - echo $ANSIBLE_VAULT_PASSWORD > ${CI_PROJECT_DIR}/ansible/.vault-password
 
-    # Change permission for ansible
-    # For more information see https://docs.ansible.com/ansible/devel/reference_appendices/config.html#cfg-in-world-writable-dir
-    - chmod -R o-w .
-    - chmod -R ug+rw .
+#    # Change permission for ansible
+#    # For more information see https://docs.ansible.com/ansible/devel/reference_appendices/config.html#cfg-in-world-writable-dir
+#    - chmod -R o-w .
+#    - chmod -R ug+rw .
 
     # Install dependencies
     - ansible-galaxy install -r ${CI_PROJECT_DIR}/ansible/requirements.yml
