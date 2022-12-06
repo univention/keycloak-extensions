@@ -105,11 +105,6 @@ provision_ucs_vm:
     # See: https://gitlab.com/gitlab-examples/ssh-private-key/issues/1#note_48526556
     - echo "${ID_RSA_UCS_KVM_IMAGE}" | tr -d '\r' | ssh-add -
 
-    # Make sure the authorized hosts file contains the VM's IP
-    - cat "${AUTHORIZED_KEYS_FILE}" > ~/.ssh/authorized_keys
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-
     # Install dependencies
     - ansible-galaxy install -r ${ANSIBLE_ROOT}/requirements.yml
   script:
