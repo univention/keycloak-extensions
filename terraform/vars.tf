@@ -14,6 +14,7 @@ variable "server_ssh_keys" {
   default = [
     "4820687", # ucs
     "4872327", # arequate
+    "9271374", # mark.lindhout.extern@univention.de
   ]
   type = list(string)
   description = "A list of pre-installed SSH keys for this machine."
