@@ -58,9 +58,6 @@ setup_environment:
     - >
       terraform
       apply
-      -replace=aws_route53_record.primary[0]
-      -replace=aws_route53_record.portal[0]
-      -replace=aws_route53_record.ucs-sso[0]
       -auto-approve
       -var target_environment=${TARGET_ENVIRONMENT}
       -var project_name_slug=${CI_PROJECT_NAME}
