@@ -1,5 +1,8 @@
-# For the AWS resources used in this configuration, please see the docs at:
+# AWS Terraform provider documentation:
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_zone
+#
+# Hetzner Terraform provider documentation:
+# https://registry.terraform.io/providers/hetznercloud/hcloud/latest/docs
 
 terraform {
   required_providers {
@@ -24,9 +27,8 @@ provider "aws" {
 provider "hcloud" {
 }
 
-resource "hcloud_server" "main" {
-  # (Required, string) Name of the server to create.
-  # (must be unique per project and a valid hostname as per RFC 1123).
+resource "hcloud_server" "primary" {
+  # (Required, string) Name of the server to create. Must be unique per project and a valid hostname as per RFC 1123.
   name        = "${var.project_name_slug}-${var.target_environment}"
   server_type = var.server_type_ucs
   image       = var.server_snapshot
@@ -54,16 +56,23 @@ resource "aws_route53_record" "primary" {
   type  = "A"
 
   records = [
-    hcloud_server.main.ipv4_address
+    hcloud_server.primary.ipv4_address
   ]
 
   ttl     = 300
   zone_id = data.aws_route53_zone.at-univention_de.zone_id
 
   depends_on = [
-    hcloud_server.main
+    hcloud_server.primary
   ]
 }
+
+resource "hcloud_rdns" "primary" {
+  server_id  = hcloud_server.primary.id
+  ip_address = hcloud_server.primary.ipv4_address
+  dns_ptr    = aws_route53_record.primary.name
+}
+
 
 resource "aws_route53_record" "portal" {
   count = var.create_dns_record ? 1 : 0
@@ -71,14 +80,14 @@ resource "aws_route53_record" "portal" {
   type  = "A"
 
   records = [
-    hcloud_server.main.ipv4_address
+    hcloud_server.primary.ipv4_address
   ]
 
   ttl     = 300
   zone_id = data.aws_route53_zone.at-univention_de.zone_id
 
   depends_on = [
-    hcloud_server.main
+    hcloud_server.primary
   ]
 }
 
@@ -88,14 +97,13 @@ resource "aws_route53_record" "ucs-sso" {
   type  = "A"
 
   records = [
-    hcloud_server.main.ipv4_address
+    hcloud_server.primary.ipv4_address
   ]
 
   ttl     = 300
   zone_id = data.aws_route53_zone.at-univention_de.zone_id
 
   depends_on = [
-    hcloud_server.main
+    hcloud_server.primary
   ]
 }
-

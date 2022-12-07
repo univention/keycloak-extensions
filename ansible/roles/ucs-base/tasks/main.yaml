@@ -5,6 +5,7 @@
   ansible.builtin.include_role:
     name: "univention.ucs_roles.ucs_join"
   vars:
+    ucs_join_hide_logging: False
     ucs_join_basedn: "{{ basedn }}"
     ucs_join_domain_name: "{{ domain_name }}"
     ucs_join_hostname: "{{ host_name }}"
