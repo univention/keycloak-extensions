@@ -36,10 +36,7 @@ teardown_environment:
   environment:
     name: $TARGET_ENVIRONMENT
     action: stop
-  rules:
-    - when: manual
-    - if: $CI_MERGE_REQUEST_ID
-      when: manual
+  when: manual
   script:
     - terraform refresh
     - terraform destroy -auto-approve
@@ -78,8 +75,8 @@ setup_environment:
       dotenv: "${CI_PROJECT_DIR}/deploy.env"
   environment:
     name: $TARGET_ENVIRONMENT
-    on_stop: teardown_environment
     url: "https://${SERVER_HTTPS_URL_PRIMARY}"
+    on_stop: teardown_environment
   resource_group: $TARGET_ENVIRONMENT
 
 # Provisionig of the VM for the target environment
@@ -114,7 +111,7 @@ provision_ucs_vm:
       --extra-vars "ansible_python_interpreter=auto"
       --extra-vars "basedn=dc=${SERVER_SUBDOMAIN},dc=at-univention,dc=de"
       --extra-vars "domain_name=${SERVER_HTTPS_URL_PRIMARY}"
-      --extra-vars "hostname=master"
+      --extra-vars "hostname=${SERVER_SUBDOMAIN}"
       --extra-vars "server_ip=${SERVER_IP}/24"
       --extra-vars "root_password=${UCS_JOIN_ROOT_PASSWORD}"
   environment:

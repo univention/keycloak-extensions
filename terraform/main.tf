@@ -25,7 +25,9 @@ provider "hcloud" {
 }
 
 resource "hcloud_server" "main" {
-  name        = "${var.project_name_slug}-primary-${var.project_name_slug}-${var.target_environment}"
+  # (Required, string) Name of the server to create.
+  # (must be unique per project and a valid hostname as per RFC 1123).
+  name        = "${var.project_name_slug}-${var.target_environment}"
   server_type = var.server_type_ucs
   image       = var.server_snapshot
   location    = "fsn1"
