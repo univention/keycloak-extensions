@@ -1,7 +1,6 @@
 ---
 stages:
   - infrastructure
-  - provision
   - release
   - documentation
 

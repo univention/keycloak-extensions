@@ -82,7 +82,7 @@ setup_environment:
 # Provisionig of the VM for the target environment
 # This runs The Univention `ucs_join` Ansible role to set a hostname.
 # See: https://github.com/univention/ansible-roles#rolesucs_joinreadmemd
-provision_ucs_vm:
+provision_environment:
   image: "artifacts.knut.univention.de/upx/container-tooling/automation-ansible:main-0ff77d38"
   stage: provision
   rules:
@@ -109,13 +109,14 @@ provision_ucs_vm:
       --ssh-common-args "-o StrictHostKeyChecking=no"
       ${ANSIBLE_ROOT}/provision_ucs_environment.yml
       --extra-vars "ansible_python_interpreter=auto"
-      --extra-vars "basedn=dc=${SERVER_SUBDOMAIN},dc=at-univention,dc=de"
+      --extra-vars "basedn=dc=${SERVER_SUBDOMAIN}"
       --extra-vars "domain_name=${SERVER_HTTPS_URL_PRIMARY}"
-      --extra-vars "hostname=${SERVER_SUBDOMAIN}"
+      --extra-vars "host_name=${SERVER_SUBDOMAIN}"
       --extra-vars "server_ip=${SERVER_IP}/24"
+      --extra-vars "admin_user_name=${UCS_JOIN_ADMIN_USER_NAME}"
       --extra-vars "root_password=${UCS_JOIN_ROOT_PASSWORD}"
   environment:
     name: $TARGET_ENVIRONMENT
-    on_stop: teardown_environment
     url: "https://${SERVER_HTTPS_URL_PRIMARY}"
+    on_stop: teardown_environment
   resource_group: $TARGET_ENVIRONMENT
