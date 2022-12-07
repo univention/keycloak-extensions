@@ -101,9 +101,6 @@ provision_environment:
 
     # Install Ansible dependencies
     - ansible-galaxy install -r ${ANSIBLE_ROOT}/requirements.yml
-
-    # Install `netaddr` Python library, to make Ansible's `ipaddr` filter work.
-    - pip install netaddr
   script:
     - ansible --version
     - >
