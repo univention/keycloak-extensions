@@ -25,7 +25,7 @@ provider "hcloud" {
 }
 
 resource "hcloud_server" "main" {
-  name        = "${var.project_name}-primary-${var.project_name}-${var.ci_target_environment}"
+  name        = "${var.project_name_slug}-primary-${var.project_name_slug}-${var.target_environment}"
   server_type = var.server_type_ucs
   image       = var.server_snapshot
   location    = "fsn1"
@@ -33,9 +33,9 @@ resource "hcloud_server" "main" {
   keep_disk   = true
 
   labels = {
-    dns_record   = "${var.project_name}-${var.ci_target_environment}"
-    project_name = var.project_name
-    purpose      = "primary"
+    dns_record = "${var.project_name_slug}-${var.target_environment}"
+    project    = var.project_name_slug
+    purpose    = "primary"
   }
 
   backups = false
@@ -48,7 +48,7 @@ data "aws_route53_zone" "at-univention_de" {
 
 resource "aws_route53_record" "primary" {
   count = var.create_dns_record ? 1 : 0
-  name  = "primary.${var.project_name}-${var.ci_target_environment}.${data.aws_route53_zone.at-univention_de.name}"
+  name  = "primary.${var.project_name_slug}-${var.target_environment}.${data.aws_route53_zone.at-univention_de.name}"
   type  = "A"
 
   records = [
@@ -65,7 +65,7 @@ resource "aws_route53_record" "primary" {
 
 resource "aws_route53_record" "portal" {
   count = var.create_dns_record ? 1 : 0
-  name  = "portal.${var.project_name}-${var.ci_target_environment}.${data.aws_route53_zone.at-univention_de.name}"
+  name  = "portal.${var.project_name_slug}-${var.target_environment}.${data.aws_route53_zone.at-univention_de.name}"
   type  = "A"
 
   records = [
@@ -82,7 +82,7 @@ resource "aws_route53_record" "portal" {
 
 resource "aws_route53_record" "ucs-sso" {
   count = var.create_dns_record ? 1 : 0
-  name  = "ucs-sso.${var.project_name}-${var.ci_target_environment}.${data.aws_route53_zone.at-univention_de.name}"
+  name  = "ucs-sso.${var.project_name_slug}-${var.target_environment}.${data.aws_route53_zone.at-univention_de.name}"
   type  = "A"
 
   records = [

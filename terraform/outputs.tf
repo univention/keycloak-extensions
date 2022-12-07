@@ -4,7 +4,7 @@ output "server_ip" {
 }
 
 output "server_subdomain" {
-  value = "${var.project_name}-${var.ci_target_environment}"
+  value = "${var.project_name_slug}-${var.target_environment}"
   description = "The subdomain for this environment."
 }
 
