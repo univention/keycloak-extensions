@@ -70,7 +70,7 @@ resource "aws_route53_record" "primary" {
 resource "hcloud_rdns" "primary" {
   server_id  = hcloud_server.main.id
   ip_address = hcloud_server.main.ipv4_address
-  dns_ptr    = one(aws_route53_record.primary).name
+  dns_ptr    = "primary.${var.project_name_slug}-${var.target_environment}.${data.aws_route53_zone.at-univention_de.name}"
 }
 
 resource "aws_route53_record" "portal" {
@@ -93,7 +93,7 @@ resource "aws_route53_record" "portal" {
 resource "hcloud_rdns" "portal" {
   server_id  = hcloud_server.main.id
   ip_address = hcloud_server.main.ipv4_address
-  dns_ptr    = one(aws_route53_record.portal).name
+  dns_ptr    = "portal.${var.project_name_slug}-${var.target_environment}.${data.aws_route53_zone.at-univention_de.name}"
 }
 
 resource "aws_route53_record" "ucs-sso" {
@@ -116,5 +116,5 @@ resource "aws_route53_record" "ucs-sso" {
 resource "hcloud_rdns" "ucs-sso" {
   server_id  = hcloud_server.main.id
   ip_address = hcloud_server.main.ipv4_address
-  dns_ptr    = one(aws_route53_record.ucs-sso).name
+  dns_ptr    = "ucs-sso.${var.project_name_slug}-${var.target_environment}.${data.aws_route53_zone.at-univention_de.name}"
 }
