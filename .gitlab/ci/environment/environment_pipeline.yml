@@ -83,7 +83,7 @@ setup_environment:
 # This runs The Univention `ucs_join` Ansible role to set a hostname.
 # See: https://github.com/univention/ansible-roles#rolesucs_joinreadmemd
 provision_environment:
-  image: "artifacts.knut.univention.de/upx/container-tooling/automation-ansible:main-0ff77d38"
+  image: "artifacts.knut.univention.de/upx/container-tooling/automation-ansible:main"
   stage: provision
   rules:
     - when: always
@@ -102,6 +102,7 @@ provision_environment:
     # Install Ansible dependencies
     - ansible-galaxy install -r ${ANSIBLE_ROOT}/requirements.yml
   script:
+    - ansible --version
     - >
       ansible-playbook
       --inventory ${SERVER_IP},
