@@ -1,5 +1,5 @@
 output "server_ip" {
-  value = hcloud_server.primary.ipv4_address
+  value = hcloud_server.main.ipv4_address
   description = "The IPv4 address of the created Hetzner server for this environment."
 }
 

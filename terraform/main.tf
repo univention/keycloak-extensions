@@ -27,7 +27,7 @@ provider "aws" {
 provider "hcloud" {
 }
 
-resource "hcloud_server" "primary" {
+resource "hcloud_server" "main" {
   # (Required, string) Name of the server to create. Must be unique per project and a valid hostname as per RFC 1123.
   name        = "${var.project_name_slug}-${var.target_environment}"
   server_type = var.server_type_ucs
@@ -56,23 +56,22 @@ resource "aws_route53_record" "primary" {
   type  = "A"
 
   records = [
-    hcloud_server.primary.ipv4_address
+    hcloud_server.main.ipv4_address
   ]
 
   ttl     = 300
   zone_id = data.aws_route53_zone.at-univention_de.zone_id
 
   depends_on = [
-    hcloud_server.primary
+    hcloud_server.main
   ]
 }
 
 resource "hcloud_rdns" "primary" {
-  server_id  = hcloud_server.primary.id
-  ip_address = hcloud_server.primary.ipv4_address
-  dns_ptr    = aws_route53_record.primary.name
+  server_id  = hcloud_server.main.id
+  ip_address = hcloud_server.main.ipv4_address
+  dns_ptr    = one(aws_route53_record.primary).name
 }
-
 
 resource "aws_route53_record" "portal" {
   count = var.create_dns_record ? 1 : 0
@@ -80,15 +79,21 @@ resource "aws_route53_record" "portal" {
   type  = "A"
 
   records = [
-    hcloud_server.primary.ipv4_address
+    hcloud_server.main.ipv4_address
   ]
 
   ttl     = 300
   zone_id = data.aws_route53_zone.at-univention_de.zone_id
 
   depends_on = [
-    hcloud_server.primary
+    hcloud_server.main
   ]
+}
+
+resource "hcloud_rdns" "portal" {
+  server_id  = hcloud_server.main.id
+  ip_address = hcloud_server.main.ipv4_address
+  dns_ptr    = one(aws_route53_record.portal).name
 }
 
 resource "aws_route53_record" "ucs-sso" {
@@ -97,13 +102,19 @@ resource "aws_route53_record" "ucs-sso" {
   type  = "A"
 
   records = [
-    hcloud_server.primary.ipv4_address
+    hcloud_server.main.ipv4_address
   ]
 
   ttl     = 300
   zone_id = data.aws_route53_zone.at-univention_de.zone_id
 
   depends_on = [
-    hcloud_server.primary
+    hcloud_server.main
   ]
+}
+
+resource "hcloud_rdns" "ucs-sso" {
+  server_id  = hcloud_server.main.id
+  ip_address = hcloud_server.main.ipv4_address
+  dns_ptr    = one(aws_route53_record.ucs-sso).name
 }
