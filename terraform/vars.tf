@@ -1,35 +1,24 @@
 variable "create_dns_record" {
-  default = false
-  type    = bool
+  default     = false
+  type        = bool
   description = "Boolean value which indicates if a DNS record should be created."
 }
 
 variable "server_type_ucs" {
-  default = "cx21"
-  type    = string
+  default     = "cx21"
+  type        = string
   description = "The Hetzner VPS machine type for this server."
 }
 
-variable "server_ssh_keys" {
-  default = [
-    "4820687", # ucs
-    "4872327", # arequate
-    "9271374", # mark.lindhout.extern@univention.de
-  ]
-  type = list(string)
-  description = "A list of pre-installed SSH keys for this machine."
-}
-
 variable "server_snapshot" {
-  #UCS 5.0
-  default = "53389185"
-  type    = string
+  default     = "53389185" # UCS 5.0
+  type        = string
   description = "The Hetzner source snapshot image to be used for this server."
 }
 
 variable "project_name_slug" {
-  type    = string
-  default = "default"
+  type        = string
+  default     = "default"
   description = "The slug for this project, used in domain names, labels, and tags."
 }
 
