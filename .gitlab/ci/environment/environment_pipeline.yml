@@ -84,6 +84,7 @@ setup_environment:
 # See: https://github.com/univention/ansible-roles#rolesucs_joinreadmemd
 provision_environment:
   image: "artifacts.knut.univention.de/upx/container-tooling/automation-ansible:main"
+  timeout: 3h
   stage: provision
   rules:
     - when: always
