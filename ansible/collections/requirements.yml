@@ -1,0 +1,25 @@
+---
+# Taken from:
+# https://git.knut.univention.de/univention/customers/dataport/dps/ansible/playbooks/dphoenixsuite-hetzner/-/blob/main/collections/requirements.yml
+collections:
+  - name: "ansible.utils"
+    version: "2.6.1"
+    source: "https://galaxy.ansible.com"
+  - name: "ansible.netcommon"
+    version: "3.0.1"
+    source: "https://galaxy.ansible.com"
+  - name: "ansible.posix"
+    version: "1.4.0"
+    source: "https://galaxy.ansible.com"
+  - name: "community.general"
+    version: "5.2.0"
+    source: "https://galaxy.ansible.com"
+  - name: "community.crypto"
+    version: "2.3.4"
+    source: "https://galaxy.ansible.com"
+  - name: "univention.ucs_modules"
+    version: "1.2.0"
+    source: "https://galaxy.ansible.com"
+  - name: "univention.ucs_roles"
+    version: "3.7.2"
+    source: "https://galaxy.ansible.com"

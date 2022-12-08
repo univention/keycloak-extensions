@@ -1,6 +1,6 @@
+---
 # For documentation on the use of this role, and default variables,
 # See: https://github.com/univention/ansible-roles#rolesucs_joinreadmemd
-#
 - name: "UCS join"
   ansible.builtin.include_role:
     name: "univention.ucs_roles.ucs_join"
