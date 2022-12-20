@@ -28,7 +28,6 @@ variable "server-ssh-keys" {
   default = [
     "4820687", # ucs
     "4872327", # arequate
-    "5715204"  # yschmidt
   ]
   type = list(string)
 }
