@@ -3,6 +3,8 @@ import ssl
 import smtplib
 import logging
 
+import datetime
+
 
 class Email:
 
@@ -12,6 +14,8 @@ class Email:
         self.sender_server = os.environ.get("SMTP_SERVER")
         self.sender_password = os.environ.get("SMTP_PASSWORD")
 
+        self.backoff_time = os.environ.get("MAIL_BACKOFF_TIME")
+
         # Configure logging
         log_level = os.environ.get('LOG_LEVEL', 'INFO')
         logging.basicConfig(
@@ -20,7 +24,28 @@ class Email:
             level=log_level)
         self.logger = logging.getLogger(__name__)
 
-    def send(target: str, **kwargs):
+    # FIXME: this is a file approach... maybe a queue should be implemented
+    def prevent_flooding(self):
+        if not os.path.isfile("last_mail"):
+            with open("last_mail", "w") as f:
+                f.write(str(int(datetime.datetime.now().timestamp())))
+            return False
+
+        with open("last_mail") as f:
+            now = datetime.datetime.now()
+            content = f.read()
+            if not content:
+                return False
+            dif = now - datetime.datetime.fromtimestamp(int(float(content)))
+            if dif < datetime.timedelta(seconds=self.backoff_time):
+                self.logger.debug(
+                    "Flooding prevention. Not sending Mail: still in backoff time!")
+                return True
+        return True
+
+    def send(self, target: str, **kwargs):
+        if self.prevent_flooding():
+            return
         self.logger.debug(f"Sending email to {target}")
         context = ssl.create_default_context()
         # FIXME: if port for startls, this will not work
