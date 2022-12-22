@@ -77,7 +77,7 @@ class Device:
                                   ip=self.ip))
             db.session.commit()
 
-            mail.send(user_agent=ua, ip=ip, cookie_id=self.uuid,
+            mail.send(user_agent=self.user_agent, ip=self.ip, cookie_id=self.uuid,
                       fingerprint=self.uuid_fingerprint)
 
         if self.uuid_fingerprint and not result_fp:
