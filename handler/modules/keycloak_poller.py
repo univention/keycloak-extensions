@@ -57,7 +57,7 @@ class KeycloakPoller:
                 event_uuid = e["time"]
                 if not event_uuid:
                     continue
-                if event_uuid not in event_uuids:
+                if event_uuid not in events_uuids:
                     events_uuids.append(event_uuid)
                     all_events.append(e)
                     found_new = True

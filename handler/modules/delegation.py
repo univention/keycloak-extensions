@@ -104,8 +104,8 @@ class Delegation:
         self.logger.debug("Cleaning up expired actions")
         for s in cleanup_list:
             d = getattr(actions, s.classname)(
-                json.loads(s.args), args, 0, "ipAddress")
+                json.loads(s.args), 0, "ipAddress")
             d.cleanup()
             da = getattr(actions, s.classname)(
-                json.loads(s.args), args, 0, "code_id")
+                json.loads(s.args), 0, "code_id")
             da.cleanup()
