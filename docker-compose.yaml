@@ -1,0 +1,50 @@
+version: "3.7"
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:19.0.0
+    command: start-dev --http-enabled=true
+    ports:
+      - 5050:8080
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=univention
+      - PROXY_ADDRESS_FORWARDING=true
+      - KC_PROXY=edge
+      - KEYCLOAK_LOGLEVEL=ALL
+      - ROOT_LOGLEVEL=ALL
+
+  proxy:
+    container_name: keycloak-extensions-proxy
+    image: keycloak-proxy:develop
+    build: ./proxy
+    ports:
+      - 8181:8181
+    environment:
+      KEYCLOAK_SERVER: keycloak:8080
+      KEYCLOAK_PROTOCOL: http
+      TARGET_EMAILS: jaimecondel@gmail.com
+      SENDER_MAIL: jaime.conde@satelecupm.com
+      SMTP_SERVER: mail.satelecupm.com
+      SMTP_PASSWORD: thieyeo8aiPhitie9aeyeex9
+      API_SECRET: someapikey
+
+  handler:
+    container_name: keycloak-extensions-handler
+    image: keycloak-handler:develop
+    build: ./handler
+    depends_on:
+      - keycloak
+    environment:
+      KC_REALM: master
+      KC_AUTH_URL: http://keycloak:8080/admin
+      KC_USER: admin
+      KC_PASS: univention
+      MAIL_USER: jaime.conde@satelecupm.com
+      MAIL_PASS: thieyeo8aiPhitie9aeyeex9
+      MAIL_SERVER: mail.satelecupm.com
+      ADMIN_MAIL: jaimecondel@gmail.com
+      UDM_REST_BASE_URL: test
+      UDM_REST_USER: test
+      UDM_REST_PASSWORD: test
+      KC_PROXY: proxy:8181
+      RATE_MINUTES: 10
