@@ -4,14 +4,15 @@ import sys
 import logging
 import time
 
-from utils import parse_event_date
-
 from keycloak import KeycloakAdmin
 
 
 class KeycloakPoller:
 
     def __init__(self):
+        """
+        Initialize KeycloakPoller
+        """
         # Configure logging
         log_level = os.environ.get('LOG_LEVEL', 'INFO')
         logging.basicConfig(
@@ -20,7 +21,16 @@ class KeycloakPoller:
             level=log_level)
         self.logger = logging.getLogger(__name__)
 
-        # Connect to Keycloak admin interface
+        self.connect()
+        self.last_polled_event = None
+        self.events = []
+        self.retention_period = os.environ.get("EVENTS_RETENTION_PERIOD", 10)
+        # TODO: read retention time from config
+
+    def connect(self):
+        """
+        Connect to Keycloak admin interface
+        """
         try:
             self.kc_admin = KeycloakAdmin(
                 server_url=os.environ.get("KC_AUTH_URL", None),
@@ -35,39 +45,44 @@ class KeycloakPoller:
             self.logger.error(e)
             sys.exit(1)
 
-    def get_all_events(self):
+    def get_new_events(self):
+        """
+        Get new events from Keycloak
+        """
+        # See `GET /{realm}/events` at https://www.keycloak.org/docs-api/18.0/rest-api/index.html
         filterDate = {
-            "dateFrom": datetime.datetime.now().strftime("%y-%d-%m"),
-            "dateTo": datetime.datetime.now().strftime("%y-%d-%m"),
-            "max": 11
+            # datetime.datetime.now().strftime("%y-%d-%m"),
+            "dateFrom": (datetime.datetime.now() - datetime.timedelta(days=1)).strftime("%Y-%m-%d"),
+            "dateTo": (datetime.datetime.now() + datetime.timedelta(days=1)).strftime("%Y-%m-%d"),
+            "type": "LOGIN_ERROR"
         }
-
-        all_events = []
-        events_uuids = []
-        counter = 1
-        found_new = True
-        run_delegates = True
-
-        while found_new:
-            found_new = False
-            events = self.kc_admin.get_events(
-                filterDate.update({"first": counter * 10}))
-            counter += 1
-            for e in events:
-                event_uuid = e["time"]
-                if not event_uuid:
-                    continue
-                if event_uuid not in events_uuids:
-                    events_uuids.append(event_uuid)
-                    all_events.append(e)
-                    found_new = True
-                    run_delegates = True
-            if found_new is False:
+        # FIXME: if polling every seconds, we are assuming there will be less than 1k failed login attempts per second (if more, we would lose events)
+        last_query_length = 0
+        for i in range(1, 100):
+            filterDate.update({"max": i * 10})
+            try:
+                events = self.kc_admin.get_events(filterDate)
+            except Exception as e:
+                self.logger.debug("Renewing Keycloak connection")
+                self.connect()
+                events = self.kc_admin.get_events(filterDate)
+            if self.last_polled_event in events:
+                events = events[:events.index(self.last_polled_event)]
                 break
-            else:
-                time.sleep(1)
-        self.logger.debug(
-            f"Found {len(all_events)} unique events in {counter} queries")
-        self.logger.debug(f"Run delegates: {run_delegates}")
-        events_time_parsed = [parse_event_date(event) for event in all_events]
-        return (events_time_parsed, run_delegates)
+            if last_query_length == len(events):
+                break
+            last_query_length = len(events)
+        self.logger.debug(f"Found {len(events)} unique events in {i} queries")
+        if len(events) > 0:
+            self.last_polled_event = events[0]
+        return events
+
+    def update_events(self):
+        """
+        Retrieve new events, add them to the state and discard events older than `retention_period`
+        """
+        new_events = self.get_new_events()
+        self.events.extend(new_events)
+        self.events = [e for e in self.events if (
+            datetime.datetime.now().timestamp() - e["time"]/1000)/60 < self.retention_period]
+        return self.events
