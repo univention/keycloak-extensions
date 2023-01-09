@@ -1,0 +1,18 @@
+{
+  "name": "keycloak-proxy",
+  "version": "1.0.0",
+  "description": "A proxy to intercept, modify and block requests to Keycloak",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jaime Conde Segovia",
+  "license": "AGPL-3.0-only",
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "express": "^4.18.2",
+    "http-proxy-middleware": "^2.0.6",
+    "pg": "^8.8.0",
+    "winston": "^3.8.2"
+  }
+}
