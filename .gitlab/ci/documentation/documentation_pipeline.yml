@@ -1,3 +1,6 @@
+# The following to pipeline is based on the documentation and cookiecutter project generator at:
+# https://git.knut.univention.de/univention/documentation/docs-template/-/tree/main/
+
 include:
   - project: 'univention/documentation/sphinx-docker'
     file: 'pipeline/sphinx.yml'
@@ -11,9 +14,7 @@ variables:
   # Check the README for more information about the variables:
   # https://git.knut.univention.de/univention/documentation/sphinx-docker/-/blob/main/README.rst
   DOCS_DIR: "docs"
-  # TODO: Move this to use $CI_PROJECT_ID
   DOC_TARGET_NAME: "keycloak-extensions"
-  DOC_TARGET_VERSION: "$CI_COMMIT_TAG"
   DOC_TARGET_PATH: "$DOC_TARGET_NAME/$DOC_TARGET_VERSION"
 
 link_check:
@@ -83,7 +84,7 @@ pages:
 docs_production:
   stage: deploy
   cache:
-    key: docs-$CI_COMMIT_REF_SLUG
+    key: "docs-${DOC_TARGET_VERSION}"
     paths:
       - univention-docs
   interruptible: false
