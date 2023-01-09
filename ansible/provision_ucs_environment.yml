@@ -1,6 +1,10 @@
 ---
 - hosts: "all"
   roles:
+    - name: "add_ssh_key"
+      tags:
+        - "ucs"
+        - "ssh"
     - name: "ucs-base"
       tags:
         - "ucs"

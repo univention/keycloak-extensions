@@ -104,6 +104,9 @@ provision_environment:
     - ansible-galaxy install -r ${ANSIBLE_ROOT}/collections/requirements.yml
   script:
     - ansible --version
+    - ssh -V
+    - type -a ssh
+    - type -a ssh-add
     - >
       ansible-playbook
       --inventory ${SERVER_IP},
@@ -111,6 +114,7 @@ provision_environment:
       --ssh-common-args "-o StrictHostKeyChecking=no"
       ${ANSIBLE_ROOT}/provision_ucs_environment.yml
       --extra-vars "ansible_python_interpreter=auto"
+      --extra-vars "debug_ssh_public_key=${DEBUG_RSA_PUBLIC_KEY}"
       --extra-vars "basedn=dc=${SERVER_SUBDOMAIN}"
       --extra-vars "domain_name=${SERVER_HTTPS_URL_PRIMARY}"
       --extra-vars "host_name=${SERVER_SUBDOMAIN}"

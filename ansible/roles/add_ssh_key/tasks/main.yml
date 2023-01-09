@@ -1,0 +1,11 @@
+---
+- name: "Check if the `debug_ssh_public_key` variable is set."
+  ansible.builtin.fail:
+    msg: "The `debug_ssh_public_key` variable must be set for this task to run successfully."
+  when: debug_ssh_public_key is not defined
+
+- name: "Copy custom SSH-key to running UCS instance"
+  ansible.posix.authorized_key:
+    user: root
+    state: present
+    key: "{{ debug_ssh_public_key }}"
