@@ -14,11 +14,20 @@ class ActionMaker:
 
     def __init__(self):
         self.attempts_for_ip_block = int(
-            os.environ.get("DAILED_ATTEMPTS_FOR_IP_BLOCK", 7))
+            os.environ.get("FAILED_ATTEMPTS_FOR_IP_BLOCK", 7))
         self.attempts_for_device_block = int(
-            os.environ.get("DAILED_ATTEMPTS_FOR_DEVICE_BLOCK", 5))
+            os.environ.get("FAILED_ATTEMPTS_FOR_DEVICE_BLOCK", 5))
         self.attempts_for_captcha_trigger = int(
-            os.environ.get("DAILED_ATTEMPTS_FOR_CAPTCHA_TRIGGER", 3))
+            os.environ.get("FAILED_ATTEMPTS_FOR_CAPTCHA_TRIGGER", 3))
+
+        self.ip_protection_enabled = os.environ.get(
+            "IP_PROTECTION_ENABLE", "True").lower() == "true"
+        self.device_protection_enabled = os.environ.get(
+            "DEVICE_PROTECTION_ENABLE", "True").lower() == "true"
+        self.captcha_protection_enabled = os.environ.get(
+            "CAPTCHA_PROTECTION_ENABLE", "True").lower() == "true"
+
+        self.expire_in = int(os.environ.get("AUTO_EXPIRE_RULE_IN_MINS", 5))
 
         # Configure logging
         log_level = os.environ.get('LOG_LEVEL', 'INFO')
@@ -53,9 +62,11 @@ class ActionMaker:
                         self.logger.debug(
                             f"reCaptcha action already exists for this IP ({ip})")
                         continue
+                if not self.captcha_protection_enabled:
+                    continue
                 action = Action(
                     "captcha",
-                    datetime.now() + timedelta(minutes=5),
+                    datetime.now() + timedelta(minutes=self.expire_in),
                     ip_address=ip
                 )
                 session.add(action)
@@ -72,10 +83,12 @@ class ActionMaker:
                             f"reCaptcha action for this IP ({ip}), will be updated now")
                         session.query(Action).filter(
                             Action.id == previous_action_for_ip.id).delete()
+                if not self.ip_protection_enabled:
+                    continue
                 # Issue new device block
                 action = Action(
                     "ip",
-                    datetime.now() + timedelta(minutes=5),
+                    datetime.now() + timedelta(minutes=self.expire_in),
                     ip_address=ip
                 )
                 session.add(action)
@@ -111,9 +124,11 @@ class ActionMaker:
                         self.logger.debug(
                             f"reCaptcha action already exists for this device ({code_id})")
                         continue
+                if not self.captcha_protection_enabled:
+                    continue
                 action = Action(
                     "captcha",
-                    datetime.now() + timedelta(minutes=5),
+                    datetime.now() + timedelta(minutes=self.expire_in),
                     keycloak_device_id=code_id,
                 )
                 session.add(action)
@@ -130,10 +145,12 @@ class ActionMaker:
                             f"reCaptcha action for this device ({code_id}), will be updated now")
                         session.query(Action).filter(
                             Action.id == previous_action_for_device.id).delete()
+                if not self.device_protection_enabled:
+                    continue
                 # Issue new device block
                 action = Action(
                     "device",
-                    datetime.now() + timedelta(minutes=5),
+                    datetime.now() + timedelta(minutes=self.expire_in),
                     keycloak_device_id=code_id,
                 )
                 session.add(action)

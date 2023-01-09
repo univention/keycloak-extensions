@@ -8,48 +8,48 @@ const {
 const { 
   getDeviceByIpOrUserAgent,
   getDeviceByCookie,
-  getDeviceByFingerprintCookie 
+  getDeviceByFingerprintCookie,
+  getActionsForIP,
+  getActionsForDevice,
 } = require("../database");
 
 const router = express.Router();
 
+
+// FIXME: Not clean, but workaround for:
+// https://github.com/chimurai/http-proxy-middleware/issues/318
+const fetchBlockActions = async (req, res, next) => {
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  req._ipBlockActions = await getActionsForIP(ip, "ip");
+  req._deviceBlockActions = await getActionsForDevice(
+    req.cookies["AUTH_SESSION_ID"] ?? req.cookies["AUTH_SESSION_ID_LEGACY"],
+    "device");
+  next();
+}
+
+const fetchCaptchaActions = async (req, res, next) => {
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  req._ipCaptchaActions = await getActionsForIP(ip, "captcha");
+  req._deviceCaptchaActions = await getActionsForDevice(req.cookies["AUTH_SESSION_ID"] ?? req.cookies["AUTH_SESSION_ID_LEGACY"], "captcha");
+  next();
+}
+
 /**
- * @name /
+ * @name *\/openid-connect/auth*
  * @desc
- * Proxy everything Keycloak related
+ * Proxy everything Keycloak login form template fetch and inject fingerprintjs
  */
-router.use("/", createProxyMiddleware({
+router.use("*/openid-connect/auth*", fetchCaptchaActions, createProxyMiddleware({
   target: process.env.KEYCLOAK_URL,
   logLevel: `${process.env.LOG_LEVEL}`.toLowerCase() ?? "info",
   // pathFilter: "**/openid-connect/auth**",  // Micromatch
   pathFilter: "**",
   selfHandleResponse: true,
+  ws: true,
   logger: logger,
-  onProxyReq: function onProxyReq(proxyReq, req, res) {
-    // TODO: Check if IP block actions
-
-    // TODO: Check if device block actions
-
-    // TODO: Check if reCaptcha actions
-    // proxyReq.setHeader('X-SUSPICIOUS-REQUEST', 1);
-
-    // res.writeHead(429, {
-    //   'Content-Type': 'text/plain',
-    // });
-    // res.end('Too many failed attempts. Wait for cooldown.');
-
-
-    if (req.path.includes("login-actions/authenticate") && req.method === "POST") {
-      const userAgent = req.headers["user-agent"];
-      const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-      logger.debug(req.cookies);
-      // const a = getDeviceByIpOrUserAgent(ip, userAgent);
-      // const b = getDeviceByCookie(req.cookies["AUTH_SESSION_ID"]); // This is the event["code_id"]
-      // const c = getDeviceByFingerprintCookie(req.cookies["DEVICE_FINGERPRINT"]);
-    }
-    // logger.debug(userAgent);
-    // logger.debug(ip);
-
+  onProxyReq: (proxyReq, req, res) => {
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    proxyReq.setHeader("x-forwarded-for", ip);
   },
   onProxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
       if (
@@ -72,17 +72,84 @@ router.use("/", createProxyMiddleware({
           console.log(visitorId)
           document.cookie = 'DEVICE_FINGERPRINT=' + visitorId+ ';path=/';
           })
-          </script>`;
-      };
-      if (
-        req.path.includes("login-actions/authenticate") &&
-        req.method === "POST" &&
-        res.statusCode === 302) {
-          // TODO: notify user if new domain
-          logger.debug("Login succeded, notify user if new device.")
+      </script>`;
       };
       return responseBuffer;
   }),
+}));
+
+/**
+ * @name *\/login-actions/authenticate*
+ * @desc
+ * Proxy everything Keycloak login post attempts to take actions
+ */
+router.use("*/login-actions/authenticate*", fetchCaptchaActions, fetchBlockActions, createProxyMiddleware({
+  target: process.env.KEYCLOAK_URL,
+  logLevel: `${process.env.LOG_LEVEL}`.toLowerCase() ?? "info",
+  pathFilter: "**",
+  ws: true,
+  logger: logger,
+  onProxyReq: (proxyReq, req, res) => {
+
+    if (req.path.includes("login-actions/authenticate") && req.method === "POST") {
+  
+      const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+      proxyReq.setHeader("x-forwarded-for", ip);
+  
+      if (req._ipBlockActions.rows.length > 0) {
+          logger.debug("IP block");
+          res.writeHead(429, {
+            'Content-Type': 'text/plain',
+          });
+          res.end('Too many failed login attempts on this IP. Wait for cooldown.');
+          return;
+      }
+
+      if (req._deviceBlockActions.rows.length > 0) {
+        logger.debug("Device block");
+        res.writeHead(429, {
+          'Content-Type': 'text/plain',
+        });
+        res.end('Too many failed login attempts on this device. Wait for cooldown.');
+        return
+      }
+  
+      // const c = getDeviceByFingerprintCookie(req.cookies["DEVICE_FINGERPRINT"]);
+    }
+  },
+  onProxyRes: (proxyRes, req, res) => {
+    if (
+      req.path.includes("login-actions/authenticate") &&
+      req.method === "POST" && !res.finished) {
+        if (res.statusCode === 302) {
+          // TODO: notify user if new domain
+        logger.debug("Login succeded, notify user if new device.")
+        }
+        if (req._ipCaptchaActions.rows.length > 0) {
+          logger.debug("login-actions reCaptcha IP");
+          res.setHeader('X-SUSPICIOUS-REQUEST', 1);
+          return;
+        };
+    
+        if (req._deviceCaptchaActions.rows.length > 0) {
+          logger.debug("login-actions reCaptcha device");
+          res.setHeader('X-SUSPICIOUS-REQUEST', 1);
+          return;
+        };
+    };
+  },
+}));
+
+/**
+ * @name /
+ * @desc
+ * Proxy most of the requests not involving auth
+ */
+router.use("/", createProxyMiddleware({
+  target: process.env.KEYCLOAK_URL,
+  logLevel: `${process.env.LOG_LEVEL}`.toLowerCase() ?? "info",
+  pathFilter: "**",
+  logger: logger
 }));
 
 module.exports = router;

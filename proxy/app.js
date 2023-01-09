@@ -22,9 +22,11 @@ app.get("/test", function (req, res) {
 /**
  * @name /
  * @desc
- * Proxy endpoint to handle all the requests
+ * Proxy endpoint to handle all requests
  */
 app.use("/", proxy);
+
+
 
 var server = app.listen(process.env.PORT, function () {
     var host = server.address().address;

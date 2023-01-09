@@ -1,7 +1,10 @@
 version: "3.7"
 services:
   keycloak:
-    image: quay.io/keycloak/keycloak:19.0.0
+    container_name: keycloak
+    # image: quay.io/keycloak/keycloak:19.0.0
+    image: keycloak:captcha
+    build: ./keycloak
     command: start-dev --http-enabled=true
     ports:
       - 5050:8080
@@ -15,36 +18,61 @@ services:
 
   proxy:
     container_name: keycloak-extensions-proxy
-    image: keycloak-proxy:develop
+    image: keycloak-extensions-proxy:develop
     build: ./proxy
     ports:
       - 8181:8181
+    depends_on:
+      - keycloak
+      - database
+      - handler
     environment:
-      KEYCLOAK_SERVER: keycloak:8080
-      KEYCLOAK_PROTOCOL: http
-      TARGET_EMAILS: jaimecondel@gmail.com
-      SENDER_MAIL: jaime.conde@satelecupm.com
-      SMTP_SERVER: mail.satelecupm.com
-      SMTP_PASSWORD: thieyeo8aiPhitie9aeyeex9
-      API_SECRET: someapikey
+      KEYCLOAK_URL: http://keycloak:8080
+      LOG_LEVEL: debug
+      # Database
+      POSTGRES_USER: postgres
+      POSTGRES_HOST: database
+      POSTGRES_DATABASE_NAME: handler
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_PORT: 5432
 
   handler:
     container_name: keycloak-extensions-handler
-    image: keycloak-handler:develop
+    image: keycloak-extensions-handler:develop
     build: ./handler
     depends_on:
       - keycloak
+      - database
     environment:
-      KC_REALM: master
+      # Keycloak
       KC_AUTH_URL: http://keycloak:8080/admin
       KC_USER: admin
       KC_PASS: univention
-      MAIL_USER: jaime.conde@satelecupm.com
-      MAIL_PASS: thieyeo8aiPhitie9aeyeex9
-      MAIL_SERVER: mail.satelecupm.com
-      ADMIN_MAIL: jaimecondel@gmail.com
-      UDM_REST_BASE_URL: test
-      UDM_REST_USER: test
-      UDM_REST_PASSWORD: test
-      KC_PROXY: proxy:8181
-      RATE_MINUTES: 10
+      KC_REALM: master
+      # Database
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DATABASE_NAME: handler
+      POSTGRES_HOST: database
+      POSTGRES_PORT: 5432
+      # Logging
+      LOG_LEVEL: DEBUG
+      # Configuration
+      FAILED_ATTEMPTS_FOR_IP_BLOCK: 7
+      FAILED_ATTEMPTS_FOR_DEVICE_BLOCK: 5
+      FAILED_ATTEMPTS_FOR_CAPTCHA_TRIGGER: 3
+      EVENTS_RETENTION_PERIOD: 10
+      AUTO_EXPIRE_RULE_IN_MINS: 5
+      DEVICE_PROTECTION_ENABLE: True
+      IP_PROTECTION_ENABLE: True
+      CAPTCHA_PROTECTION_ENABLE: True
+
+  database:
+    container_name: keycloak-extensions-postgres
+    image: postgres:15.1-alpine
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: handler

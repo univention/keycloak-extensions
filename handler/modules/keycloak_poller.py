@@ -24,8 +24,8 @@ class KeycloakPoller:
         self.connect()
         self.last_polled_event = None
         self.events = []
-        self.retention_period = os.environ.get("EVENTS_RETENTION_PERIOD", 10)
-        # TODO: read retention time from config
+        self.retention_period = int(
+            os.environ.get("EVENTS_RETENTION_PERIOD", 10))
 
     def connect(self):
         """
