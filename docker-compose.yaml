@@ -16,17 +16,26 @@ services:
   proxy:
     container_name: keycloak-extensions-proxy
     image: keycloak-proxy:develop
-    build: ./proxy
+    build: ./node-proxy
     ports:
       - 8181:8181
     environment:
-      KEYCLOAK_SERVER: keycloak:8080
-      KEYCLOAK_PROTOCOL: http
-      TARGET_EMAILS: jaimecondel@gmail.com
-      SENDER_MAIL: jaime.conde@satelecupm.com
-      SMTP_SERVER: mail.satelecupm.com
-      SMTP_PASSWORD: thieyeo8aiPhitie9aeyeex9
+      KEYCLOAK_URL: http://keycloak:8080
+      LOG_LEVEL: debug
+      # Database
+      DB_USER: postgres
+      DB_HOST: postgres
+      DB_NAME: actions
+      DB_PASSWORD: postgres
+      DB_PORT: 5432
+      # Email
+      TARGET_EMAILS: test@example.org
+      SENDER_MAIL: test@example.org
+      SMTP_SERVER: mail.example.org
+      SMTP_PASSWORD: example_password
+      ADMIN_MAIL: admin@example.org
       API_SECRET: someapikey
+      MAIL_BACKOFF_TIME: 5
 
   handler:
     container_name: keycloak-extensions-handler
@@ -35,16 +44,15 @@ services:
     depends_on:
       - keycloak
     environment:
-      KC_REALM: master
-      KC_AUTH_URL: http://keycloak:8080/admin
+      # Keycloak
+      KC_AUTH_URL: http://localhost:5050/admin
       KC_USER: admin
-      KC_PASS: univention
-      MAIL_USER: jaime.conde@satelecupm.com
-      MAIL_PASS: thieyeo8aiPhitie9aeyeex9
-      MAIL_SERVER: mail.satelecupm.com
-      ADMIN_MAIL: jaimecondel@gmail.com
-      UDM_REST_BASE_URL: test
-      UDM_REST_USER: test
-      UDM_REST_PASSWORD: test
-      KC_PROXY: proxy:8181
-      RATE_MINUTES: 10
+      KC_PASS: admin
+      KC_REALM: master
+      # Logging
+      LOG_LEVEL: debug
+      # Configuration
+      DAILED_ATTEMPTS_FOR_IP_BLOCK: 7
+      DAILED_ATTEMPTS_FOR_DEVICE_BLOCK: 5
+      DAILED_ATTEMPTS_FOR_CAPTCHA_TRIGGER: 3
+      EVENTS_RETENTION_PERIOD: 10
