@@ -1,4 +1,6 @@
 const express = require("express");
+const jwt_decode = require("jwt-decode");
+const setCookie = require('set-cookie-parser');
 const { createProxyMiddleware, responseInterceptor } = require("http-proxy-middleware");
 
 const {
@@ -6,12 +8,11 @@ const {
 } = require("../utils");
 
 const { 
-  getDeviceByIpOrUserAgent,
-  getDeviceByCookie,
-  getDeviceByFingerprintCookie,
+  saveFingerprintToDeviceRelation,
   getActionsForIP,
   getActionsForDevice,
 } = require("../database");
+const { response } = require("express");
 
 const router = express.Router();
 
@@ -34,6 +35,30 @@ const fetchCaptchaActions = async (req, res, next) => {
   next();
 }
 
+const applyBlocks = (req, res, next) => {
+
+  if (req.method !== "POST") next();
+  if (req._deviceBlockActions.rows.length === 0 && req._ipBlockActions.rows.length === 0) next();
+  if (req._ipBlockActions.rows.length > 0) {
+    logger.debug("IP block");
+    res.writeHead(429, {
+      'Content-Type': 'text/plain',
+    });
+    res.end('Too many failed login attempts on this IP. Wait for cooldown.');
+    return;
+  }
+
+
+  if (req._deviceBlockActions.rows.length > 0) {
+    logger.debug("Device block");
+    res.writeHead(429, {
+      'Content-Type': 'text/plain',
+    });
+    res.end('Too many failed login attempts on this device. Wait for cooldown.');
+    return;
+  }
+};
+
 /**
  * @name *\/openid-connect/auth*
  * @desc
@@ -52,10 +77,11 @@ router.use("*/openid-connect/auth*", fetchCaptchaActions, createProxyMiddleware(
     proxyReq.setHeader("x-forwarded-for", ip);
   },
   onProxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
+      if (res.writableEnded) return responseBuffer;
       if (
       req.path.includes("openid-connect/auth") &&
       req.method === "GET" &&
-      proxyRes.headers['content-type'].includes("text/html")
+      (proxyRes.headers['content-type'] ?? "").includes("text/html")
       ) {
       const response = responseBuffer.toString('utf8'); // Convert buffer to string
       return response + `<script>
@@ -83,11 +109,12 @@ router.use("*/openid-connect/auth*", fetchCaptchaActions, createProxyMiddleware(
  * @desc
  * Proxy everything Keycloak login post attempts to take actions
  */
-router.use("*/login-actions/authenticate*", fetchCaptchaActions, fetchBlockActions, createProxyMiddleware({
+router.use("*/login-actions/authenticate*", fetchCaptchaActions, fetchBlockActions, applyBlocks, createProxyMiddleware({
   target: process.env.KEYCLOAK_URL,
   logLevel: `${process.env.LOG_LEVEL}`.toLowerCase() ?? "info",
   pathFilter: "**",
   ws: true,
+  selfHandleResponse: true,
   logger: logger,
   onProxyReq: (proxyReq, req, res) => {
 
@@ -95,49 +122,28 @@ router.use("*/login-actions/authenticate*", fetchCaptchaActions, fetchBlockActio
   
       const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
       proxyReq.setHeader("x-forwarded-for", ip);
-  
-      if (req._ipBlockActions.rows.length > 0) {
-          logger.debug("IP block");
-          res.writeHead(429, {
-            'Content-Type': 'text/plain',
-          });
-          res.end('Too many failed login attempts on this IP. Wait for cooldown.');
-          return;
-      }
-
-      if (req._deviceBlockActions.rows.length > 0) {
-        logger.debug("Device block");
-        res.writeHead(429, {
-          'Content-Type': 'text/plain',
-        });
-        res.end('Too many failed login attempts on this device. Wait for cooldown.');
-        return
-      }
-  
-      // const c = getDeviceByFingerprintCookie(req.cookies["DEVICE_FINGERPRINT"]);
     }
   },
-  onProxyRes: (proxyRes, req, res) => {
+  onProxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
     if (
       req.path.includes("login-actions/authenticate") &&
-      req.method === "POST" && !res.finished) {
+      req.method === "POST" ) {
         if (res.statusCode === 302) {
-          // TODO: notify user if new domain
-        logger.debug("Login succeded, notify user if new device.")
-        }
-        if (req._ipCaptchaActions.rows.length > 0) {
-          logger.debug("login-actions reCaptcha IP");
-          res.setHeader('X-SUSPICIOUS-REQUEST', 1);
-          return;
-        };
-    
-        if (req._deviceCaptchaActions.rows.length > 0) {
-          logger.debug("login-actions reCaptcha device");
-          res.setHeader('X-SUSPICIOUS-REQUEST', 1);
-          return;
-        };
+          logger.debug("Login succeded, notify user if new device.")
+          // logger.debug(req.headers["set-cookie"])
+          const cookies = setCookie.parse(proxyRes, {map: true});
+          logger.debug(cookies);
+          const token = jwt_decode(cookies["KEYCLOAK_IDENTITY"].value ?? cookies["KEYCLOAK_IDENTITY_LEGACY"].value)
+          logger.debug(token)
+          await saveFingerprintToDeviceRelation(
+            req.cookies["DEVICE_FINGERPRINT"],
+            req.cookies["AUTH_SESSION_ID"] ?? req.cookies["AUTH_SESSION_ID_LEGACY"],
+            token.sub
+          );
+      }
     };
-  },
+    return responseBuffer;
+  }),
 }));
 
 /**

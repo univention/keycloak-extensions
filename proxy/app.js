@@ -11,15 +11,6 @@ app.use(express.static('public'));
 app.use(cookieParser());
 
 /**
- * @name /test
- * @desc
- * Simple endpoint to check if everything is working
- */
-app.get("/test", function (req, res) {
-    res.send("<p>Hello</p>");
-  });
-
-/**
  * @name /
  * @desc
  * Proxy endpoint to handle all requests

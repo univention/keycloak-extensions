@@ -55,7 +55,7 @@ class ActionMaker:
                         f"IP block already exists for this IP ({ip})")
                     continue
             # Enough attempts for reCaptcha, not enough for IP block
-            if len(ip_events) >= self.attempts_for_captcha_trigger and len(ip_events) < self.attempts_for_ip_block:
+            if self.attempts_for_captcha_trigger <= len(ip_events) < self.attempts_for_ip_block:
                 # Already a reCaptcha action issued for this IP
                 if previous_action_for_ip is not None:
                     if previous_action_for_ip.action == "captcha":
@@ -85,7 +85,7 @@ class ActionMaker:
                             Action.id == previous_action_for_ip.id).delete()
                 if not self.ip_protection_enabled:
                     continue
-                # Issue new device block
+                # Issue new ip block
                 action = Action(
                     "ip",
                     datetime.now() + timedelta(minutes=self.expire_in),
@@ -117,7 +117,7 @@ class ActionMaker:
                         f"Device block already exists for this device ({code_id})")
                     continue
             # Enough attempts for reCaptcha, not enough for device block
-            if len(code_id_events) >= self.attempts_for_captcha_trigger and len(code_id_events) < self.attempts_for_device_block:
+            if self.attempts_for_captcha_trigger <= len(code_id_events) < self.attempts_for_device_block:
                 # Already a reCaptcha action issued for this device
                 if previous_action_for_device is not None:
                     if previous_action_for_device.action == "captcha":
