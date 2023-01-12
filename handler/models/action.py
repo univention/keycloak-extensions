@@ -4,11 +4,16 @@ from sqlalchemy import Column, Integer, String, Float, DateTime
 
 class Action(database.Base):
     """
-    Action 
+    Action
+
+    Description:
+        This table holds actions to prevent brute force attacks, and this can
+        be `captcha`, `device` or `IP`, depending on the rules configured. This
+        actions will be executed by the proxy and should autoexpire. 
 
     Attributes:
         action (str): `captcha`, `ip`, `device`
-        expiration (datetime): # FIXME: change to timestamp
+        expiration (datetime):
         keycloak_device_id (str): 
         fingerprint_device_id (str):
         ip_address (str):  

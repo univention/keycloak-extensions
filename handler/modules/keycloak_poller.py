@@ -4,6 +4,10 @@ import sys
 import logging
 import time
 
+from modules import mail
+from database import session
+from models.device import Device
+
 from keycloak import KeycloakAdmin
 
 
@@ -23,9 +27,10 @@ class KeycloakPoller:
 
         self.connect()
         self.last_polled_event = None
+        self.last_notified_event = None
         self.events = []
         self.retention_period = int(
-            os.environ.get("EVENTS_RETENTION_PERIOD", 10))
+            os.environ.get("EVENTS_RETENTION_MINUTES", 10))
 
     def connect(self):
         """
@@ -54,7 +59,7 @@ class KeycloakPoller:
             # datetime.datetime.now().strftime("%y-%d-%m"),
             "dateFrom": (datetime.datetime.now() - datetime.timedelta(days=1)).strftime("%Y-%m-%d"),
             "dateTo": (datetime.datetime.now() + datetime.timedelta(days=1)).strftime("%Y-%m-%d"),
-            "type": "LOGIN_ERROR"
+            "type": ["LOGIN_ERROR"]
         }
         # FIXME: if polling every seconds, we are assuming there will be less than 1k failed login attempts per second (if more, we would lose events)
         last_query_length = 0
@@ -86,3 +91,40 @@ class KeycloakPoller:
         self.events = [e for e in self.events if (
             datetime.datetime.now().timestamp() - e["time"]/1000)/60 < self.retention_period]
         return self.events
+
+    def get_user_email(self, user_id):
+        user = self.kc_admin.get_user(user_id)
+        return user.get("email", None)
+
+    # def notify_new_device_logins(self):
+    #     if self.last_notified_event in self.events:
+    #         return
+    #     else:
+    #         login_events = [e for e in self.events if e.get("type") == "LOGIN"]
+    #     for event in login_events:
+    #         if event.get("userId", None) is None:
+    #             continue
+    #         user_email = self.get_user_email(event["userId"])
+    #         if user_email is None:
+    #             continue
+    #         print(event)
+    #         device = session.query(Device).filter(
+    #             Device.keycloak_device_id == event.get(
+    #                 "details", {}).get("code_id", None)
+    #         ).first()
+    #         if not device:
+    #             continue
+    #         if device.is_notified:
+    #             continue
+    #         e = mail.Email(
+    #             user_email,
+    #             {
+    #                 "Time": datetime.datetime.fromtimestamp(
+    #                     event.get("time", 0)/1000
+    #                 ) if event.get("time") is not None else "unknown",
+    #                 "IP": event.get("ipAddress", "unknown"),
+    #                 "Device ID": event.get("details", {}).get("code_id", "unknown")
+    #             }
+    #         )
+    #         e.send()
+    #         self.last_notified_event = event

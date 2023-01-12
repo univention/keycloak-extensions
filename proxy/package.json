@@ -6,13 +6,15 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Jaime Conde Segovia",
+  "author": "Univention",
   "license": "AGPL-3.0-only",
   "dependencies": {
-    "cookie-parser": "^1.4.6",
-    "express": "^4.18.2",
-    "http-proxy-middleware": "^2.0.6",
-    "pg": "^8.8.0",
-    "winston": "^3.8.2"
+    "cookie-parser": "1.4.6",
+    "express": "4.18.2",
+    "http-proxy-middleware": "2.0.6",
+    "jwt-decode": "3.1.2",
+    "pg": "8.8.0",
+    "set-cookie-parser": "2.5.1",
+    "winston": "3.8.2"
   }
 }

@@ -2,9 +2,9 @@ version: "3.7"
 services:
   keycloak:
     container_name: keycloak
-    # image: quay.io/keycloak/keycloak:19.0.0
-    image: keycloak:captcha
-    build: ./keycloak
+    image: quay.io/keycloak/keycloak:19.0.0
+    # image: keycloak:captcha
+    # build: ./keycloak
     command: start-dev --http-enabled=true
     ports:
       - 5050:8080
@@ -41,7 +41,7 @@ services:
     image: keycloak-extensions-handler:develop
     build: ./handler
     depends_on:
-      - keycloak
+      # - keycloak
       - database
     environment:
       # Keycloak
@@ -61,11 +61,16 @@ services:
       FAILED_ATTEMPTS_FOR_IP_BLOCK: 7
       FAILED_ATTEMPTS_FOR_DEVICE_BLOCK: 5
       FAILED_ATTEMPTS_FOR_CAPTCHA_TRIGGER: 3
-      EVENTS_RETENTION_PERIOD: 10
-      AUTO_EXPIRE_RULE_IN_MINS: 5
-      DEVICE_PROTECTION_ENABLE: True
-      IP_PROTECTION_ENABLE: True
-      CAPTCHA_PROTECTION_ENABLE: True
+      EVENTS_RETENTION_MINUTES: 1
+      AUTO_EXPIRE_RULE_IN_MINS: 1
+      DEVICE_PROTECTION_ENABLE: "True"
+      IP_PROTECTION_ENABLE: "True"
+      CAPTCHA_PROTECTION_ENABLE: "True"
+      # Email
+      SMTP_SERVER: mail.example.org
+      SMTP_PORT: 587
+      SENDER_EMAIL: univention@example.org
+      SENDER_EMAIL_PASSWORD: somepassword
 
   database:
     container_name: keycloak-extensions-postgres

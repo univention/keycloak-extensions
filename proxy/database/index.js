@@ -1,10 +1,8 @@
-const { getDeviceByIpOrUserAgent, getDeviceByCookie, getDeviceByFingerprintCookie } = require("./devices");
+const { saveFingerprintToDeviceRelation } = require("./devices");
 const { getActionsForIP, getActionsForDevice } = require("./actions");
 
 module.exports = {
-    getDeviceByIpOrUserAgent,
-    getDeviceByCookie,
-    getDeviceByFingerprintCookie,
+    saveFingerprintToDeviceRelation,
     getActionsForIP,
     getActionsForDevice
 }
