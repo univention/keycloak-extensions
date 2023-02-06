@@ -91,5 +91,4 @@ services:
       - database
       - handler
       - proxy
-    environment:
-      PROXY_BASE_URL: http://proxy:8181
+    command: pytest --base-url http://proxy:8181
