@@ -27,6 +27,6 @@ docker_pipeline:
 tests:
   stage: test
   trigger:
-    include: "/.gitlab/tests/docker_tests.yml"
+    include: "/.gitlab/ci/tests/docker_tests.yml"
   rules:
     - when: always
