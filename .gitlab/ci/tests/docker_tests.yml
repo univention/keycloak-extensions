@@ -1,0 +1,24 @@
+stages:
+  - test
+
+image:
+  name: docker/compose:latest
+
+services:
+  - docker:dind
+
+before_script:
+  - docker version
+  - docker-compose version
+  - docker-compose build
+
+tests:
+  stage: test
+  script:
+    - docker-compose up -d keycloak database
+    - sleep 60
+    - docker-compose up -d proxy handler
+    - docker-compose up --exit-code-from e2e-tests
+
+after_script:
+  - docker-compose down
