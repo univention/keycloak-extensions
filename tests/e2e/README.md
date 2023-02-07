@@ -48,7 +48,7 @@ Some other useful supported options:
 ## For test engineers
 
 We use the [page object pattern](https://martinfowler.com/bliki/PageObject.html)
-to represent Portal pages. The page objects are in `src/pages`.
+to represent Keycloak admin pages. The page objects are in `src/pages`.
 
 You can pip install the page objects as a package using
 
