@@ -91,4 +91,4 @@ services:
       - database
       - handler
       - proxy
-    command: pytest --base-url http://proxy:8181
+    command: pytest --base-url http://proxy:8181 --slowmo 500
