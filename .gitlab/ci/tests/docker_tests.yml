@@ -18,6 +18,7 @@ tests:
     - docker-compose up -d keycloak database
     - sleep 60
     - docker-compose up -d proxy handler
+    - sleep 10
     - docker-compose up --exit-code-from e2e-tests
 
 after_script:
