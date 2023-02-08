@@ -86,6 +86,7 @@ services:
   e2e-tests:
     container_name: e2e-tests
     image: e2e-tests:develop
+    init: true
     build: ./tests/e2e
     depends_on:
       - keycloak
