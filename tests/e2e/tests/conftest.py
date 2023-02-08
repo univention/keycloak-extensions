@@ -121,7 +121,7 @@ def agent_chromium_ip_1_trigger_device_block(agent_chromium_ip_1_page,
     yield
     now = datetime.datetime.now()
     seconds_since_block = (now - block_initiated_at).total_seconds()
-    remaining = min(0, release_duration - seconds_since_block)
+    remaining = max(0, release_duration - seconds_since_block)
     agent_chromium_ip_1_page.wait_for_timeout(round(remaining * 1000) + 1)  # + 1 for safety
     # Consider adding a check here to see if login is actually working
     # Remember: the state here might be logged-in
@@ -152,5 +152,5 @@ def trigger_ip_block(agent_chromium_ip_1_page,
     yield
     now = datetime.datetime.now()
     seconds_since_block = (now - block_initiated_at).total_seconds()
-    remaining = min(0, release_duration - seconds_since_block)
+    remaining = max(0, release_duration - seconds_since_block)
     agent_chromium_ip_1_page.wait_for_timeout(round(remaining * 1000) + 1)  # + 1 for safety
