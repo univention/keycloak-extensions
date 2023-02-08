@@ -25,6 +25,6 @@ tests:
     - docker-compose up -d proxy handler
     - sleep 60
     - docker-compose up e2e-tests
-    - docker cp e2e-tests:/e2e/test-results/ $CI_PROJECT_DIR/e2e/
+    - docker cp e2e-tests:/e2e/test-results/ $CI_PROJECT_DIR/tests/e2e/
   after_script:
     - docker-compose down
