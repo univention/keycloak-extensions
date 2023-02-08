@@ -13,7 +13,7 @@ def test_device_block(agent_chromium_ip_1_page,
                       release_duration
                       ):
     admin_login_page = AdminLoginPage(agent_chromium_ip_1_page)
-    expect(admin_login_page.invalid_login_message).to_be_hidden()
+    expect(admin_login_page.invalid_login_message).to_be_visible()
     on_device_block_page = OnDeviceBlockPage(agent_chromium_ip_1_page)
     expect(on_device_block_page.device_blocked_message).to_be_visible()
 
