@@ -15,4 +15,5 @@ class AdminConsolePage(BasePage):
         admin_login_page = AdminLoginPage(self.page)
         admin_login_page.go_there()
         admin_login_page.login(username, password)
+        self.page.wait_for_load_state()
         expect(self.realm_selector).to_be_visible()

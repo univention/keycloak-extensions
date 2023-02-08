@@ -16,7 +16,7 @@ class AdminLoginPage(BasePage):
         welcome_page = WelcomePage(self.page)
         welcome_page.go_there()
         welcome_page.click_administrator_console_link()
-        self.page.wait_for_timeout(10000)  # wait for spinner
+        self.page.wait_for_load_state()
         expect(self.username_input).to_be_visible()
         expect(self.password_input).to_be_visible()
         expect(self.submit_button).to_be_visible()
