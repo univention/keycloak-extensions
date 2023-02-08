@@ -28,5 +28,6 @@ tests:
   stage: test
   trigger:
     include: "/.gitlab/ci/tests/docker_tests.yml"
+    strategy: depend
   rules:
     - when: always
