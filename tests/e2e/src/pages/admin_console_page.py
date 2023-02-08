@@ -10,6 +10,8 @@ class AdminConsolePage(BasePage):
         self.realm_selector = self.page.get_by_test_id("realmSelectorToggle")
 
     def go_there(self, username, password):
+        # The navigation always starts from the welcome page
+        # Think: How to handle navigation from logged in to logged in pages?
         admin_login_page = AdminLoginPage(self.page)
         admin_login_page.go_there()
         admin_login_page.login(username, password)

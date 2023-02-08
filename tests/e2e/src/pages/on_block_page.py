@@ -16,6 +16,7 @@ class OnDeviceBlockPage(BasePage):
 
     def go_there(self, username, wrong_password, failed_attempts_for_device_block):
         admin_login_page = AdminLoginPage(self.page)
+        admin_login_page.go_there()
         for _ in range(failed_attempts_for_device_block):
             admin_login_page.login(username, wrong_password)
             expect(admin_login_page.invalid_login_message).to_be_visible()
