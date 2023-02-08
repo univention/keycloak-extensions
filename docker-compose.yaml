@@ -29,7 +29,7 @@ services:
       - handler
     environment:
       KEYCLOAK_URL: http://keycloak:8080
-      LOG_LEVEL: info
+      LOG_LEVEL: debug
       # Database
       POSTGRES_USER: postgres
       POSTGRES_HOST: database
@@ -57,7 +57,7 @@ services:
       POSTGRES_HOST: database
       POSTGRES_PORT: 5432
       # Logging
-      LOG_LEVEL: WARNING
+      LOG_LEVEL: DEBUG
       # Configuration
       FAILED_ATTEMPTS_FOR_IP_BLOCK: 7
       FAILED_ATTEMPTS_FOR_DEVICE_BLOCK: 5
@@ -93,4 +93,4 @@ services:
       - database
       - handler
       - proxy
-    command: pytest --base-url http://proxy:8181 --slowmo 500 --video on
+    command: pytest --base-url http://proxy:8181 --slowmo 500 --video retain-on-failure

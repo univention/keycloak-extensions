@@ -33,6 +33,7 @@ Some other useful supported options:
 
 1. `headed`: Use headed browsers with `--headed`.
 2. `slowmo`: Will run things in slow motion e.g. `--slowmo 500`
+3. `video`: Will save videos. Options are `on` or `retain-on-failure`. E.g. `--video on`
 
 ### Running with `docker`
 

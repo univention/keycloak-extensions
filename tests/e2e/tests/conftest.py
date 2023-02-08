@@ -96,17 +96,23 @@ def agent_page(browser_name, ip):
         page = browser_context.new_page()
         yield page
         browser_context.close()
-        video = page.video
-        if video:
-            try:
-                video_path = video.path()
-                file_name = os.path.basename(video_path)
-                video.save_as(
-                    path=build_artifact_test_folder(pytestconfig, request, file_name)
-                )
-            except Error:
-                # Silent catch empty videos.
-                pass
+        video_option = pytestconfig.getoption("--video")
+        failed = request.node.rep_call.failed if hasattr(request.node, "rep_call") else True
+        preserve_video = video_option == "on" or (
+                failed and video_option == "retain-on-failure"
+        )
+        if preserve_video:
+            video = page.video
+            if video:
+                try:
+                    video_path = video.path()
+                    file_name = os.path.basename(video_path)
+                    video.save_as(
+                        path=build_artifact_test_folder(pytestconfig, request, file_name)
+                    )
+                except Error:
+                    # Silent catch empty videos.
+                    pass
         browser.close()
     return get_agent_page
 
