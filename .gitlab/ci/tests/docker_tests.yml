@@ -23,8 +23,8 @@ tests:
     - docker-compose up -d keycloak database
     - sleep 60
     - docker-compose up -d proxy handler
-    - sleep 60
-    - docker-compose up --exit-code-from e2e-tests
+    - sleep 10
+    - docker-compose run e2e-tests
   after_script:
-    - docker cp e2e-tests:/e2e/test-results/ $CI_PROJECT_DIR/tests/e2e/
+    - docker cp e2e-tests:/e2e/test-results/ $CI_PROJECT_DIR/tests/e2e/ || true
     - docker-compose down
