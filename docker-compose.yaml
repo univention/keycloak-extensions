@@ -57,7 +57,7 @@ services:
       POSTGRES_HOST: database
       POSTGRES_PORT: 5432
       # Logging
-      LOG_LEVEL: DEBUG
+      LOG_LEVEL: WARNING
       # Configuration
       FAILED_ATTEMPTS_FOR_IP_BLOCK: 7
       FAILED_ATTEMPTS_FOR_DEVICE_BLOCK: 5
