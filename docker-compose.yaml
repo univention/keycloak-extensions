@@ -29,7 +29,7 @@ services:
       - handler
     environment:
       KEYCLOAK_URL: http://keycloak:8080
-      LOG_LEVEL: warning
+      LOG_LEVEL: info
       # Database
       POSTGRES_USER: postgres
       POSTGRES_HOST: database
