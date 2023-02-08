@@ -34,6 +34,14 @@ Some other useful supported options:
 1. `headed`: Use headed browsers with `--headed`.
 2. `slowmo`: Will run things in slow motion e.g. `--slowmo 500`
 
+### Running with `docker`
+
+```
+docker build -t e2e:latest .
+docker run -it --network="host" e2e:latest pytest --base-url http://localhost:8181 --slowmo 500
+
+```
+
 ## Available tests
 
 | Test                                                                                                                    | Source                                |
