@@ -60,6 +60,12 @@ def wrong_password():
     return "wrong_password"
 
 
+@pytest.fixture(scope="session")
+def playwright(playwright):
+    yield playwright
+    artifacts_folder.cleanup()
+
+
 def build_artifact_test_folder(pytestconfig, request, folder_or_file_name):
     output_dir = pytestconfig.getoption("--output")
     return os.path.join(output_dir, slugify(request.node.nodeid), folder_or_file_name)

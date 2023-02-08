@@ -17,7 +17,7 @@ tests:
   artifacts:
     when: always
     paths:
-      - $CI_PROJECT_DIR/e2e/test-results/**/*.webm
+      - tests/e2e/test-results/**/*.webm
     expire_in: 1 day
   script:
     - docker-compose up -d keycloak database
