@@ -1,9 +1,15 @@
 import datetime
+import os
+import tempfile
 
-from playwright.sync_api import expect
+from playwright.sync_api import expect, Error
 import pytest
+from slugify import slugify
 
 from pages.admin_login_page import AdminLoginPage
+
+
+artifacts_folder = tempfile.TemporaryDirectory(prefix="playwright-pytest-")
 
 
 def pytest_addoption(parser):
@@ -54,9 +60,14 @@ def wrong_password():
     return "wrong_password"
 
 
+def build_artifact_test_folder(pytestconfig, request, folder_or_file_name):
+    output_dir = pytestconfig.getoption("--output")
+    return os.path.join(output_dir, slugify(request.node.nodeid), folder_or_file_name)
+
+
 def agent_page(browser_name, ip):
     @pytest.fixture
-    def get_agent_page(playwright, pytestconfig):
+    def get_agent_page(playwright, pytestconfig, request):
         browser_type = getattr(playwright, browser_name)
         launch_options = {}
         headed_option = pytestconfig.getoption("--headed")
@@ -70,11 +81,26 @@ def agent_page(browser_name, ip):
         base_url = pytestconfig.getoption("--base-url")
         if base_url:
             browser_context_args["base_url"] = base_url
+        video_option = pytestconfig.getoption("--video")
+        capture_video = video_option in ["on", "retain-on-failure"]
+        if capture_video:
+            browser_context_args["record_video_dir"] = artifacts_folder.name
         browser_context = browser.new_context(**browser_context_args)
         browser_context.set_extra_http_headers({"X-Forwarded-For": ip})
         page = browser_context.new_page()
         yield page
         browser_context.close()
+        video = page.video
+        if video:
+            try:
+                video_path = video.path()
+                file_name = os.path.basename(video_path)
+                video.save_as(
+                    path=build_artifact_test_folder(pytestconfig, request, file_name)
+                )
+            except Error:
+                # Silent catch empty videos.
+                pass
         browser.close()
     return get_agent_page
 

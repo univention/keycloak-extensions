@@ -29,7 +29,7 @@ services:
       - handler
     environment:
       KEYCLOAK_URL: http://keycloak:8080
-      LOG_LEVEL: debug
+      LOG_LEVEL: info
       # Database
       POSTGRES_USER: postgres
       POSTGRES_HOST: database
@@ -93,4 +93,4 @@ services:
       - database
       - handler
       - proxy
-    command: pytest --base-url http://proxy:8181 --slowmo 500
+    command: pytest --base-url http://proxy:8181 --slowmo 500 --video on

@@ -14,12 +14,17 @@ before_script:
 
 tests:
   stage: test
+  artifacts:
+    when: always
+    paths:
+      - $CI_PROJECT_DIR/e2e/test-results/**/*.webm
+    expire_in: 1 day
   script:
     - docker-compose up -d keycloak database
     - sleep 60
     - docker-compose up -d proxy handler
     - sleep 60
-    - docker-compose up --exit-code-from e2e-tests
-
-after_script:
-  - docker-compose down
+    - docker-compose up e2e-tests
+    - docker cp e2e-tests:/e2e/test-results/ $CI_PROJECT_DIR/e2e/
+  after_script:
+    - docker-compose down
