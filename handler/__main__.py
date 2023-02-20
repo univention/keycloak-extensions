@@ -1,27 +1,27 @@
-#!/usr/bin/python3
 import time
 
 from modules import keycloak_poller
-from modules import delegation
-from modules import conditions
+from modules import action_maker
+from modules import notifier
+import database
+
+# Import needed for table creation
+from models import action
+from models import device
 
 
 if __name__ == "__main__":
 
+    database.Base.metadata.create_all(database.engine)
+
+    keycloak = keycloak_poller.KeycloakPoller()
+    action_maker = action_maker.ActionMaker()
+    notif = notifier.Notifier(keycloak)
+
     while True:
-        # Should I keep the connection open instead of reopening on each iteration?
-        kc_poller = keycloak_poller.KeycloakPoller()
-
-        events, runDelegates = kc_poller.get_all_events()
-
-        deleg = delegation.Delegation()
-
-        if runDelegates:
-
-            actions_required = deleg.evaluate_required_actions(events)
-
-            delegations = deleg.get_delegations(actions_required)
-            deleg.trigger_actions(delegations)
-
-        deleg.cleanup_expired_actions()
-        time.sleep(3)
+        events = keycloak.update_events()
+        failed_login_events = [e for e in events if e["type"] == "LOGIN_ERROR"]
+        action_maker.remove_expired_actions()
+        action_maker.take_actions(failed_login_events)
+        notif.notify_new_logins()
+        time.sleep(1)

@@ -1,28 +1,36 @@
-## Accounting
-- Customer: Dataport AöR (2149)
-- Description: PXGU-xxx
+## User Story
 
-## Story
+(Adjust as needed: “As a ROLE, I want to CAPABILITY, so I can BENEFIT.”)
 
-As a \<role\><br/>
-I can \<capability\>,<br/>
-so that \<receive benefit\>.
+## Description
 
-## Context/description
+(A short description of the feature.)
 
-A little context to the issue. Where does the task come from, what is needed for implementation. Everything which is important but doesn't fit the user story syntax can be written down here.
+## Estimation
 
-A user story should be self-contained and provide value when shipped. It should also contain a "single source of truth".
+(S/M/L/XL T-shirt-size estimation, or a timebox.)
 
-Additional points:
+## Acceptance Criteria
 
-- If possible, list implementation constraints here (e.g. after a refinement)
-- Separation to other user stories
-- Desired artifacts (package, documentation, release, etc.)
-- Specific requirements regarding documentation if required
-- For UI-heavy stories: Mockups, wireframes, storyboards, etc.
+(A list of functional, architectural, and technical requirements.)
 
-## Acceptance criteria & steps for reproduction
+## Quick Checklist: Is my issue ‘Ready’?
 
-- [ ]
-- [ ]
+This issue:
+
+- [ ] … has been discussed with product owner and stakeholders;
+- [ ] … contains a clear user story;
+- [ ] … has clear stakeholders;
+- [ ] … has defined acceptance criteria;
+- [ ] … has identified and listed dependencies;
+- [ ] … provides user experience (UX) design, if needed;
+- [ ] … provides user interface (UI) design, if needed;
+- [ ] … provides architectural design, if needed;
+- [ ] … has been estimated by the people that will work on it;
+- [ ] … can be demo-ed by the team in a Review meeting;
+- [ ] … has accounting information available (customer, PXGU nr., etc.), either on the parent epic or in the description;
+
+For a detailed explanation of these points, check out our [Definition of Ready](https://git.knut.univention.de/univention/customers/dataport/team-souvap/-/blob/master/agreements/definition-of-ready.md).
+
+
+/label ~"Backlog::SouvAP Dev" ~"Team::SouvAP Dev" ~"Status::Unrefined"
