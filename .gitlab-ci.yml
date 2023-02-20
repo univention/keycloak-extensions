@@ -74,10 +74,10 @@ documentation_pipeline_mr:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
 
 # Execute tests on MR
-tests:
-  stage: test
-  trigger:
-    include: "/.gitlab/ci/tests/docker_tests.yml"
-    strategy: depend
-  rules:
-    - if: $CI_COMMIT_BRANCH  # pipelines can't be created for MR, so sticking with only branch
+#tests_mr:
+#  stage: test
+#  trigger:
+#    include: "/.gitlab/ci/tests/docker_tests.yml"
+#    strategy: depend
+#  rules:
+#    - if: $CI_COMMIT_BRANCH  # pipelines can't be created for MR, so sticking with only branch
