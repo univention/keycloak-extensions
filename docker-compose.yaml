@@ -87,6 +87,28 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_DB: handler
 
+  keycloak-dev:
+    container_name: keycloak-dev
+    image: keycloak
+    build:
+      context: ./keycloak
+      args:
+        KEYCLOAK_VERSION: 19.0.3
+    command: start-dev --http-enabled=true --import-realm
+    ports:
+      - 8080:8080
+      - 8787:8787
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=univention
+      - PROXY_ADDRESS_FORWARDING=true
+      - KC_PROXY=edge
+      - KEYCLOAK_LOGLEVEL=ALL
+      - ROOT_LOGLEVEL=ALL
+      - DEBUG=true
+      - DEBUG_PORT='*:8787'
+      - DEBUG_SUSPEND=y # to wait until a debugger is connected
+
   e2e-tests:
     container_name: e2e-tests
     image: e2e-tests:develop
