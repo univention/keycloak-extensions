@@ -1,0 +1,38 @@
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: proxy
+  template:
+    metadata:
+      labels:
+        app: proxy
+    spec:
+      containers:
+        - name: proxy
+          image: "{{ tpl .Values.proxy.image . }}"
+          ports:
+            - containerPort: 8181
+          env:
+            - name: KEYCLOAK_URL
+              value: "http://{{ tpl .Values.keycloak.serviceName . }}"
+            - name: LOG_LEVEL
+              value: "debug"
+            - name: POSTGRES_USER
+              value: {{ .Values.postgres.user }}
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.postgres.password }}
+            - name: POSTGRES_DATABASE_NAME
+              value: {{ .Values.postgres.db }}
+            - name: POSTGRES_HOST
+              value: {{ template "postgres.fullname" . }}
+            - name: POSTGRES_PORT
+              value: "5432"
+      imagePullSecrets:
+        - name: uv-registry

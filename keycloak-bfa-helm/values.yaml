@@ -1,0 +1,58 @@
+---
+
+imageCredentials:
+  registry: gitregistry.knut.univention.de/univention/customers/dataport/upx/pocs/keycloak-bfa-and-security-poc
+  username: <USERNAME>
+  password: <PASSWORD>
+  email: irumyantsev@bla
+
+keycloak:
+  image: "quay.io/keycloak/keycloak:19.0.0"
+  adminUsername: admin
+  adminPassword: univention
+  replicas: 1
+  proxyAddressForwarding: "true"
+  proxy: edge
+  logLevel: ALL
+  rootLogLevel: ALL
+  deploymentName: "keycloak"
+  serviceName: "keycloak"
+
+proxy:
+  image: "{{ .Values.imageCredentials.registry }}:proxy-develop"
+  logLevel: debug
+  postgresUser: postgres
+  postgresHost: database
+  postgresDatabaseName: handler
+  postgresPassword: postgres
+  postgresPort: 5432
+
+handler:
+  image: "{{ .Values.imageCredentials.registry }}:handler-develop"
+  kcUser: admin
+  kcPassword: univention
+  kcRealm: master
+  postgresUser: postgres
+  postgresPassword: postgres
+  postgresDatabaseName: handler
+  postgresHost: database
+  postgresPort: 5432
+  logLevel: DEBUG
+  failedAttemptsForIpBlock: 7
+  failedAttemptsForDeviceBlock: 5
+  failedAttemptsForCaptchaTrigger: 3
+  eventsRetentionPeriod: 1
+  autoExpireRuleInMins: 1
+  deviceProtectionEnable: "True"
+  ipProtectionEnable: "True"
+  captchaProtectionEnable: "True"
+  smtpServer: mail.example.org
+  smtpPort: 587
+  senderEmail: univention@example.org
+  senderEmailPassword: somepassword
+
+postgres:
+  image: postgres:15.1-alpine
+  user: postgres
+  password: postgres
+  db: handler

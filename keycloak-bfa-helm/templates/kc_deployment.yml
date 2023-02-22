@@ -1,0 +1,39 @@
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ tpl .Values.keycloak.deploymentName . }}
+spec:
+  replicas: {{ .Values.keycloak.replicas }}
+  selector:
+    matchLabels:
+      app: {{ tpl .Values.keycloak.deploymentName . }}
+  template:
+    metadata:
+      labels:
+        app: {{ tpl .Values.keycloak.deploymentName . }}
+    spec:
+      containers:
+      - name: keycloak
+        image: {{ .Values.keycloak.image }}
+        args:
+          - start-dev
+          - --http-enabled=true
+        ports:
+        - containerPort: 8080
+          name: keycloak-port
+        env:
+        - name: KEYCLOAK_ADMIN
+          value: {{ .Values.keycloak.adminUsername }}
+        - name: KEYCLOAK_ADMIN_PASSWORD
+          value: {{ .Values.keycloak.adminPassword }}
+        - name: PROXY_ADDRESS_FORWARDING
+          value: "{{ .Values.keycloak.proxyAddressForwarding }}"
+        - name: KC_PROXY
+          value: "{{ .Values.keycloak.proxy }}"
+        - name: KEYCLOAK_LOGLEVEL
+          value: {{ .Values.keycloak.logLevel }}
+        - name: ROOT_LOGLEVEL
+          value: {{ .Values.keycloak.rootLogLevel }}
+          

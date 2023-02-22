@@ -1,0 +1,28 @@
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "postgres.fullname" . }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "postgres.fullname" . }}
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ template "postgres.fullname" . }}
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:15.1-alpine
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_PASSWORD
+          value: {{ .Values.postgres.password }}
+        - name: POSTGRES_USER
+          value: {{ .Values.postgres.user }}
+        - name: POSTGRES_DB
+          value: {{ .Values.postgres.db }}

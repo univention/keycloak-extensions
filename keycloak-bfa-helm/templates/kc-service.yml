@@ -1,0 +1,16 @@
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ tpl .Values.keycloak.serviceName . }}"
+  labels:
+    app: {{ tpl .Values.keycloak.deploymentName . }}
+spec:
+  selector:
+    app: {{ tpl .Values.keycloak.deploymentName . }}
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+  type: ClusterIP
