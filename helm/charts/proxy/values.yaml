@@ -1,0 +1,97 @@
+---
+# Default values for keycloak-bfp-proxy.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+## Global values
+affinity: {}
+environment: {}
+fullnameOverride: ""
+nameOverride: ""
+nodeSelector: {}
+podAnnotations: {}
+podSecurityContext: {}
+replicaCount: 1
+securityContext: {}
+tolerations: []
+
+## Application-specific
+appConfig:
+  logLevel: "debug"
+
+global:
+  keycloak:
+    host: "sso.example.com"
+  postgresql:
+    connection:
+      host: "keycloak-extensions-postgresql"
+      port: "5432"
+    auth:
+      database: "bfp"
+      username: "bfp"
+      password: "correcthorsebatterystaple"
+
+## Kubernetes ingress
+ingress:
+  enabled: true
+  ingressClassName: "nginx"
+  annotations: {}
+  ## define hostname
+  # host: "sso.example.com"
+  paths:
+    - pathType: "Prefix"
+      path: "/"
+  tls:
+    enabled: true
+    secretName: ""
+
+## Docker image
+image:
+  registry: "registry.souvap-univention.de"
+  repository: "souvap/tooling/images/keycloak-extensions/keycloak-proxy"
+  tag: "0.1.0"
+  imagePullPolicy: "Always"
+
+## Container deployment probes
+probes:
+  liveness:
+    enabled: false
+    initialDelaySeconds: 120
+    timeoutSeconds: 3
+    periodSeconds: 30
+    failureThreshold: 3
+    successThreshold: 1
+
+  readiness:
+    enabled: false
+    initialDelaySeconds: 30
+    timeoutSeconds: 3
+    periodSeconds: 15
+    failureThreshold: 30
+    successThreshold: 1
+
+
+## Deployment resources
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "250m"
+  limits:
+    memory: "4Gi"
+    cpu: "4"
+
+## Kubernetes service
+service:
+  enabled: true
+  type: "ClusterIP"
+  ports:
+    http:
+      containerPort: 8181
+      port: 8181
+      protocol: "TCP"
+
+  sessionAffinity:
+    enabled: false
+    timeoutSeconds: 10800
+
+...

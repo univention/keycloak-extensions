@@ -70,8 +70,10 @@ services:
       # Email
       SMTP_SERVER: mail.example.org
       SMTP_PORT: 587
-      SENDER_EMAIL: univention@example.org
-      SENDER_EMAIL_PASSWORD: somepassword
+      SMTP_USERNAME: univention
+      SMTP_PASSWORD: somepassword
+      MAIL_FROM: univention@example.org
+      NEW_DEVICE_LOGIN_SUBJECT: "New device login"
 
   database:
     container_name: keycloak-extensions-postgres

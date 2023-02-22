@@ -1,0 +1,34 @@
+---
+
+apiVersion: "v1"
+kind: ConfigMap
+metadata:
+  name: '{{ include "common.names.fullname" . }}'
+data:
+  KC_AUTH_URL: "http://{{ .Values.global.keycloak.host }}/admin"
+  KC_USER: "{{ .Values.global.keycloak.adminUsername }}"
+  KC_PASS: "{{ .Values.global.keycloak.adminPassword }}"
+  KC_REALM: "{{ .Values.global.keycloak.realm }}"
+  KC_USER_REALM: "{{ .Values.global.keycloak.adminRealm }}"
+  POSTGRES_HOST: "{{ .Values.global.postgresql.connection.host }}"
+  POSTGRES_PORT: "{{ .Values.global.postgresql.connection.port }}"
+  POSTGRES_USER: "{{ .Values.global.postgresql.auth.username }}"
+  POSTGRES_PASSWORD: "{{ .Values.global.postgresql.auth.password }}"
+  POSTGRES_DATABASE_NAME: "{{ .Values.global.postgresql.auth.database }}"
+  LOG_LEVEL: "{{ .Values.appConfig.logLevel }}"
+  FAILED_ATTEMPTS_FOR_IP_BLOCK: "{{ .Values.appConfig.failedAttemptsForIpBlock }}"
+  FAILED_ATTEMPTS_FOR_DEVICE_BLOCK: "{{ .Values.appConfig.failedAttemptsForDeviceBlock }}"
+  FAILED_ATTEMPTS_FOR_CAPTCHA_TRIGGER: "{{ .Values.appConfig.failedAttemptsForCaptchaTrigger }}"
+  EVENTS_RETENTION_PERIOD: "{{ .Values.appConfig.eventsRetentionPeriod }}"
+  AUTO_EXPIRE_RULE_IN_MINS: "{{ .Values.appConfig.autoExpireRuleInMins }}"
+  DEVICE_PROTECTION_ENABLE: "{{ .Values.appConfig.deviceProtectionEnable }}"
+  IP_PROTECTION_ENABLE: "{{ .Values.appConfig.ipProtectionEnable }}"
+  CAPTCHA_PROTECTION_ENABLE: "{{ .Values.appConfig.captchaProtectionEnable }}"
+  NEW_DEVICE_LOGIN_SUBJECT: "{{ .Values.appConfig.newDeviceLoginSubject }}"
+  SMTP_HOST: "{{ .Values.appConfig.smtpHost }}"
+  SMTP_PORT: "{{ .Values.appConfig.smtpPort }}"
+  SMTP_USERNAME: "{{ .Values.appConfig.smtpUsername }}"
+  SMTP_PASSWORD: "{{ .Values.appConfig.smtpPassword }}"
+  MAIL_FROM: "{{ .Values.appConfig.mailFrom }}"
+
+...

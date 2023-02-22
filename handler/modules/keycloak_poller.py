@@ -36,12 +36,17 @@ class KeycloakPoller:
         """
         Connect to Keycloak admin interface
         """
+        user_realm_name = os.environ.get("KC_USER_REALM", "")
+        if len(user_realm_name) == 0:
+            user_realm_name = None
+
         try:
             self.kc_admin = KeycloakAdmin(
                 server_url=os.environ.get("KC_AUTH_URL", None),
                 username=os.environ.get("KC_USER", None),
                 password=os.environ.get("KC_PASS", None),
                 realm_name=os.environ.get("KC_REALM", None),
+                user_realm_name=user_realm_name,
                 verify=True
             )
         # FIXME: more fine granular exception handling
@@ -95,36 +100,3 @@ class KeycloakPoller:
     def get_user_email(self, user_id):
         user = self.kc_admin.get_user(user_id)
         return user.get("email", None)
-
-    # def notify_new_device_logins(self):
-    #     if self.last_notified_event in self.events:
-    #         return
-    #     else:
-    #         login_events = [e for e in self.events if e.get("type") == "LOGIN"]
-    #     for event in login_events:
-    #         if event.get("userId", None) is None:
-    #             continue
-    #         user_email = self.get_user_email(event["userId"])
-    #         if user_email is None:
-    #             continue
-    #         print(event)
-    #         device = session.query(Device).filter(
-    #             Device.keycloak_device_id == event.get(
-    #                 "details", {}).get("code_id", None)
-    #         ).first()
-    #         if not device:
-    #             continue
-    #         if device.is_notified:
-    #             continue
-    #         e = mail.Email(
-    #             user_email,
-    #             {
-    #                 "Time": datetime.datetime.fromtimestamp(
-    #                     event.get("time", 0)/1000
-    #                 ) if event.get("time") is not None else "unknown",
-    #                 "IP": event.get("ipAddress", "unknown"),
-    #                 "Device ID": event.get("details", {}).get("code_id", "unknown")
-    #             }
-    #         )
-    #         e.send()
-    #         self.last_notified_event = event

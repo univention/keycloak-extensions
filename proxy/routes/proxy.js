@@ -4,10 +4,10 @@ const setCookie = require('set-cookie-parser');
 const { createProxyMiddleware, responseInterceptor } = require("http-proxy-middleware");
 
 const {
-    logger
+  logger
 } = require("../utils");
 
-const { 
+const {
   saveFingerprintToDeviceRelation,
   getActionsForIP,
   getActionsForDevice,
@@ -36,7 +36,6 @@ const fetchCaptchaActions = async (req, res, next) => {
 }
 
 const applyBlocks = (req, res, next) => {
-
   if (req.method !== "POST") next();
   if (req._deviceBlockActions.rows.length === 0 && req._ipBlockActions.rows.length === 0) next();
   if (req._ipBlockActions.rows.length > 0) {
@@ -59,50 +58,64 @@ const applyBlocks = (req, res, next) => {
   }
 };
 
-/**
- * @name *\/openid-connect/auth*
- * @desc
- * Proxy everything Keycloak login form template fetch and inject fingerprintjs
- */
-router.use("*/openid-connect/auth*", fetchCaptchaActions, createProxyMiddleware({
+// Re-use the same proxy middleware when proxying both SAML and OIDC urls.
+// Proxy the login form and inject FingerprintJs.
+const loginMiddleware = createProxyMiddleware({
   target: process.env.KEYCLOAK_URL,
   logLevel: `${process.env.LOG_LEVEL}`.toLowerCase() ?? "info",
-  // pathFilter: "**/openid-connect/auth**",  // Micromatch
   pathFilter: "**",
-  selfHandleResponse: true,
   ws: true,
+  selfHandleResponse: true,
   logger: logger,
+
   onProxyReq: (proxyReq, req, res) => {
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     proxyReq.setHeader("x-forwarded-for", ip);
   },
+
   onProxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
-      if (res.writableEnded) return responseBuffer;
-      if (
-      req.path.includes("openid-connect/auth") &&
-      req.method === "GET" &&
-      (proxyRes.headers['content-type'] ?? "").includes("text/html")
-      ) {
+    if (res.writableEnded)
+      return responseBuffer;
+
+    if (
+      (req.path.includes("openid-connect/auth") || req.path.includes("protocol/saml"))
+      && req.method === "GET"
+      && (proxyRes.headers['content-type'] ?? "").includes("text/html")
+    ) {
+      logger.debug(`Injecting script into ${req.method} ${req.path}`);
       const response = responseBuffer.toString('utf8'); // Convert buffer to string
       return response + `<script>
       // Initialize the agent at application startup.
       const fpPromise = import('/fingerprintjs/v3.js')
-          .then(FingerprintJS => FingerprintJS.load())
+        .then(FingerprintJS => FingerprintJS.load());
 
       // Get the visitor identifier when you need it.
       fpPromise
-          .then(fp => fp.get())
-          .then(result => {
+        .then(fp => fp.get())
+        .then(result => {
           // This is the visitor identifier:
-          const visitorId = result.visitorId
-          console.log(visitorId)
-          document.cookie = 'DEVICE_FINGERPRINT=' + visitorId+ ';path=/';
-          })
+          const visitorId = result.visitorId;
+          document.cookie = 'DEVICE_FINGERPRINT=' + visitorId+ ';path=/;SameSite=None;Secure=false';
+        });
       </script>`;
-      };
-      return responseBuffer;
+    };
+    return responseBuffer;
   }),
-}));
+});
+
+/**
+ * @name *\/protocol/saml*
+ * @desc
+ * Proxy the Keycloak SAML login form and inject fingerprintjs.
+ */
+router.use("*/protocol/saml*", fetchCaptchaActions, loginMiddleware);
+
+/**
+ * @name *\/openid-connect/auth*
+ * @desc
+ * Proxy the Keycloak OIDC login form and inject fingerprintjs.
+ */
+router.use("*/openid-connect/auth*", fetchCaptchaActions, loginMiddleware);
 
 /**
  * @name *\/login-actions/authenticate*
@@ -116,30 +129,36 @@ router.use("*/login-actions/authenticate*", fetchCaptchaActions, fetchBlockActio
   ws: true,
   selfHandleResponse: true,
   logger: logger,
-  onProxyReq: (proxyReq, req, res) => {
 
+  onProxyReq: (proxyReq, req, res) => {
     if (req.path.includes("login-actions/authenticate") && req.method === "POST") {
-  
       const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
       proxyReq.setHeader("x-forwarded-for", ip);
     }
   },
+
   onProxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
     if (
-      req.path.includes("login-actions/authenticate") &&
-      req.method === "POST" ) {
-        if (res.statusCode === 302) {
-          logger.debug("Login succeded, notify user if new device.")
-          // logger.debug(req.headers["set-cookie"])
-          const cookies = setCookie.parse(proxyRes, {map: true});
-          logger.debug(cookies);
-          const token = jwt_decode(cookies["KEYCLOAK_IDENTITY"].value ?? cookies["KEYCLOAK_IDENTITY_LEGACY"].value)
-          logger.debug(token)
-          await saveFingerprintToDeviceRelation(
-            req.cookies["DEVICE_FINGERPRINT"],
-            req.cookies["AUTH_SESSION_ID"] ?? req.cookies["AUTH_SESSION_ID_LEGACY"],
-            token.sub
-          );
+        req.path.includes("login-actions/authenticate") && req.method === "POST"
+        && (200 <= res.statusCode) && (res.statusCode <= 399)
+    ) {
+      const resCookies = setCookie.parse(proxyRes, {map: true});
+      const rawToken = (resCookies["KEYCLOAK_IDENTITY"] || resCookies["KEYCLOAK_IDENTITY_LEGACY"]).value;
+      if (rawToken === undefined) {
+        logger.warn("POST to login-actions/authenticate without Keycloak identity tokens!");
+        return responseBuffer;
+      }
+      const token = jwt_decode(rawToken);
+
+      if (Object.keys(req.cookies).includes("DEVICE_FINGERPRINT")) {
+        logger.debug("Login succeeded, notify user if new device.");
+        await saveFingerprintToDeviceRelation(
+          req.cookies["DEVICE_FINGERPRINT"],
+          req.cookies["AUTH_SESSION_ID"] ?? req.cookies["AUTH_SESSION_ID_LEGACY"],
+          token.sub,
+        );
+      } else {
+        logger.info("Login succeeded, but no fingerprint was returned.");
       }
     };
     return responseBuffer;

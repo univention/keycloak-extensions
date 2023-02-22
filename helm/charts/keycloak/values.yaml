@@ -1,0 +1,84 @@
+---
+# Default values for keycloak.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+## Global values
+affinity: {}
+environment: {}
+fullnameOverride: ""
+nameOverride: ""
+nodeSelector: {}
+podAnnotations: {}
+podSecurityContext: {}
+replicaCount: 1
+securityContext: {}
+tolerations: []
+
+## Application-specific
+appConfig:
+  proxyAddressForwarding: "true"
+  proxy: "edge"
+  logLevel: "ALL"
+  rootLogLevel: "ALL"
+
+global:
+  keycloak:
+    adminUsername: "admin"
+    adminPassword: "univention"
+
+## Kubernetes ingress
+ingress:
+  enabled: false
+
+## Docker image
+image:
+  registry: "registry.souvap-univention.de"
+  repository: "souvap/tooling/images/keycloak-extensions/keycloak-service"
+  tag: "18.0.2"
+  imagePullPolicy: "Always"
+
+## Container deployment probes
+probes:
+  # TODO
+  liveness:
+    enabled: true
+    initialDelaySeconds: 120
+    timeoutSeconds: 3
+    periodSeconds: 30
+    failureThreshold: 3
+    successThreshold: 1
+
+  readiness:
+    enabled: true
+    initialDelaySeconds: 30
+    timeoutSeconds: 3
+    periodSeconds: 15
+    failureThreshold: 30
+    successThreshold: 1
+
+
+## Deployment resources
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "250m"
+  limits:
+    memory: "4Gi"
+    cpu: "4"
+
+## Kubernetes service
+service:
+  enabled: true
+  type: "ClusterIP"
+  ports:
+    http:
+      containerPort: 8080
+      port: 80
+      protocol: "TCP"
+
+  sessionAffinity:
+    enabled: false
+    timeoutSeconds: 10800
+
+...

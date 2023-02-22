@@ -1,0 +1,21 @@
+---
+
+apiVersion: "v1"
+type: "application"
+name: "keycloak"
+description: "A Helm chart for Keycloak"
+home: "https://www.univention.de/"
+
+# Chart version
+# Apply Semantic Versioning (https://semver.org/)
+version: "0.1.0"
+
+# Keycloak Version
+appVersion: "18.0.2"
+
+dependencies:
+  - name: "common"
+    repository: "https://charts.bitnami.com/bitnami"
+    version: "^2.2.2"
+
+...

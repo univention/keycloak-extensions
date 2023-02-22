@@ -1,0 +1,21 @@
+---
+
+apiVersion: "v1"
+type: "application"
+name: "handler"
+description: "A Helm chart for the Keycloak BFP Handler"
+home: "https://www.univention.de/"
+
+# Chart version
+# Apply Semantic Versioning (https://semver.org/)
+version: "0.1.0"
+
+# BFP Handler Version
+appVersion: "0.1.0"
+
+dependencies:
+  - name: "common"
+    repository: "https://charts.bitnami.com/bitnami"
+    version: "^2.2.2"
+
+...

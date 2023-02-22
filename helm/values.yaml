@@ -1,0 +1,46 @@
+---
+
+# common values
+global:
+  keycloak:
+    host: "keycloak-extensions-keycloak"
+    adminUsername: "admin"
+    adminPassword: "univention"
+    realm: "ucs"
+    adminRealm:
+  postgresql:
+    connection:
+      host: "keycloak-extensions-postgresql"
+      port: "5432"
+    auth:
+      database: "bfp"
+      username: "bfp"
+      password: "correcthorsebatterystaple"
+      postgresPassword: "correcthorsebatterystaple"
+
+# sub-chart specific values
+handler:
+  image:
+    tag: "latest"
+  appConfig:
+    captchaProtectionEnable: "false"
+    smtpHost: "mail.example.org"
+    smtpPort: "587"
+    smtpUsername: "univention"
+    smtpPassword: "some_password"
+    mailFrom: "univention@example.org"
+
+keycloak:
+  # Keycloak built with our extensions
+  enabled: true
+  image:
+    tag: "latest"
+
+postgresql:
+  enabled: true
+
+proxy:
+  image:
+    tag: "latest"
+  ingress:
+    host: "sso.example.com"

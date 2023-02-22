@@ -21,13 +21,18 @@ class Notifier:
 
     def notify_user(self, user_id: str, details: dict):
         user_email = self.keycloak.get_user_email(user_id)
+        self.logger.info("Notifying user %s about login at %s with fingerprint %s",
+            user_id, details["Time"], details["Fingerprint"])
         if user_email is None:
+            self.logger.warn("User %s does not have an email address!", user_id)
             return
         e = mail.Email(user_email, details)
         e.send()
 
     def notify_new_logins(self):
-        new_logins = session.query(Device).filter(Device.is_notified == False)
+        new_logins = session.query(Device).filter(Device.is_notified == False).all()
+        self.logger.debug("Found %d logins that have no notifications yet", len(new_logins))
+
         for new_login in new_logins:
             self.notify_user(
                 new_login.user_id,
@@ -37,4 +42,5 @@ class Notifier:
                     "Fingerprint": new_login.fingerprint_device_id
                 })
             new_login.is_notified = True
+
         session.commit()

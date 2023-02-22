@@ -1,6 +1,9 @@
 ---
 
 variables:
+  SOUVAP_API_V4_URL: https://gitlab.souvap-univention.de/api/v4
+  SOUVAP_HELM_ACCESS_USER: gitlab-ci-knut
+  SOUVAP_HELM_PROJECT_ID: 76
   SOUVAP_REGISTRY_HOST: registry.souvap-univention.de
   SOUVAP_REGISTRY_PATH: souvap/tooling/images/keycloak-extensions
   SOUVAP_REGISTRY_REPO: ${SOUVAP_REGISTRY_HOST}/${SOUVAP_REGISTRY_PATH}
@@ -133,6 +136,58 @@ push-image-souvap-proxy-job:
   variables:
     CI_REGISTRY_IMAGE: "$CI_REGISTRY_IMAGE/keycloak-proxy"
     SOUVAP_IMAGE_NAME: "keycloak-proxy"
+
+lint-helm-chart:
+  stage: release
+  image:
+    name: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/alpine/helm:3.10.2"
+    entrypoint: [""]
+  script:
+    - helm repo add bitnami https://charts.bitnami.com/bitnami
+    - helm dependency build helm
+    - helm lint helm --strict
+
+package-helm-chart:
+  stage: release
+  needs: []
+  artifacts:
+    paths:
+      - "packages/*.tgz"
+  image:
+    name: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/alpine/helm:3.10.2"
+    entrypoint: [""]
+  script:
+    - "if [ -z \"${RELEASE_VERSION}\" ]; then exit 0; fi"
+    - "helm repo add bitnami https://charts.bitnami.com/bitnami"
+    - "helm package --version ${RELEASE_VERSION} --destination ./packages --dependency-update helm"
+  variables:
+    # TODO: Extract the release information from Git.
+    # Compare: https://gitlab.souvap-univention.de/souvap/tooling/charts/openproject-helm-chart/-/blob/souvap/.gitlab-ci.yml#L25
+    RELEASE_VERSION: "0.1.0"
+
+publish-helm-chart:
+  stage: release
+  dependencies:
+    - "package-helm-chart"
+  needs:
+    - "package-helm-chart"
+  image: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/curlimages/curl:latest"
+  script:
+    - "if [ -z \"${RELEASE_VERSION}\" ]; then exit 0; fi"
+    - |
+      for _filename in `find packages -type f`;
+      do
+        curl \
+        --request "POST" \
+        --user "${SOUVAP_HELM_ACCESS_USER}:${SOUVAP_HELM_ACCESS_TOKEN}" \
+        --form "chart=@$_filename" \
+        "${SOUVAP_API_V4_URL}/projects/${SOUVAP_HELM_PROJECT_ID}/packages/helm/api/stable/charts";
+      done
+  variables:
+    GIT_STRATEGY: "none"
+    # TODO: Extract the release information from Git.
+    # Compare: https://gitlab.souvap-univention.de/souvap/tooling/charts/openproject-helm-chart/-/blob/souvap/.gitlab-ci.yml#L25
+    RELEASE_VERSION: "0.1.0"
 
 tests:
   stage: test

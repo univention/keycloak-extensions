@@ -14,13 +14,15 @@ class Email:
         self.message['To'] = receiver
         self.message['Subject'] = os.environ.get(
             "NEW_DEVICE_LOGIN_SUBJECT", "New device login")
-        self.message['From'] = os.environ.get("SENDER_EMAIL", None)
+        self.message['From'] = os.environ.get("MAIL_FROM", None)
         self.generate_body(details)
-        self.sender = os.environ.get("SENDER_EMAIL", None)
-        self.password = os.environ.get("SENDER_EMAIL_PASSWORD", None)
+        self.sender = os.environ.get("MAIL_FROM", None)
+        self.smtp_user = os.environ.get("SMTP_USERNAME", None)
+        self.smtp_pass = os.environ.get("SMTP_PASSWORD", None)
         assert self.sender is not None
-        assert self.password is not None
-        self.smtp_server = os.environ.get("SMTP_SERVER", None)
+        assert self.smtp_user is not None
+        assert self.smtp_pass is not None
+        self.smtp_host = os.environ.get("SMTP_HOST", None)
         self.smtp_port = int(os.environ.get("SMTP_PORT", 587))
 
         # Configure logging
@@ -36,7 +38,7 @@ class Email:
         for key, value in details.items():
             details_str += f"   {key}: {value}\n"
         body = f"""Hello,
-    
+
 You just logged in from a new device. The device details are:
 
 {details_str}
@@ -54,11 +56,11 @@ Keycloak.
         self.logger.debug("")
         context = ssl.create_default_context()
 
-        # with smtplib.SMTP_SSL(self.smtp_server, self.smtp_port, context=context) as server:
-        with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
+        # with smtplib.SMTP_SSL(self.smtp_host, self.smtp_port, context=context) as server:
+        with smtplib.SMTP(self.smtp_host, self.smtp_port) as server:
             server.ehlo()
             server.starttls(context=context)
             server.ehlo()
-            server.login(self.sender, self.password)
+            server.login(self.smtp_user, self.smtp_pass)
             server.sendmail(self.sender, self.receiver,
                             self.message.as_string())

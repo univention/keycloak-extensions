@@ -1,0 +1,18 @@
+dependencies:
+- name: common
+  repository: https://charts.bitnami.com/bitnami
+  version: 2.2.4
+- name: handler
+  repository: file://./charts/handler
+  version: 0.1.0
+- name: keycloak
+  repository: file://./charts/keycloak
+  version: 0.1.0
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 12.2.2
+- name: proxy
+  repository: file://./charts/proxy
+  version: 0.1.0
+digest: sha256:c9546fe52c54eced452289c6c3b7306fcad1a78b587bcbc99991ec32707b8178
+generated: "2023-03-07T15:07:07.976506+01:00"

@@ -1,0 +1,87 @@
+---
+# Default values for keycloak-bfp-handler.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+## Global values
+affinity: {}
+environment: {}
+fullnameOverride: ""
+nameOverride: ""
+nodeSelector: {}
+podAnnotations: {}
+podSecurityContext: {}
+replicaCount: 1
+securityContext: {}
+tolerations: []
+
+## Application-specific
+appConfig:
+  logLevel: "DEBUG"
+  failedAttemptsForIpBlock: 7
+  failedAttemptsForDeviceBlock: 5
+  failedAttemptsForCaptchaTrigger: 3
+  eventsRetentionPeriod: 10
+  autoExpireRuleInMins: 5
+  deviceProtectionEnable: "True"
+  ipProtectionEnable: "True"
+  captchaProtectionEnable: "True"
+  smtpHost: "mail.example.org"
+  smtpPort: "587"
+  smtpUsername: "univention"
+  smtpPassword: "some_password"
+  mailFrom: "univention@example.org"
+  newDeviceLoginSubject: "New device login"
+
+global:
+  ## Keycloak host
+  keycloak:
+    host: "sso.example.com"
+    adminUsername: "admin"
+    adminPassword: "univention"
+    realm: "ucs"
+    adminRealm:
+  ## Postgres host
+  postgresql:
+    connection:
+      host: "keycloak-extensions-postgresql"
+      port: "5432"
+    auth:
+      database: "bfp"
+      username: "bfp"
+      password: "correcthorsebatterystaple"
+
+## Kubernetes ingress
+ingress:
+  enabled: false
+
+## Docker image
+image:
+  registry: "registry.souvap-univention.de"
+  repository: "souvap/tooling/images/keycloak-extensions/keycloak-handler"
+  tag: "0.1.0"
+  imagePullPolicy: "Always"
+
+## Container deployment probes
+probes:
+  liveness:
+    enabled: false
+
+  readiness:
+    enabled: false
+
+
+## Deployment resources
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "250m"
+  limits:
+    memory: "4Gi"
+    cpu: "4"
+
+## Kubernetes service
+service:
+  enabled: false
+
+...
