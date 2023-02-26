@@ -1,4 +1,11 @@
 ---
+
+variables:
+  SOUVAP_REGISTRY_HOST: registry.souvap-univention.de
+  SOUVAP_REGISTRY_PATH: souvap/tooling/images/keycloak-extensions
+  SOUVAP_REGISTRY_REPO: ${SOUVAP_REGISTRY_HOST}/${SOUVAP_REGISTRY_PATH}
+  SOUVAP_REGISTRY_USER: gitlab-ci-knut
+
 stages:
   - test
   - release
@@ -7,6 +14,47 @@ stages:
 include:
   - project: univention/dist/docker-services
     file: kaniko.yml
+
+
+.push-image-souvap:
+  variables:
+    GIT_STRATEGY: none
+  image: artifacts.knut.univention.de/dockerhub_proxy_cache/library/docker:20.10.12
+  services:
+  - name: docker-registry.knut.univention.de/ucs/docker:dind
+    alias: docker
+  before_script:
+    # derived from the .kaniko_pre to define the IMAGE_TAG and IMAGE_VERSION
+    - |-
+      if [ "${CI_COMMIT_REF_NAME:-}" = "${CI_DEFAULT_BRANCH:-}" ]; then
+        VERSION="latest"
+      elif [ -n "${CI_COMMIT_TAG:-}" ]; then
+        NOSLASH=$(echo "${CI_COMMIT_TAG:-}" | tr -s / -)
+        SANITIZED="${NOSLASH//[^a-zA-Z0-9\-\.]/}"
+        VERSION="$SANITIZED"
+      else
+        NOSLASH=$(echo "${CI_COMMIT_REF_NAME:-}" | tr -s / -)
+        SANITIZED="${NOSLASH//[^a-zA-Z0-9\-]/}"
+        VERSION="branch-$SANITIZED"
+      fi
+      if [ ! -z "${IMAGE_TAG:-}" ]; then
+        IMAGE_TAG="${CI_REGISTRY_IMAGE:-}:$VERSION"
+      fi
+    - echo "IMAGE_TAG=$IMAGE_TAG" | tee -a ./.env
+    - echo "IMAGE_VERSION=$VERSION" | tee -a ./.env
+  script:
+    # Load variables from before_script
+    - . ./.env
+    - SOUVAP_IMAGE_TAG="${SOUVAP_REGISTRY_REPO}/${SOUVAP_IMAGE_NAME}:${IMAGE_VERSION}"
+    - echo "logging in with CI_JOB_TOKEN"
+    - echo "${CI_JOB_TOKEN}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin "${CI_REGISTRY}"
+    - 'echo "pulling image: ${IMAGE_TAG}"'
+    - docker pull "${IMAGE_TAG}"
+    - 'echo "tagging image: ${SOUVAP_IMAGE_TAG}"'
+    - docker tag "${IMAGE_TAG}" "${SOUVAP_IMAGE_TAG}"
+    # Use SouvAP-Repo-Access-Token to push image
+    - echo "${SOUVAP_REGISTRY_TOKEN}" | docker login --username "${SOUVAP_REGISTRY_USER}" --password-stdin "${SOUVAP_REGISTRY_HOST}"
+    - docker push "${SOUVAP_IMAGE_TAG}"
 
 
 # A release is only possible from a semantic version tag,
@@ -33,18 +81,36 @@ build-keycloak-handler-job:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH
 
-build-keycloak-keycloak-job:
+push-image-souvap-handler-job:
+  stage: release
+  needs:
+    - job: build-keycloak-handler-job
+  extends: .push-image-souvap
+  variables:
+    CI_REGISTRY_IMAGE: "$CI_REGISTRY_IMAGE/keycloak-handler"
+    SOUVAP_IMAGE_NAME: "keycloak-handler"
+
+build-keycloak-service-job:
   stage: release
   extends: .kaniko
   variables:
     KANIKO_BUILD_CONTEXT: "keycloak"
-    CI_REGISTRY_IMAGE: "$CI_REGISTRY_IMAGE/keycloak-keycloak"
+    CI_REGISTRY_IMAGE: "$CI_REGISTRY_IMAGE/keycloak-service"
     KANIKO_ARGS: "--skip-unused-stages=true --cache=true --cache-repo=$CI_REGISTRY_IMAGE-cache"
   after_script:
     - docker images --all
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH
+
+push-image-souvap-keycloak-job:
+  stage: release
+  needs:
+    - job: build-keycloak-service-job
+  extends: .push-image-souvap
+  variables:
+    CI_REGISTRY_IMAGE: "$CI_REGISTRY_IMAGE/keycloak-service"
+    SOUVAP_IMAGE_NAME: "keycloak-service"
 
 build-keycloak-proxy-job:
   stage: release
@@ -58,6 +124,15 @@ build-keycloak-proxy-job:
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH
+
+push-image-souvap-proxy-job:
+  stage: release
+  needs:
+    - job: build-keycloak-proxy-job
+  extends: .push-image-souvap
+  variables:
+    CI_REGISTRY_IMAGE: "$CI_REGISTRY_IMAGE/keycloak-proxy"
+    SOUVAP_IMAGE_NAME: "keycloak-proxy"
 
 tests:
   stage: test
