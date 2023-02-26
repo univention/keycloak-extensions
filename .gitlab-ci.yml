@@ -3,6 +3,12 @@ stages:
   - test
   - release
 
+
+include:
+  - project: univention/dist/docker-services
+    file: kaniko.yml
+
+
 # A release is only possible from a semantic version tag,
 # and must be triggered manually, from the GitLab CI web UI.
 release_pipeline:
@@ -14,15 +20,44 @@ release_pipeline:
       when: always
     - when: never
 
-# The Docker images for `proxy` and `handler` are published upon semantic version tag push as well.
-docker_pipeline:
+build-keycloak-handler-job:
   stage: release
-  trigger:
-    include: "/.gitlab/ci/docker/docker_pipeline.yml"
+  extends: .kaniko
+  variables:
+    KANIKO_BUILD_CONTEXT: "handler"
+    CI_REGISTRY_IMAGE: "$CI_REGISTRY_IMAGE/keycloak-handler"
+    KANIKO_ARGS: "--skip-unused-stages=true --cache=true --cache-repo=$CI_REGISTRY_IMAGE-cache"
+  after_script:
+    - docker images --all
   rules:
-    - if: '$CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+/'
-      when: always
-    - when: never
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH
+
+build-keycloak-keycloak-job:
+  stage: release
+  extends: .kaniko
+  variables:
+    KANIKO_BUILD_CONTEXT: "keycloak"
+    CI_REGISTRY_IMAGE: "$CI_REGISTRY_IMAGE/keycloak-keycloak"
+    KANIKO_ARGS: "--skip-unused-stages=true --cache=true --cache-repo=$CI_REGISTRY_IMAGE-cache"
+  after_script:
+    - docker images --all
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH
+
+build-keycloak-proxy-job:
+  stage: release
+  extends: .kaniko
+  variables:
+    KANIKO_BUILD_CONTEXT: "proxy"
+    CI_REGISTRY_IMAGE: "$CI_REGISTRY_IMAGE/keycloak-proxy"
+    KANIKO_ARGS: "--skip-unused-stages=true --cache=true --cache-repo=$CI_REGISTRY_IMAGE-cache"
+  after_script:
+    - docker images --all
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH
 
 tests:
   stage: test
