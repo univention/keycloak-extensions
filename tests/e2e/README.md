@@ -69,3 +69,5 @@ While this is not strictly necessary to run the tests (`pytest` finds the necess
 packages using the `[tool.pytest.ini_options]` in `pyproject.toml`), this will
 help the IDE in autocompletion etc., and generally improve the development
 experience.
+
+We have a [guide on writing Page Objects, tests and fixtures](https://univention.gitpages.knut.univention.de/customers/dataport/team-souvap/testing/e2e-testing-guidelines.html).

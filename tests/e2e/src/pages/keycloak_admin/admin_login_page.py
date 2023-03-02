@@ -1,7 +1,7 @@
 from playwright.sync_api import expect
 
 from pages.base import BasePage
-from pages.welcome_page import WelcomePage
+from pages.keycloak_admin.welcome_page import WelcomePage
 
 
 class AdminLoginPage(BasePage):
@@ -12,14 +12,13 @@ class AdminLoginPage(BasePage):
         self.submit_button = self.page.get_by_role("button", name="Sign In")
         self.invalid_login_message = self.page.get_by_text("Invalid username or password.")
 
-    def go_there(self):
-        welcome_page = WelcomePage(self.page)
-        welcome_page.go_there()
-        welcome_page.click_administrator_console_link()
-        self.page.wait_for_load_state()
+    def check_its_there(self):
         expect(self.username_input).to_be_visible()
-        expect(self.password_input).to_be_visible()
-        expect(self.submit_button).to_be_visible()
+
+    def navigate(self):
+        welcome_page = WelcomePage(self.page)
+        welcome_page.navigate()
+        welcome_page.click_administrator_console_link()
 
     def fill_username(self, username):
         self.username_input.fill(username)

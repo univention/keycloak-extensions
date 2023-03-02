@@ -6,7 +6,7 @@ from playwright.sync_api import expect, Error
 import pytest
 from slugify import slugify
 
-from pages.admin_login_page import AdminLoginPage
+from pages.keycloak_admin.admin_login_page import AdminLoginPage
 
 
 artifacts_folder = tempfile.TemporaryDirectory(prefix="playwright-pytest-")
@@ -71,9 +71,9 @@ def build_artifact_test_folder(pytestconfig, request, folder_or_file_name):
     return os.path.join(output_dir, slugify(request.node.nodeid), folder_or_file_name)
 
 
-def agent_page(browser_name, ip):
+def get_page(browser_name, ip):
     @pytest.fixture
-    def get_agent_page(playwright, pytestconfig, request):
+    def get_page_for_browser_and_ip(playwright, pytestconfig, request):
         browser_type = getattr(playwright, browser_name)
         launch_options = {}
         headed_option = pytestconfig.getoption("--headed")
@@ -114,62 +114,61 @@ def agent_page(browser_name, ip):
                     # Silent catch empty videos.
                     pass
         browser.close()
-    return get_agent_page
+    return get_page_for_browser_and_ip
 
 
-agent_chromium_ip_1_page = agent_page("chromium", "127.0.0.12")
-agent_firefox_ip_1_page = agent_page("firefox", "127.0.0.12")
-agent_chromium_ip_2_page = agent_page("chromium", "127.0.0.13")
-
-
-# This pattern of defining one fixture per agent doesn't scale.
-# Is there a better way?
-@pytest.fixture
-def agent_chromium_ip_1_login_page(agent_chromium_ip_1_page):
-    admin_login_page = AdminLoginPage(agent_chromium_ip_1_page)
-    admin_login_page.go_there()
+chromium_ip_1_page = get_page("chromium", "127.0.0.12")
+firefox_ip_1_page = get_page("firefox", "127.0.0.12")
+chromium_ip_2_page = get_page("chromium", "127.0.0.13")
 
 
 @pytest.fixture
-def agent_chromium_ip_2_login_page(agent_chromium_ip_2_page):
-    admin_login_page = AdminLoginPage(agent_chromium_ip_2_page)
-    admin_login_page.go_there()
+def navigate_to_login_page_chromium_ip_1(chromium_ip_1_page):
+    admin_login_page = AdminLoginPage(chromium_ip_1_page)
+    admin_login_page.navigate()
+    return chromium_ip_1_page
 
 
 @pytest.fixture
-def agent_firefox_ip_1_login_page(agent_firefox_ip_1_page):
-    admin_login_page = AdminLoginPage(agent_firefox_ip_1_page)
-    admin_login_page.go_there()
+def navigate_to_login_page_chromium_ip_2(chromium_ip_2_page):
+    admin_login_page = AdminLoginPage(chromium_ip_2_page)
+    admin_login_page.navigate()
+    return chromium_ip_2_page
 
 
 @pytest.fixture
-def agent_chromium_ip_1_trigger_device_block(agent_chromium_ip_1_page,
-                                             agent_chromium_ip_1_login_page,
-                                             username,
-                                             wrong_password,
-                                             num_device_block,
-                                             release_duration
-                                             ):
-    this_page = AdminLoginPage(agent_chromium_ip_1_page)
+def navigate_to_login_page_firefox_ip_1(firefox_ip_1_page):
+    admin_login_page = AdminLoginPage(firefox_ip_1_page)
+    admin_login_page.navigate()
+    return firefox_ip_1_page
+
+
+@pytest.fixture
+def trigger_device_block_chromium_ip_1(navigate_to_login_page_chromium_ip_1,
+                                       username,
+                                       wrong_password,
+                                       num_device_block,
+                                       release_duration
+                                       ):
+    page = navigate_to_login_page_chromium_ip_1
+    login_page = AdminLoginPage(page)
     for _ in range(num_device_block):
-        this_page.login(username, wrong_password)
-        expect(this_page.invalid_login_message).to_be_visible()
-    this_page.login(username, wrong_password)
+        login_page.login(username, wrong_password)
+        expect(login_page.invalid_login_message).to_be_visible()
+    login_page.login(username, wrong_password)
     block_initiated_at = datetime.datetime.now()
-    yield
+    yield page
     now = datetime.datetime.now()
     seconds_since_block = (now - block_initiated_at).total_seconds()
     remaining = max(0, release_duration - seconds_since_block)
-    agent_chromium_ip_1_page.wait_for_timeout(round(remaining * 1000) + 1)  # + 1 for safety
+    page.wait_for_timeout(round(remaining * 1000) + 1)  # + 1 for safety
     # Consider adding a check here to see if login is actually working
     # Remember: the state here might be logged-in
 
 
 @pytest.fixture
-def trigger_ip_block(agent_chromium_ip_1_page,
-                     agent_firefox_ip_1_page,
-                     agent_chromium_ip_1_login_page,
-                     agent_firefox_ip_1_login_page,
+def trigger_ip_block(navigate_to_login_page_chromium_ip_1,
+                     navigate_to_login_page_firefox_ip_1,
                      username,
                      password,
                      wrong_password,
@@ -177,18 +176,21 @@ def trigger_ip_block(agent_chromium_ip_1_page,
                      num_ip_block,
                      release_duration
                      ):
-    this_page = AdminLoginPage(agent_chromium_ip_1_page)
+    chromium_ip_1_page = navigate_to_login_page_chromium_ip_1
+    login_page = AdminLoginPage(chromium_ip_1_page)
     for _ in range(num_device_block):
-        this_page.login(username, wrong_password)
-        expect(this_page.invalid_login_message).to_be_visible()
-    this_page = AdminLoginPage(agent_firefox_ip_1_page)
+        login_page.login(username, wrong_password)
+        expect(login_page.invalid_login_message).to_be_visible()
+
+    firefox_ip_1_page = navigate_to_login_page_firefox_ip_1
+    login_page = AdminLoginPage(firefox_ip_1_page)
     for _ in range(num_ip_block - num_device_block):
-        this_page.login(username, wrong_password)
-        expect(this_page.invalid_login_message).to_be_visible()
-    this_page.login(username, wrong_password)
+        login_page.login(username, wrong_password)
+        expect(login_page.invalid_login_message).to_be_visible()
+    login_page.login(username, wrong_password)
     block_initiated_at = datetime.datetime.now()
-    yield
+    yield chromium_ip_1_page, firefox_ip_1_page
     now = datetime.datetime.now()
     seconds_since_block = (now - block_initiated_at).total_seconds()
     remaining = max(0, release_duration - seconds_since_block)
-    agent_chromium_ip_1_page.wait_for_timeout(round(remaining * 1000) + 1)  # + 1 for safety
+    chromium_ip_1_page.wait_for_timeout(round(remaining * 1000) + 1)  # + 1 for safety

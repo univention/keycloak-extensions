@@ -1,50 +1,57 @@
 from playwright.sync_api import expect
 
-from pages.admin_console_page import AdminConsolePage, AdminLoginPage
-from pages.on_block_page import OnDeviceBlockPage, OnIPBlockPage
+from pages.keycloak_admin.admin_console.admin_console_home_page import AdminConsoleHomePage
+from pages.keycloak_admin.admin_login_page import AdminLoginPage
+from pages.keycloak_admin.on_block_page import OnDeviceBlockPage, OnIPBlockPage
 
 
-def test_device_block(agent_chromium_ip_1_page,
-                      agent_firefox_ip_1_page,
-                      agent_chromium_ip_1_trigger_device_block,
-                      agent_firefox_ip_1_login_page,
+def test_device_block(trigger_device_block_chromium_ip_1,
+                      navigate_to_login_page_firefox_ip_1,
                       username,
                       password,
                       release_duration
                       ):
-    admin_login_page = AdminLoginPage(agent_chromium_ip_1_page)
+    chromium_ip_1_page = trigger_device_block_chromium_ip_1
+    firefox_ip_1_page = navigate_to_login_page_firefox_ip_1
+
+    admin_login_page = AdminLoginPage(chromium_ip_1_page)
     expect(admin_login_page.invalid_login_message).to_be_hidden()
-    on_device_block_page = OnDeviceBlockPage(agent_chromium_ip_1_page)
+    on_device_block_page = OnDeviceBlockPage(chromium_ip_1_page)
     expect(on_device_block_page.device_blocked_message).to_be_visible()
 
-    admin_login_page = AdminLoginPage(agent_firefox_ip_1_page)
+    admin_login_page = AdminLoginPage(firefox_ip_1_page)
+    admin_login_page.check_its_there()
     admin_login_page.login(username, password)
-    admin_console_page = AdminConsolePage(agent_firefox_ip_1_page)
-    expect(admin_console_page.realm_selector).to_be_visible()
+    admin_console_home_page = AdminConsoleHomePage(firefox_ip_1_page)
+    admin_console_home_page.check_its_there()
 
-    agent_chromium_ip_1_page.wait_for_timeout(round(release_duration * 1000) + 1)  # + 1 for safety
-    admin_console_page = AdminConsolePage(agent_chromium_ip_1_page)
-    admin_console_page.go_there(username, password)
+    chromium_ip_1_page.wait_for_timeout(round(release_duration * 1000) + 1)  # + 1 for safety
+    admin_console_home_page = AdminConsoleHomePage(chromium_ip_1_page)
+    admin_console_home_page.navigate(username, password)
+    admin_console_home_page.check_its_there()
 
 
-def test_ip_block(agent_firefox_ip_1_page,
-                  agent_chromium_ip_2_page,
-                  trigger_ip_block,
-                  agent_chromium_ip_2_login_page,
+def test_ip_block(trigger_ip_block,
+                  navigate_to_login_page_chromium_ip_2,
                   username,
                   password,
                   release_duration
                   ):
-    admin_login_page = AdminLoginPage(agent_firefox_ip_1_page)
+    chromium_ip_1_page, firefox_ip_1_page = trigger_ip_block
+    chromium_ip_2_page = navigate_to_login_page_chromium_ip_2
+
+    admin_login_page = AdminLoginPage(firefox_ip_1_page)
     expect(admin_login_page.invalid_login_message).to_be_hidden()
-    on_ip_block_page = OnIPBlockPage(agent_firefox_ip_1_page)
-    expect(on_ip_block_page.ip_blocked_message).to_be_visible()
+    on_ip_block_page = OnIPBlockPage(firefox_ip_1_page)
+    on_ip_block_page.check_its_there()
 
-    admin_login_page = AdminLoginPage(agent_chromium_ip_2_page)
+    admin_login_page = AdminLoginPage(chromium_ip_2_page)
+    admin_login_page.check_its_there()
     admin_login_page.login(username, password)
-    admin_console_page = AdminConsolePage(agent_chromium_ip_2_page)
-    expect(admin_console_page.realm_selector).to_be_visible()
+    admin_console_home_page = AdminConsoleHomePage(chromium_ip_2_page)
+    admin_console_home_page.check_its_there()
 
-    agent_firefox_ip_1_page.wait_for_timeout(round(release_duration * 1000) + 1)  # + 1 for safety
-    admin_console_page = AdminConsolePage(agent_firefox_ip_1_page)
-    admin_console_page.go_there(username, password)
+    firefox_ip_1_page.wait_for_timeout(round(release_duration * 1000) + 1)  # + 1 for safety
+    admin_console_home_page = AdminConsoleHomePage(firefox_ip_1_page)
+    admin_console_home_page.navigate(username, password)
+    admin_console_home_page.check_its_there()
