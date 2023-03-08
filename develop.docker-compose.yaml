@@ -2,11 +2,8 @@ version: "3.7"
 services:
   keycloak:
     container_name: keycloak
-    image: keycloak
-    build: ./keycloak/test
-    command: start-dev --http-enabled=true --import-realm
-    # volumes:
-    #   - ./keycloak/test/realm-export.json:/opt/keycloak/data/import/realm-export.json
+    image: quay.io/keycloak/keycloak:21.0.1
+    command: start-dev --http-enabled=true
     ports:
       - 5050:8080
     environment:
@@ -21,6 +18,7 @@ services:
     container_name: keycloak-extensions-proxy
     image: keycloak-extensions-proxy:develop
     build: ./proxy
+    restart: unless-stopped
     ports:
       - 8181:8181
     depends_on:
@@ -36,13 +34,16 @@ services:
       POSTGRES_DATABASE_NAME: handler
       POSTGRES_PASSWORD: postgres
       POSTGRES_PORT: 5432
+      # Captcha
+      CAPTCHA_SITE_KEY: 6LcUyZkiAAAAAHo98CowhZFoc-E-3yeo38Hs1HSB
 
   handler:
     container_name: keycloak-extensions-handler
     image: keycloak-extensions-handler:develop
     build: ./handler
+    restart: unless-stopped
     depends_on:
-      # - keycloak
+      - keycloak
       - database
     environment:
       # Keycloak
@@ -70,10 +71,8 @@ services:
       # Email
       SMTP_SERVER: mail.example.org
       SMTP_PORT: 587
-      SMTP_USERNAME: univention
-      SMTP_PASSWORD: somepassword
-      MAIL_FROM: univention@example.org
-      NEW_DEVICE_LOGIN_SUBJECT: "New device login"
+      SENDER_EMAIL: univention@example.org
+      SENDER_EMAIL_PASSWORD: somepassword
 
   database:
     container_name: keycloak-extensions-postgres
@@ -84,15 +83,3 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
       POSTGRES_DB: handler
-
-  e2e-tests:
-    container_name: e2e-tests
-    image: e2e-tests:develop
-    init: true  # https://playwright.dev/docs/ci#docker
-    build: ./tests/e2e
-    depends_on:
-      - keycloak
-      - database
-      - handler
-      - proxy
-    command: pytest --base-url http://proxy:8181 --slowmo 500 --video retain-on-failure

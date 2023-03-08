@@ -39,19 +39,6 @@ The branch detection regex looks like this:
 
 For more information on semantic versioning, see: https://semver.org
 
-### Updating the Maven project version
-
-It makes sense to have the internal Maven project under `./reCaptcha-auth-flow`
-versioned using the same version number from your tag.
-To achieve this, you can update the version in the Maven project,
-and then version-tag your commit.
-
-Updating the version of a Maven project is done using the following command:
-
-```shell
-mvn versions:set -DnewVersion=0.3.0
-```
-
 # Setup
 
 ## Configure Keycloak
@@ -71,7 +58,7 @@ We need user events to be enabled. In order to do so:
 7. You can set an expiration time for events, but it is not needed for local testing.
 8. For now we only need `LOGIN_ERROR` and `LOGIN`, but no need to disable the other 111 event types.
 
-#### Keycloak <= 18 (current local setup)
+#### Keycloak <= 18
 
 1. Access `http://localhost:5050/admin`.
 2. Click `Administration Console`.
@@ -85,45 +72,25 @@ We need user events to be enabled. In order to do so:
 
 > Any changes to `docker-compose.yaml` will affect this steps.
 
-### Configure reCaptcha extension (optional)
+### Configure reCaptcha
 
-#### Theme
+In order for reCaptcha to work, we need to tweak two things on Keycloak:
 
-1. Go into `Realm settings > Themes`.
-2. Choose `captcha` as `Login theme`.
+1. Go to `Realm settings > Security Defenses` and set:
+2. `X-Frame-Options` to `ALLOW-FROM https://www.google.com`
+3. `Content-Security-Policy` to `frame-src 'self' https://www.google.com; frame-ancestors 'self'; object-src 'none';`
+4. Save.
 
-> If the theme is not there, make sure you build the custom keycloak:
-> `docker compose up -d keycloak --build`
+Now you need to check that your proxy gets the environment variable `CAPTCHA_SITE_KEY`.
+For localhost, I lend you this one: `6LcUyZkiAAAAAHo98CowhZFoc-E-3yeo38Hs1HSB`, but you
+may want to grab one from [here](https://www.google.com/recaptcha/admin/).
 
-#### Auth Flow
-
-1. Go to `Authentication` on the left menu.
-2. Select the `Browser` flow from the dropdown.
-3. On the top right, do `Copy`.
-4. Name: `Captcha` (can be changed).
-5. Access the new created flow from the dropdown.
-6. Under `Captcha forms` (or the name you gave it on step 4), go to `Actions > Add execution`
-7. Select `Username Password Form With reCaptcha`.
-8. Move it just below `Captcha forms` as a substep.
-9. Set it as `Required` and remove the original step `Username Password Form`
-10. Configure the new step:
-    1. Click on `Actions > Config` for the new step.
-    2. Set an alias, `myCaptcha` will do.
-    3. (Optional, or copy my values from following steps) Go to `https://www.google.com/recaptcha/admin` and get the site key and secret key.
-    4. Set site key to `6LcUyZkiAAAAAHo98CowhZFoc-E-3yeo38Hs1HSB`
-    5. Set secret key to `6LcUyZkiAAAAAOM0G7kctpprpOtM6DWKagf8Ew88`
-11. Go back to `Authentication` menu on the left and go to `Bindings`.
-12. Set the `Browser Flow` to `Captcha` (or your name on step 4).
-13. Save.
-14. Go to `Realm settings > Security Defenses` and set:
-    1. `X-Frame-Options` to `ALLOW-FROM https://www.google.com`
-    2. `Content-Security-Policy` to `frame-src 'self' https://www.google.com; frame-ancestors 'self'; object-src 'none';`
-    3. Save.
+Currently only Google reCaptcha is supported, but Cloudflare and others are easy to integrate.
 
 ## Local setup
 
-`docker compose up -d keycloak database`  
-`docker compose up -d proxy handler`
+`docker compose -f develop.docker-compose.yaml up -d keycloak database`  
+`docker compose -f develop.docker-compose.yaml up -d proxy handler`
 
 You can access:
 
@@ -139,8 +106,8 @@ You can access:
 
 - [x] Fingerprint requests to track devices.
 - [x] Block requests based on IP (read from database).
-- [ ] Block requests based on device (read from database). TODO: better device tracking.
-- [x] Add header `X-SUSPICIOUS-REQUEST` to enable captcha on Keycloak if configured.
+- [x] Block requests based on device (read from database).
+- [x] Injects the reCaptcha into the login form if needed (read action from database).
 
 ### Handler
 
@@ -151,11 +118,6 @@ You can access:
 - [x] Deletes expired actions from the database.
 - [x] TODO: Notifies the administrator if failed login attempts rate is exceeded.
 - [x] New Device Login.
-
-### Keycloak
-
-- [x] Show reCaptcha if configured on `X-SUSPICIOUS-REQUEST`.
-- [ ] ONGOING: currently reCaptcha fails with KC > 18 because of a new JSON mapping...
 
 ## Future lines of work
 

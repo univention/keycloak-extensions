@@ -10,7 +10,7 @@ services:
 before_script:
   - docker version
   - docker-compose version
-  - docker-compose build
+  - docker-compose -f test.docker-compose.yaml build
 
 tests:
   stage: test
@@ -20,11 +20,11 @@ tests:
       - tests/e2e/test-results/**/*.webm
     expire_in: 1 day
   script:
-    - docker-compose up -d keycloak database
+    - docker-compose -f test.docker-compose.yaml up -d keycloak database
     - sleep 60
-    - docker-compose up -d proxy handler
+    - docker-compose -f test.docker-compose.yaml up -d proxy handler
     - sleep 10
-    - docker-compose run --name e2e-ci e2e-tests
+    - docker-compose -f test.docker-compose.yaml run --name e2e-ci e2e-tests
   after_script:
     - docker cp e2e-ci:/e2e/test-results/ $CI_PROJECT_DIR/tests/e2e/ || true
-    - docker-compose down
+    - docker-compose -f test.docker-compose.yaml down
