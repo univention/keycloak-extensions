@@ -18,6 +18,7 @@ tolerations: []
 ## Application-specific
 appConfig:
   logLevel: "debug"
+  captchaSiteKey: "some_site_key"
 
 global:
   keycloak:
@@ -49,7 +50,7 @@ ingress:
 image:
   registry: "registry.souvap-univention.de"
   repository: "souvap/tooling/images/keycloak-extensions/keycloak-proxy"
-  tag: "0.1.0"
+  tag: "0.1.1"
   imagePullPolicy: "Always"
 
 ## Container deployment probes
@@ -69,7 +70,6 @@ probes:
     periodSeconds: 15
     failureThreshold: 30
     successThreshold: 1
-
 
 ## Deployment resources
 resources:
@@ -93,5 +93,3 @@ service:
   sessionAffinity:
     enabled: false
     timeoutSeconds: 10800
-
-...

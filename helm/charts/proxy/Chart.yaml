@@ -1,5 +1,4 @@
 ---
-
 apiVersion: "v1"
 type: "application"
 name: "proxy"
@@ -8,14 +7,12 @@ home: "https://www.univention.de/"
 
 # Chart version
 # Apply Semantic Versioning (https://semver.org/)
-version: "0.1.0"
+version: "0.1.1"
 
 # BFP Proxy Version
-appVersion: "0.1.0"
+appVersion: "0.1.1"
 
 dependencies:
   - name: "common"
     repository: "https://charts.bitnami.com/bitnami"
     version: "^2.2.2"
-
-...
