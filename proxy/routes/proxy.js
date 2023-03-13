@@ -4,7 +4,9 @@ const setCookie = require('set-cookie-parser');
 const { createProxyMiddleware, responseInterceptor } = require("http-proxy-middleware");
 
 const {
-  logger
+    logger,
+    injectFingerprintJS,
+    injectGoogleCaptcha
 } = require("../utils");
 
 const {
@@ -84,20 +86,7 @@ const loginMiddleware = createProxyMiddleware({
     ) {
       logger.debug(`Injecting script into ${req.method} ${req.path}`);
       const response = responseBuffer.toString('utf8'); // Convert buffer to string
-      return response + `<script>
-      // Initialize the agent at application startup.
-      const fpPromise = import('/fingerprintjs/v3.js')
-        .then(FingerprintJS => FingerprintJS.load());
-
-      // Get the visitor identifier when you need it.
-      fpPromise
-        .then(fp => fp.get())
-        .then(result => {
-          // This is the visitor identifier:
-          const visitorId = result.visitorId;
-          document.cookie = 'DEVICE_FINGERPRINT=' + visitorId+ ';path=/;SameSite=None;Secure=false';
-        });
-      </script>`;
+      return injectFingerprintJS(response);
     };
     return responseBuffer;
   }),
@@ -139,7 +128,6 @@ router.use("*/login-actions/authenticate*", fetchCaptchaActions, fetchBlockActio
 
   onProxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
     if (
-<<<<<<< HEAD
         req.path.includes("login-actions/authenticate") && req.method === "POST"
         && (200 <= res.statusCode) && (res.statusCode <= 399)
     ) {
@@ -160,38 +148,12 @@ router.use("*/login-actions/authenticate*", fetchCaptchaActions, fetchBlockActio
         );
       } else {
         logger.info("Login succeeded, but no fingerprint was returned.");
-=======
-      req.path.includes("login-actions/authenticate") &&
-      req.method === "POST" ) {
-        if (res.statusCode === 302) {
-          logger.debug("Login succeded, notify user if new device.")
-          const cookies = setCookie.parse(proxyRes, {map: true});
-          const token = jwt_decode(cookies["KEYCLOAK_IDENTITY"].value ?? cookies["KEYCLOAK_IDENTITY_LEGACY"].value)
-          await saveFingerprintToDeviceRelation(
-            req.cookies["DEVICE_FINGERPRINT"],
-            req.cookies["AUTH_SESSION_ID"] ?? req.cookies["AUTH_SESSION_ID_LEGACY"],
-            token.sub
-          );
->>>>>>> 78fc071 (feat(captcha): proxy injects captcha if needed)
       }
 
       if (res.statusCode === 200 && (req._ipCaptchaActions.rows.length > 0 || req._deviceCaptchaActions.rows.length > 0)) {
         logger.debug("Prompting for reCaptcha");
         let response = responseBuffer.toString('utf8');
-        response = response.replace(
-          "</head>",
-          `<script src="https://www.google.com/recaptcha/api.js" async defer></script>
-          </head>`);
-        response = response.replace(
-          `onsubmit="login.disabled = true; return true;"`,
-          `onsubmit="login.disabled = true; if (grecaptcha.getResponse() === '') {console.log('Captcha not filled'); login.disabled = false; return false;} else {console.log('Captcha filled'); return true;}"`)
-        response = response.replace(
-          `<div class="form-group login-pf-settings">`,
-          `<div class="form-group" style="display:flex; justify-content:center; align-items:center">
-            <div class="g-recaptcha" data-sitekey="${process.env.CAPTCHA_SITE_KEY}"></div>
-          </div>
-          <div class="form-group login-pf-settings">`);
-        return response;
+        return injectGoogleCaptcha(response);
       }
     };
     return responseBuffer;
