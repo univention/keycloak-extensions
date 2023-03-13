@@ -132,7 +132,7 @@ router.use("*/login-actions/authenticate*", fetchCaptchaActions, fetchBlockActio
         && (200 <= res.statusCode) && (res.statusCode <= 399)
     ) {
       const resCookies = setCookie.parse(proxyRes, {map: true});
-      const rawToken = (resCookies["KEYCLOAK_IDENTITY"] || resCookies["KEYCLOAK_IDENTITY_LEGACY"]).value;
+      const rawToken = (resCookies["KEYCLOAK_IDENTITY"] || resCookies["KEYCLOAK_IDENTITY_LEGACY"])?.value;
       if (rawToken === undefined) {
         logger.warn("POST to login-actions/authenticate without Keycloak identity tokens!");
         return responseBuffer;
