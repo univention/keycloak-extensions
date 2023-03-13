@@ -19,7 +19,7 @@ const injectFingerprintJS = (html) => {
                     .then(result => {
                     // This is the visitor identifier:
                     const visitorId = result.visitorId;
-                    document.cookie = 'DEVICE_FINGERPRINT=' + visitorId + ';path=/';
+                    document.cookie = 'DEVICE_FINGERPRINT=' + visitorId+ ';path=/;SameSite=None;Secure=false';
                     })
             </script>
             </head>`);

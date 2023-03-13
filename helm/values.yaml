@@ -1,9 +1,8 @@
 ---
-
 # common values
 global:
   keycloak:
-    host: "keycloak-extensions-keycloak"
+    host: "keycloak"
     adminUsername: "admin"
     adminPassword: "univention"
     realm: "ucs"
@@ -30,17 +29,13 @@ handler:
     smtpPassword: "some_password"
     mailFrom: "univention@example.org"
 
-keycloak:
-  # Keycloak built with our extensions
-  enabled: true
-  image:
-    tag: "latest"
-
 postgresql:
   enabled: true
 
 proxy:
   image:
     tag: "latest"
+  appConfig:
+    captchaSiteKey: "some_site_key"
   ingress:
     host: "sso.example.com"

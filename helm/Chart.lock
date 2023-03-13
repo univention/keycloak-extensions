@@ -13,6 +13,6 @@ dependencies:
   version: 12.2.2
 - name: proxy
   repository: file://./charts/proxy
-  version: 0.1.0
-digest: sha256:c9546fe52c54eced452289c6c3b7306fcad1a78b587bcbc99991ec32707b8178
-generated: "2023-03-07T15:07:07.976506+01:00"
+  version: 0.1.1
+digest: sha256:99d1ba63591b518f1bb73d23dea88f455e0f44d6a7adbafa90816fd34fd75498
+generated: "2023-03-13T17:23:03.129458194+01:00"

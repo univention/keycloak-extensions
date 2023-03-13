@@ -1,5 +1,4 @@
 ---
-
 apiVersion: v2
 type: application
 name: keycloak-extensions
@@ -11,7 +10,7 @@ home: "https://www.univention.de/"
 version: 0.1.0
 
 # Keycloak version
-appVersion: "18.0.2"
+appVersion: "21.0.1"
 
 dependencies:
   - name: "common"
@@ -20,16 +19,10 @@ dependencies:
   - name: "handler"
     repository: "file://./charts/handler"
     version: "0.1.0"
-  - name: "keycloak"
-    repository: "file://./charts/keycloak"
-    version: "0.1.0"
-    condition: keycloak.enabled
   - name: "postgresql"
     repository: "https://charts.bitnami.com/bitnami"
     version: "^12.2.2"
     condition: postgresql.enabled
   - name: "proxy"
     repository: "file://./charts/proxy"
-    version: "0.1.0"
-
-...
+    version: "0.1.1"

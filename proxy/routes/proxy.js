@@ -84,7 +84,7 @@ const loginMiddleware = createProxyMiddleware({
       && req.method === "GET"
       && (proxyRes.headers['content-type'] ?? "").includes("text/html")
     ) {
-      logger.debug(`Injecting script into ${req.method} ${req.path}`);
+      logger.debug(`Injecting FingerprintJS script into ${req.method} ${req.path}`);
       const response = responseBuffer.toString('utf8'); // Convert buffer to string
       return injectFingerprintJS(response);
     };
@@ -135,6 +135,11 @@ router.use("*/login-actions/authenticate*", fetchCaptchaActions, fetchBlockActio
       const rawToken = (resCookies["KEYCLOAK_IDENTITY"] || resCookies["KEYCLOAK_IDENTITY_LEGACY"])?.value;
       if (rawToken === undefined) {
         logger.warn("POST to login-actions/authenticate without Keycloak identity tokens!");
+        if (res.statusCode === 200 && (req._ipCaptchaActions.rows.length > 0 || req._deviceCaptchaActions.rows.length > 0)) {
+          logger.debug("Prompting for reCaptcha");
+          let response = responseBuffer.toString('utf8');
+          return injectGoogleCaptcha(response);
+        }
         return responseBuffer;
       }
       const token = jwt_decode(rawToken);
@@ -148,12 +153,6 @@ router.use("*/login-actions/authenticate*", fetchCaptchaActions, fetchBlockActio
         );
       } else {
         logger.info("Login succeeded, but no fingerprint was returned.");
-      }
-
-      if (res.statusCode === 200 && (req._ipCaptchaActions.rows.length > 0 || req._deviceCaptchaActions.rows.length > 0)) {
-        logger.debug("Prompting for reCaptcha");
-        let response = responseBuffer.toString('utf8');
-        return injectGoogleCaptcha(response);
       }
     };
     return responseBuffer;

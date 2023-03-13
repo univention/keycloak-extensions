@@ -1,5 +1,4 @@
 ---
-
 variables:
   SOUVAP_API_V4_URL: https://gitlab.souvap-univention.de/api/v4
   SOUVAP_HELM_ACCESS_USER: gitlab-ci-knut
@@ -13,19 +12,17 @@ stages:
   - test
   - release
 
-
 include:
   - project: univention/dist/docker-services
     file: kaniko.yml
-
 
 .push-image-souvap:
   variables:
     GIT_STRATEGY: none
   image: artifacts.knut.univention.de/dockerhub_proxy_cache/library/docker:20.10.12
   services:
-  - name: docker-registry.knut.univention.de/ucs/docker:dind
-    alias: docker
+    - name: docker-registry.knut.univention.de/ucs/docker:dind
+      alias: docker
   before_script:
     # derived from the .kaniko_pre to define the IMAGE_TAG and IMAGE_VERSION
     - |-
@@ -59,7 +56,6 @@ include:
     - echo "${SOUVAP_REGISTRY_TOKEN}" | docker login --username "${SOUVAP_REGISTRY_USER}" --password-stdin "${SOUVAP_REGISTRY_HOST}"
     - docker push "${SOUVAP_IMAGE_TAG}"
 
-
 # A release is only possible from a semantic version tag,
 # and must be triggered manually, from the GitLab CI web UI.
 release_pipeline:
@@ -92,28 +88,6 @@ push-image-souvap-handler-job:
   variables:
     CI_REGISTRY_IMAGE: "$CI_REGISTRY_IMAGE/keycloak-handler"
     SOUVAP_IMAGE_NAME: "keycloak-handler"
-
-build-keycloak-service-job:
-  stage: release
-  extends: .kaniko
-  variables:
-    KANIKO_BUILD_CONTEXT: "keycloak"
-    CI_REGISTRY_IMAGE: "$CI_REGISTRY_IMAGE/keycloak-service"
-    KANIKO_ARGS: "--skip-unused-stages=true --cache=true --cache-repo=$CI_REGISTRY_IMAGE-cache"
-  after_script:
-    - docker images --all
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH
-
-push-image-souvap-keycloak-job:
-  stage: release
-  needs:
-    - job: build-keycloak-service-job
-  extends: .push-image-souvap
-  variables:
-    CI_REGISTRY_IMAGE: "$CI_REGISTRY_IMAGE/keycloak-service"
-    SOUVAP_IMAGE_NAME: "keycloak-service"
 
 build-keycloak-proxy-job:
   stage: release
@@ -157,7 +131,7 @@ package-helm-chart:
     name: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/alpine/helm:3.10.2"
     entrypoint: [""]
   script:
-    - "if [ -z \"${RELEASE_VERSION}\" ]; then exit 0; fi"
+    - 'if [ -z "${RELEASE_VERSION}" ]; then exit 0; fi'
     - "helm repo add bitnami https://charts.bitnami.com/bitnami"
     - "helm package --version ${RELEASE_VERSION} --destination ./packages --dependency-update helm"
   variables:
@@ -173,7 +147,7 @@ publish-helm-chart:
     - "package-helm-chart"
   image: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/curlimages/curl:latest"
   script:
-    - "if [ -z \"${RELEASE_VERSION}\" ]; then exit 0; fi"
+    - 'if [ -z "${RELEASE_VERSION}" ]; then exit 0; fi'
     - |
       for _filename in `find packages -type f`;
       do
@@ -195,4 +169,4 @@ tests:
     include: "/.gitlab/ci/tests/docker_tests.yml"
     strategy: depend
   rules:
-    - if: $CI_COMMIT_BRANCH  # pipelines can't be created for MR, so sticking with only branch
+    - if: $CI_COMMIT_BRANCH # pipelines can't be created for MR, so sticking with only branch
