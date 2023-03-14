@@ -5,14 +5,11 @@ dependencies:
 - name: handler
   repository: file://./charts/handler
   version: 0.1.0
-- name: keycloak
-  repository: file://./charts/keycloak
-  version: 0.1.0
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
-  version: 12.2.2
+  version: 12.2.3
 - name: proxy
   repository: file://./charts/proxy
-  version: 0.1.1
-digest: sha256:99d1ba63591b518f1bb73d23dea88f455e0f44d6a7adbafa90816fd34fd75498
-generated: "2023-03-13T17:23:03.129458194+01:00"
+  version: 0.1.0
+digest: sha256:25a38b32beeb973c553a002eef1ef89ef5e2741d8268053c58c7e940c7bc541f
+generated: "2023-03-14T16:22:34.995727283+01:00"

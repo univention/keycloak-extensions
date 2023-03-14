@@ -2,8 +2,9 @@ version: "3.7"
 services:
   keycloak:
     container_name: keycloak
-    image: quay.io/keycloak/keycloak:21.0.1
-    command: start-dev --http-enabled=true
+    image: keycloak
+    build: ./keycloak/test
+    command: start-dev --http-enabled=true --import-realm
     ports:
       - 5050:8080
     environment:
@@ -67,12 +68,14 @@ services:
       AUTO_EXPIRE_RULE_IN_MINS: 1
       DEVICE_PROTECTION_ENABLE: "True"
       IP_PROTECTION_ENABLE: "True"
-      CAPTCHA_PROTECTION_ENABLE: "True"
+      CAPTCHA_PROTECTION_ENABLE: "False"
       # Email
-      SMTP_SERVER: mail.example.org
+      SMTP_HOST: mail.example.org
       SMTP_PORT: 587
-      SENDER_EMAIL: univention@example.org
-      SENDER_EMAIL_PASSWORD: somepassword
+      MAIL_FROM: univention@example.org
+      SMTP_USERNAME: user
+      SMTP_PASSWORD: somepassword
+      NEW_DEVICE_LOGIN_SUBJECT: "New device login"
 
   database:
     container_name: keycloak-extensions-postgres
@@ -83,3 +86,16 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
       POSTGRES_DB: handler
+
+  e2e-tests:
+    container_name: e2e-tests
+    image: e2e-tests:develop
+    profiles: ["test"]
+    init: true # https://playwright.dev/docs/ci#docker
+    build: ./tests/e2e
+    depends_on:
+      - keycloak
+      - database
+      - handler
+      - proxy
+    command: pytest --base-url http://proxy:8181 --slowmo 500 --video retain-on-failure

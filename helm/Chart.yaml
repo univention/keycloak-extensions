@@ -25,4 +25,4 @@ dependencies:
     condition: postgresql.enabled
   - name: "proxy"
     repository: "file://./charts/proxy"
-    version: "0.1.1"
+    version: "0.1.0"

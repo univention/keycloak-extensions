@@ -50,7 +50,7 @@ ingress:
 image:
   registry: "registry.souvap-univention.de"
   repository: "souvap/tooling/images/keycloak-extensions/keycloak-proxy"
-  tag: "0.1.1"
+  tag: "0.1.0"
   imagePullPolicy: "Always"
 
 ## Container deployment probes
