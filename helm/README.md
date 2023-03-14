@@ -1,4 +1,4 @@
-# Helm Chart for Keycloak with Brute Force Prevention PoC
+# Helm Chart for Keycloak with Brute Force Prevention
 
 Allows to install Keycloak with brute force protection into a kubernetes cluster.
 
@@ -51,7 +51,7 @@ Copy the `values.yaml` file and adjust for your needs.
 Install the chart as follows:
 
 ```bash
-helm update --install --namespace <YOUR_NAMESPACE> --values <YOUR_VALUES.YAML> keycloak-extensions .
+helm upgrade --install --namespace <YOUR_NAMESPACE> --values <YOUR_VALUES.YAML> keycloak-extensions .
 ```
 
 Then follow [the instructions](https://git.knut.univention.de/univention/customers/dataport/upx/pocs/keycloak-extensions#setup)

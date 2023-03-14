@@ -89,8 +89,8 @@ Currently only Google reCaptcha is supported, but Cloudflare and others are easy
 
 ## Local setup
 
-`docker compose -f develop.docker-compose.yaml up -d keycloak database`  
-`docker compose -f develop.docker-compose.yaml up -d proxy handler`
+`docker compose up -d keycloak database`  
+`docker compose up -d proxy handler`
 
 You can access:
 
