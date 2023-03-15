@@ -2,7 +2,7 @@
 variables:
   SOUVAP_API_V4_URL: https://gitlab.souvap-univention.de/api/v4
   SOUVAP_HELM_ACCESS_USER: gitlab-ci-knut
-  SOUVAP_HELM_PROJECT_ID: 76
+  SOUVAP_HELM_PROJECT_ID: 77
   SOUVAP_REGISTRY_HOST: registry.souvap-univention.de
   SOUVAP_REGISTRY_PATH: souvap/tooling/images/keycloak-extensions
   SOUVAP_REGISTRY_REPO: ${SOUVAP_REGISTRY_HOST}/${SOUVAP_REGISTRY_PATH}
