@@ -22,7 +22,6 @@ handler:
   image:
     tag: "latest"
   appConfig:
-    captchaProtectionEnable: "false"
     smtpHost: "mail.example.org"
     smtpPort: "587"
     smtpUsername: "univention"
