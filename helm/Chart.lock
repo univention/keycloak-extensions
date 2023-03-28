@@ -7,9 +7,9 @@ dependencies:
   version: 0.1.0
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
-  version: 12.2.3
+  version: 12.2.7
 - name: proxy
   repository: file://./charts/proxy
   version: 0.1.0
-digest: sha256:25a38b32beeb973c553a002eef1ef89ef5e2741d8268053c58c7e940c7bc541f
-generated: "2023-03-14T16:22:34.995727283+01:00"
+digest: sha256:a8da45da5c5080ff1bf8bd257a408d595ba0b05d4a91ff20e74b422bac5efb03
+generated: "2023-04-04T14:24:34.781205494+02:00"

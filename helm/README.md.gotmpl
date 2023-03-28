@@ -1,0 +1,66 @@
+# Helm Chart for Keycloak Extensions
+
+Allows to install Keycloak with brute force protection into a kubernetes cluster.
+
+## Prerequisites
+
+- The images are available at the SouvAP container registry with the same name:
+
+  https://gitlab.souvap-univention.de/souvap/tooling/images/keycloak-extensions/container_registry
+
+## Run
+
+Copy the `values.yaml` file and adjust for your needs.
+
+- Note the version/tag which you want to run and adjust them in `values.yaml` accordingly.
+
+- Decide whether to use the PostgreSQL from the sub-chart, or provide your own.
+
+  - In case of using the sub-chart:
+
+    Set `postgresql.enabled` to `true`.
+    The other `postgresql.*` values are rather arbitrary in this case and will be
+    passed to the PostgreSQL instance and the other sub-charts.
+
+  - In case of using another PostgreSQL instance:
+
+    Set `postgresql.enabled` to `false`.
+    Fill the server location in `postgresql.connection.(host|port)`
+    and the credentials of the external instance in `postgresql.auth.(database|username|password)`.
+
+- In any case, ensure that `proxy.ingress.host` is set to the desired SSO hostname.
+
+- Note: Captcha protection is disabled by default.
+
+  In order to enable it
+  ensure that the chosen Keycloak image or host contains our extension plugin
+  and set `handler.appConfig.captchaProtectionEnable` to `"true"`.
+
+Install the chart as follows:
+
+```bash
+helm upgrade --install --namespace <YOUR_NAMESPACE> --values <YOUR_VALUES.YAML> keycloak-extensions .
+```
+
+Then follow [the instructions](https://git.knut.univention.de/univention/customers/dataport/upx/pocs/keycloak-extensions#setup)
+to configure the realm properly and enable the reCaptha-protected auth fow.
+
+
+# Helm docs
+
+{{ template "chart.header" . }}
+{{ template "chart.deprecationWarning" . }}
+
+{{ template "chart.badgesSection" . }}
+
+{{ template "chart.description" . }}
+
+{{ template "chart.homepageLine" . }}
+
+{{ template "chart.maintainersSection" . }}
+
+{{ template "chart.sourcesSection" . }}
+
+{{ template "chart.requirementsSection" . }}
+
+{{ template "chart.valuesSection" . }}

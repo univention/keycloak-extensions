@@ -159,3 +159,18 @@ tests:
     strategy: depend
   rules:
     - if: $CI_COMMIT_BRANCH # pipelines can't be created for MR, so sticking with only branch
+
+# Ensures that we have the generated files always consistent with the
+# sources.
+lint-helm-docs:
+  stage: test
+  needs: []
+  image:
+    name: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/jnorwood/helm-docs:v1.11.0"
+    entrypoint: [""]
+  script:
+    - cp -r helm helm-orig
+    - helm-docs -c helm
+    - diff -r helm-orig helm
+  after_script:
+    - 'echo "INFO: Check ./helm/README.md for details how to re-generate the README.md files in the charts."'

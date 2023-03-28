@@ -1,23 +1,37 @@
 ---
-# common values
+# -- Global Keycloak Extensions configuration values
 global:
+  # -- External Keycloak settings
   keycloak:
+    # -- Host where keycloak is accessible (specify port if needed)
     host: "keycloak"
+    # -- Admin user for Keycloak admin-cli
     adminUsername: "admin"
+    # -- Admin password for Keycloak admin-cli provided user
     adminPassword: "univention"
+    # -- Keycloak realm to listen events on (master allows to listen for all realms)
     realm: "ucs"
     adminRealm:
+  # -- PostgreSQL settings
   postgresql:
+    # -- Connextion details
     connection:
+      # -- Hostname or IP address of the server hosting the PostgreSQL database
       host: "keycloak-extensions-postgresql"
+      # -- Port number that the PostgreSQL database is exposed on
       port: "5432"
+    # -- Authentication details
     auth:
+      # -- Database for the proxy and handler to use
       database: "bfp"
+      # -- User for the PostgreSQL database
       username: "bfp"
+      # -- Password for the PostgreSQL database
       password: "correcthorsebatterystaple"
+      # -- Currently unused
       postgresPassword: "correcthorsebatterystaple"
 
-# sub-chart specific values
+# Handler sub-chart specific values
 handler:
   image:
     tag: "latest"
@@ -29,9 +43,15 @@ handler:
     smtpPassword: "some_password"
     mailFrom: "univention@example.org"
 
+# -- PostgreSQL settings.
+#
+# The bitnami helm chart does contain all details of what can be configured:
+# https://github.com/bitnami/charts/tree/main/bitnami/postgresql
 postgresql:
+  # -- Set to `true` if you want PostgreSQL to be installed as well.
   enabled: true
 
+# Proxy sub-chart specific values
 proxy:
   image:
     tag: "latest"

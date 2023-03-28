@@ -1,6 +1,7 @@
 version: "3.7"
 services:
   keycloak:
+    # Test Keycloak instance already configured according to README.md
     container_name: keycloak
     image: keycloak
     build: ./keycloak/test
@@ -16,6 +17,8 @@ services:
       - ROOT_LOGLEVEL=ALL
 
   proxy:
+    # The proxy in front of Keycloak handling blocks and captcha.
+    # More at /proxy/README.md
     container_name: keycloak-extensions-proxy
     image: keycloak-extensions-proxy:develop
     build: ./proxy
@@ -39,6 +42,8 @@ services:
       CAPTCHA_SITE_KEY: 6LcUyZkiAAAAAHo98CowhZFoc-E-3yeo38Hs1HSB
 
   handler:
+    # The container checking for new events and triggering actions for the proxy.
+    # More at /handler/README.md
     container_name: keycloak-extensions-handler
     image: keycloak-extensions-handler:develop
     build: ./handler
@@ -78,6 +83,7 @@ services:
       NEW_DEVICE_LOGIN_SUBJECT: "New device login"
 
   database:
+    # PostgreSQL database shared between proxy and handler containers.
     container_name: keycloak-extensions-postgres
     image: postgres:15.1-alpine
     ports:
@@ -88,8 +94,10 @@ services:
       POSTGRES_DB: handler
 
   keycloak-dev:
+    # A non configured instance of Keycloak for development.
     container_name: keycloak-dev
     image: keycloak
+    profiles: ["development"]
     build:
       context: ./keycloak
       args:
@@ -110,6 +118,7 @@ services:
       - DEBUG_SUSPEND=y # to wait until a debugger is connected
 
   e2e-tests:
+    # Test suite to run end-to-end tests
     container_name: e2e-tests
     image: e2e-tests:develop
     profiles: ["test"]
@@ -121,3 +130,13 @@ services:
       - handler
       - proxy
     command: pytest --base-url http://proxy:8181 --slowmo 500 --video retain-on-failure
+
+  # Environment which allows to run the tool "helm-docs". See the directory
+  # "/helm" for more details.
+  helm-docs:
+    profiles:
+      - test
+    image: "jnorwood/helm-docs:v1.11.0"
+    command: "-c helm"
+    volumes:
+      - ./helm:/helm-docs/helm
