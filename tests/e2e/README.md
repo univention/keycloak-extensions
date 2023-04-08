@@ -28,6 +28,7 @@ We support the following custom command line options defined in `tests/conftest.
 4. `num-ip-block`: Number of failed login attempts for IP block. Defaults to `7`. 
 Must be higher than `num-device-block`
 5. `release-duration`: Number of seconds after which blocks are released. Default is `60`.
+6. `realm`: Realm to attempt logins against. Defaults to `master`.
 
 Some other useful supported options:
 
@@ -53,6 +54,7 @@ docker run -it --network="host" e2e:latest pytest --base-url http://localhost:81
 | Many failed logins with browser A and IP X; browser A blocked. more failed logins with browser B and IP X; IP X blocked | `tests/test_block::test_ip_block`     |
 | IP X block is released after a minute                                                                                   | `tests/test_block::test_ip_block`     |
 | IP X blocked, but IP Y can login                                                                                        | `tests/test_block::test_ip_block`     |
+| OIDC API block for IP address                                                                                           | `tests/test_block::test_api_ip_block` |
 
 ## For test engineers
 

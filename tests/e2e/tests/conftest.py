@@ -28,6 +28,9 @@ def pytest_addoption(parser):
     parser.addoption("--release-duration", type=int, default=60,
                      help="Blocks are released after this many seconds"
                      )
+    parser.addoption("--realm", default="master",
+                     help="Realm to attempt logins at"
+                     )
 
 
 @pytest.fixture
@@ -38,6 +41,16 @@ def username(pytestconfig):
 @pytest.fixture
 def password(pytestconfig):
     return pytestconfig.option.password
+
+
+@pytest.fixture
+def realm(pytestconfig):
+    return pytestconfig.option.realm
+
+
+@pytest.fixture(scope="session")
+def base_url(pytestconfig):
+    return pytestconfig.getoption("--base-url")
 
 
 @pytest.fixture
@@ -56,8 +69,8 @@ def release_duration(pytestconfig):
 
 
 @pytest.fixture
-def wrong_password():
-    return "wrong_password"
+def wrong_password(pytestconfig):
+    return pytestconfig.option.password + "wrong_password"
 
 
 @pytest.fixture(scope="session")
