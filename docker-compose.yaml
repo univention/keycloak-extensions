@@ -40,6 +40,7 @@ services:
       POSTGRES_PORT: 5432
       # Captcha
       CAPTCHA_SITE_KEY: 6LcUyZkiAAAAAHo98CowhZFoc-E-3yeo38Hs1HSB
+      CAPTCHA_SECRET_KEY: 6LcUyZkiAAAAAOM0G7kctpprpOtM6DWKagf8Ew88
 
   handler:
     # The container checking for new events and triggering actions for the proxy.

@@ -32,9 +32,11 @@
 
 const { logger } = require("./logger");
 const { injectFingerprintJS, injectGoogleCaptcha } = require("./injectors");
+const { googleCaptchaCheck } = require("./captchaCheck");
 
 module.exports = {
   logger,
   injectFingerprintJS,
-  injectGoogleCaptcha
+  injectGoogleCaptcha,
+  googleCaptchaCheck
 };

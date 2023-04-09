@@ -57,5 +57,6 @@ proxy:
     tag: "latest"
   appConfig:
     captchaSiteKey: "some_site_key"
+    captchaSecretKey: "some_secret_key"
   ingress:
     host: "sso.example.com"

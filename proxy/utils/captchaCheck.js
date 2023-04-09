@@ -30,11 +30,36 @@
  * <https://www.gnu.org/licenses/>.
  */
 
-const { saveFingerprintToDeviceRelation } = require("./devices");
-const { getActionCountForIP, getActionCountForDevice } = require("./actions");
+const axios = require("axios");
+const qs = require("qs");
+
+const { logger } = require("./logger");
+
+// Function to validate Google reCaptcha v2
+const googleCaptchaCheck = async (challengeResult) => {
+  if (
+    challengeResult === undefined ||
+    challengeResult === "" ||
+    challengeResult === null
+  ) {
+    return false;
+  }
+  const response = await axios.post(
+    "https://www.google.com/recaptcha/api/siteverify",
+    qs.stringify({
+      secret: process.env.CAPTCHA_SECRET_KEY,
+      response: challengeResult
+    }),
+    {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      }
+    }
+  );
+  logger.debug("Google reCaptcha response", response.data);
+  return response.data.success;
+};
 
 module.exports = {
-  saveFingerprintToDeviceRelation,
-  getActionCountForIP,
-  getActionCountForDevice,
+  googleCaptchaCheck
 };

@@ -12,3 +12,4 @@ data:
   POSTGRES_PASSWORD: "{{ .Values.global.postgresql.auth.password }}"
   POSTGRES_DATABASE_NAME: "{{ .Values.global.postgresql.auth.database }}"
   CAPTCHA_SITE_KEY: "{{ .Values.appConfig.captchaSiteKey }}"
+  CAPTCHA_SECRET_KEY: "{{ .Values.appConfig.captchaSecretKey }}"

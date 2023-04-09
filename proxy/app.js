@@ -31,12 +31,12 @@
  */
 
 const express = require("express");
-var cookieParser = require("cookie-parser");
+const cookieParser = require("cookie-parser");
 
 const { proxy } = require("./routes");
 const { logger } = require("./utils");
 
-var app = express();
+const app = express();
 app.use(express.static("public"));
 app.use(cookieParser());
 
@@ -48,7 +48,7 @@ app.use(cookieParser());
 app.use("/", proxy);
 
 var server = app.listen(process.env.PORT, function () {
-  var host = server.address().address;
-  var port = server.address().port;
+  const host = server.address().address;
+  const port = server.address().port;
   logger.info(`Proxy running at http://${host}:${port}`);
 });

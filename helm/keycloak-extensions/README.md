@@ -92,6 +92,7 @@ A Helm chart for Kubernetes with its extensions
 | handler.image.tag | string | `"latest"` |  |
 | postgresql | object | `{"enabled":true}` | PostgreSQL settings.  The bitnami helm chart does contain all details of what can be configured: https://github.com/bitnami/charts/tree/main/bitnami/postgresql |
 | postgresql.enabled | bool | `true` | Set to `true` if you want PostgreSQL to be installed as well. |
+| proxy.appConfig.captchaSecretKey | string | `"some_secret_key"` |  |
 | proxy.appConfig.captchaSiteKey | string | `"some_site_key"` |  |
 | proxy.image.tag | string | `"latest"` |  |
 | proxy.ingress.host | string | `"sso.example.com"` |  |

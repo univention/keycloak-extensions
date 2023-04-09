@@ -33,73 +33,87 @@
 const express = require("express");
 const jwt_decode = require("jwt-decode");
 const setCookie = require("set-cookie-parser");
-const { createProxyMiddleware, responseInterceptor } = require("http-proxy-middleware");
+const formBody = require("body/form");
+
+const { StatusCodes } = require("http-status-codes");
+
+const {
+  createProxyMiddleware,
+  responseInterceptor,
+} = require("http-proxy-middleware");
 
 const {
   logger,
   injectFingerprintJS,
-  injectGoogleCaptcha
+  injectGoogleCaptcha,
+  googleCaptchaCheck,
 } = require("../utils");
 
 const {
   saveFingerprintToDeviceRelation,
-  getActionsForIP,
-  getActionsForDevice
+  getActionCountForIP,
+  getActionCountForDevice,
 } = require("../database");
-const { response } = require("express");
 
 const router = express.Router();
 
 // FIXME: Not clean, but workaround for:
 // https://github.com/chimurai/http-proxy-middleware/issues/318
-const fetchBlockActions = async (req, res, next) => {
+const fetchBlockActions = async (req, _, next) => {
   const ip =
     req.headers["x-forwarded-for"] ||
     req.socket.remoteAddress.split(":").at(-1);
-  req._ipBlockActions = await getActionsForIP(ip, "ip");
-  req._deviceBlockActions = await getActionsForDevice(
+  req._ipBlockActions = await getActionCountForIP(ip, "ip");
+  req._deviceBlockActions = await getActionCountForDevice(
     req.cookies.AUTH_SESSION_ID ?? req.cookies.AUTH_SESSION_ID_LEGACY,
     "device"
   );
+  logger.debug(`FETCH BLOCK ACTIONS FOR IP ${ip}`);
   next();
 };
 
-const fetchCaptchaActions = async (req, res, next) => {
+const fetchCaptchaActions = async (req, _, next) => {
   const ip =
     req.headers["x-forwarded-for"] ||
     req.socket.remoteAddress.split(":").at(-1);
-  req._ipCaptchaActions = await getActionsForIP(ip, "captcha");
-  req._deviceCaptchaActions = await getActionsForDevice(
+  req._ipCaptchaActions = await getActionCountForIP(ip, "captcha");
+  req._deviceCaptchaActions = await getActionCountForDevice(
     req.cookies.AUTH_SESSION_ID ?? req.cookies.AUTH_SESSION_ID_LEGACY,
     "captcha"
   );
   next();
 };
 
+const captchaPromptScheduled = (req) => {
+  return req._ipCaptchaActions > 0 || req._deviceCaptchaActions > 0;
+};
+
+const invalidatePassword = (pwd) => {
+  return pwd + "invalid";
+};
+
 const applyBlocks = (req, res, next) => {
   if (req.method !== "POST") next();
-  if (
-    req._deviceBlockActions.rows.length === 0 &&
-    req._ipBlockActions.rows.length === 0
-  ) {
+  if (req._deviceBlockActions === 0 && req._ipBlockActions === 0) {
     next();
   }
-  if (req._ipBlockActions.rows.length > 0) {
+  if (req._ipBlockActions > 0) {
     logger.debug("IP block");
-    res.writeHead(429, {
-      "Content-Type": "text/plain"
+    res.writeHead(StatusCodes.TOO_MANY_REQUESTS, {
+      "Content-Type": "text/plain",
     });
     res.end("Too many failed login attempts on this IP. Wait for cooldown.");
     return;
   }
 
-  if (req._deviceBlockActions.rows.length > 0) {
+  if (req._deviceBlockActions > 0) {
     logger.debug("Device block");
-    res.writeHead(429, {
+    res.writeHead(StatusCodes.TOO_MANY_REQUESTS, {
       "Content-Type": "text/plain",
     });
-    res.end("Too many failed login attempts on this device. Wait for cooldown.");
-    return;
+    res.end(
+      "Too many failed login attempts on this device. Wait for cooldown."
+    );
   }
 };
 
@@ -125,38 +139,123 @@ const loginMiddleware = createProxyMiddleware({
       if (res.writableEnded) return responseBuffer;
 
       if (
-        (req.path.includes("openid-connect/auth") || req.path.includes("protocol/saml"))
-      && req.method === "GET"
-      && (proxyRes.headers["content-type"] ?? "").includes("text/html")
+        (req.path.includes("openid-connect/auth") ||
+          req.path.includes("protocol/saml")) &&
+        (proxyRes.headers["content-type"] ?? "").includes("text/html")
       ) {
-        logger.debug(`Injecting FingerprintJS script into ${req.method} ${req.path}`);
-        const response = responseBuffer.toString("utf8"); // Convert buffer to string
-        return injectFingerprintJS(response);
+        logger.debug(
+          `Injecting FingerprintJS script into ${req.method} ${req.path}`
+        );
+        let response = responseBuffer.toString("utf8"); // Convert buffer to string
+        response = injectFingerprintJS(response);
+        // TODO: Add captcha to login form on first load if needed
+        if (captchaPromptScheduled(req)) {
+          logger.debug("Prompting for reCaptcha");
+          return injectGoogleCaptcha(response);
+        }
+        return response;
       }
       return responseBuffer;
-    }),
+    }
+  ),
 });
+
+const ensureCaptchaProxyReq = async (proxyReq, req, res) => {
+  if (req.path.includes("login-actions/authenticate")) {
+    const ip =
+      req.headers["x-forwarded-for"] ||
+      req.socket.remoteAddress.split(":").at(-1);
+    proxyReq.setHeader("x-forwarded-for", ip);
+    logger.debug(`Device captcha actions: ${req._deviceCaptchaActions}`);
+    /* FIXME: Captcha action might be issued after the login form was
+     * sent, therefore the captcha will not be shown but required
+     * For now if the captcha is requested and the form did not display it
+     * the form will be invalidated (thus reloaded with captcha, but adds
+     * a failed attempt)
+     */
+    formBody(req, res, async (err, body) => {
+      if (err) {
+        logger.error(err);
+        return res;
+      }
+      if (!body["g-recaptcha-response"] && captchaPromptScheduled(req)) {
+        logger.warn("Captcha challenge needed, reprompting user's login form");
+        body.password = invalidatePassword(body.password);
+      }
+      if (body["g-recaptcha-response"]) {
+        logger.debug(
+          `Captcha challenge token: ${body["g-recaptcha-response"]}`
+        );
+        const isCaptchaValid = await googleCaptchaCheck(
+          body["g-recaptcha-response"]
+        );
+        if (!isCaptchaValid) {
+          // res.status(200).end('Invalid captcha')
+          body.password = invalidatePassword(body.password);
+        }
+      }
+      return res;
+    });
+  }
+};
+
+const ensureCaptchaProxyRes = async (responseBuffer, proxyRes, req, res) => {
+  if (
+    req.path.includes("login-actions/authenticate") &&
+    res.statusCode >= 200 &&
+    res.statusCode <= 399
+  ) {
+    const resCookies = setCookie.parse(proxyRes, { map: true });
+    const rawToken = (
+      resCookies.KEYCLOAK_IDENTITY || resCookies.KEYCLOAK_IDENTITY_LEGACY
+    )?.value;
+    if (rawToken === undefined) {
+      logger.warn(
+        "POST to login-actions/authenticate without Keycloak identity tokens!"
+      );
+      if (res.statusCode === 200 && captchaPromptScheduled(req)) {
+        logger.debug("Prompting for reCaptcha");
+        const response = responseBuffer.toString("utf8");
+        return injectGoogleCaptcha(response);
+      }
+      return responseBuffer;
+    }
+    const token = jwt_decode(rawToken);
+
+    if (Object.keys(req.cookies).includes("DEVICE_FINGERPRINT")) {
+      logger.debug("Login succeeded, notify user if new device.");
+      await saveFingerprintToDeviceRelation(
+        req.cookies.DEVICE_FINGERPRINT,
+        req.cookies.AUTH_SESSION_ID ?? req.cookies.AUTH_SESSION_ID_LEGACY,
+        token.sub
+      );
+    } else {
+      logger.info("Login succeeded, but no fingerprint was returned.");
+    }
+  }
+  return responseBuffer;
+};
 
 /**
  * @name *\/protocol/saml*
  * @desc
  * Proxy the Keycloak SAML login form and inject fingerprintjs.
  */
-router.use("*/protocol/saml*", fetchCaptchaActions, loginMiddleware);
+router.get("*/protocol/saml*", fetchCaptchaActions, loginMiddleware);
 
 /**
  * @name *\/openid-connect/auth*
  * @desc
  * Proxy the Keycloak OIDC login form and inject fingerprintjs and captcha.
  */
-router.use("*/openid-connect/auth*", fetchCaptchaActions, loginMiddleware);
+router.get("*/openid-connect/auth*", fetchCaptchaActions, loginMiddleware);
 
 /**
  * @name *\/openid-connect/token*
  * @desc
  * Proxy the Keycloak OIDC login token API (only device/IP block)
  */
-router.use(
+router.post(
   "*/openid-connect/token*",
   fetchBlockActions,
   applyBlocks,
@@ -166,13 +265,13 @@ router.use(
     pathFilter: "**",
     logger,
     onProxyReq: (proxyReq, req, res) => {
-      if (req.path.includes("openid-connect/token") && req.method === "POST") {
+      if (req.path.includes("openid-connect/token")) {
         const ip =
           req.headers["x-forwarded-for"] ||
           req.socket.remoteAddress.split(":").at(-1);
         proxyReq.setHeader("x-forwarded-for", ip);
       }
-    }
+    },
   })
 );
 
@@ -181,7 +280,7 @@ router.use(
  * @desc
  * Proxy everything Keycloak login post attempts to take actions
  */
-router.use(
+router.post(
   "*/login-actions/authenticate*",
   fetchCaptchaActions,
   fetchBlockActions,
@@ -194,45 +293,10 @@ router.use(
     selfHandleResponse: true,
     logger,
 
-    onProxyReq: (proxyReq, req, res) => {
-      if (req.path.includes("login-actions/authenticate") && req.method === "POST") {
-        const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-        proxyReq.setHeader("x-forwarded-for", ip);
-      }
-    },
-
-    onProxyRes: responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
-      if (
-        req.path.includes("login-actions/authenticate") && req.method === "POST"
-        && (200 <= res.statusCode) && (res.statusCode <= 399)
-      ) {
-        const resCookies = setCookie.parse(proxyRes, {map: true});
-        const rawToken = (resCookies["KEYCLOAK_IDENTITY"] || resCookies["KEYCLOAK_IDENTITY_LEGACY"])?.value;
-        if (rawToken === undefined) {
-          logger.warn("POST to login-actions/authenticate without Keycloak identity tokens!");
-          if (res.statusCode === 200 && (req._ipCaptchaActions.rows.length > 0 || req._deviceCaptchaActions.rows.length > 0)) {
-            logger.debug("Prompting for reCaptcha");
-            let response = responseBuffer.toString("utf8");
-            return injectGoogleCaptcha(response);
-          }
-          return responseBuffer;
-        }
-        const token = jwt_decode(rawToken);
-
-        if (Object.keys(req.cookies).includes("DEVICE_FINGERPRINT")) {
-          logger.debug("Login succeeded, notify user if new device.");
-          await saveFingerprintToDeviceRelation(
-            req.cookies["DEVICE_FINGERPRINT"],
-            req.cookies["AUTH_SESSION_ID"] ?? req.cookies["AUTH_SESSION_ID_LEGACY"],
-            token.sub,
-          );
-        } else {
-          logger.info("Login succeeded, but no fingerprint was returned.");
-        }
-      }
-      return responseBuffer;
-    }),
-  }));
+    onProxyReq: ensureCaptchaProxyReq,
+    onProxyRes: responseInterceptor(ensureCaptchaProxyRes),
+  })
+);
 
 /**
  * @name /
@@ -245,7 +309,7 @@ router.use(
     target: process.env.KEYCLOAK_URL,
     logLevel: `${process.env.LOG_LEVEL}`.toLowerCase() ?? "info",
     pathFilter: "**",
-    logger
+    logger,
   })
 );
 

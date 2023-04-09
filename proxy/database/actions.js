@@ -32,19 +32,23 @@
 
 const { pool } = require("./db");
 
-
-const getActionsForIP = async (ip, action) => {
-  const result = await pool.query("SELECT * FROM actions WHERE ip_address = $1 AND action = $2 ORDER BY expiration ASC", [ip, action]);
-  return result;
+const getActionCountForIP = async (ip, action) => {
+  const result = await pool.query(
+    "SELECT * FROM actions WHERE ip_address = $1 AND action = $2 ORDER BY expiration ASC",
+    [ip, action]
+  );
+  return result.rowCount;
 };
 
-const getActionsForDevice = async (code_id, action) => {
-  const result = await pool.query("SELECT * FROM actions WHERE keycloak_device_id = $1 AND action = $2 ORDER BY expiration ASC", [code_id, action]);
-  return result;
+const getActionCountForDevice = async (code_id, action) => {
+  const result = await pool.query(
+    "SELECT * FROM actions WHERE keycloak_device_id = $1 AND action = $2 ORDER BY expiration ASC",
+    [code_id, action]
+  );
+  return result.rowCount;
 };
-
 
 module.exports = {
-  getActionsForIP,
-  getActionsForDevice,
+  getActionCountForIP,
+  getActionCountForDevice,
 };
