@@ -110,9 +110,10 @@ def get_page(browser_name, ip):
         yield page
         browser_context.close()
         video_option = pytestconfig.getoption("--video")
-        failed = request.node.rep_call.failed if hasattr(request.node, "rep_call") else True
+        failed = request.node.rep_call.failed if hasattr(
+            request.node, "rep_call") else True
         preserve_video = video_option == "on" or (
-                failed and video_option == "retain-on-failure"
+            failed and video_option == "retain-on-failure"
         )
         if preserve_video:
             video = page.video
@@ -121,7 +122,8 @@ def get_page(browser_name, ip):
                     video_path = video.path()
                     file_name = os.path.basename(video_path)
                     video.save_as(
-                        path=build_artifact_test_folder(pytestconfig, request, file_name)
+                        path=build_artifact_test_folder(
+                            pytestconfig, request, file_name)
                     )
                 except Error:
                     # Silent catch empty videos.
@@ -206,4 +208,5 @@ def trigger_ip_block(navigate_to_login_page_chromium_ip_1,
     now = datetime.datetime.now()
     seconds_since_block = (now - block_initiated_at).total_seconds()
     remaining = max(0, release_duration - seconds_since_block)
-    chromium_ip_1_page.wait_for_timeout(round(remaining * 1000) + 1)  # + 1 for safety
+    chromium_ip_1_page.wait_for_timeout(
+        round(remaining * 1000) + 1)  # + 1 for safety

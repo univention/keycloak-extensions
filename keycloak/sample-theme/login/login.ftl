@@ -103,4 +103,3 @@
     </#if>
 
 </@layout.registrationLayout>
-

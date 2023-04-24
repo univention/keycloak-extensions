@@ -73,7 +73,8 @@ class BasePagePart:
 
     def __init__(self, page_part_locator):
         if not isinstance(page_part_locator, Locator):
-            raise ValueError(f"Locators must be of type Locator, got  {type(page_part_locator)}")
+            raise ValueError(
+                f"Locators must be of type Locator, got  {type(page_part_locator)}")
         self.page_part_locator = page_part_locator
 
     def __getattr__(self, name):
@@ -87,7 +88,8 @@ class BasePagePart:
         """
         playwright_locator_attrib = getattr(Locator, name, None)
         if playwright_locator_attrib is None:
-            raise AttributeError(f"Neither Page Part {self.__class__} nor playwright Locator has attribute {name}")
+            raise AttributeError(
+                f"Neither Page Part {self.__class__} nor playwright Locator has attribute {name}")
         return getattr(self.page_part_locator, name)
 
     def check_its_there(self):

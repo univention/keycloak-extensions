@@ -30,7 +30,8 @@ def test_device_block(trigger_device_block_chromium_ip_1,
     admin_console_home_page = AdminConsoleHomePage(firefox_ip_1_page)
     admin_console_home_page.check_its_there()
 
-    chromium_ip_1_page.wait_for_timeout(round(release_duration * 1000) + 1)  # + 1 for safety
+    chromium_ip_1_page.wait_for_timeout(
+        round(release_duration * 1000) + 1)  # + 1 for safety
     admin_console_home_page = AdminConsoleHomePage(chromium_ip_1_page)
     admin_console_home_page.navigate(username, password)
     admin_console_home_page.check_its_there()
@@ -57,7 +58,8 @@ def test_ip_block(trigger_ip_block,
     admin_console_home_page = AdminConsoleHomePage(chromium_ip_2_page)
     admin_console_home_page.check_its_there()
 
-    firefox_ip_1_page.wait_for_timeout(round(release_duration * 1000) + 1)  # + 1 for safety
+    firefox_ip_1_page.wait_for_timeout(
+        round(release_duration * 1000) + 1)  # + 1 for safety
     admin_console_home_page = AdminConsoleHomePage(firefox_ip_1_page)
     admin_console_home_page.navigate(username, password)
     admin_console_home_page.check_its_there()
@@ -82,4 +84,3 @@ def test_api_ip_block(num_ip_block, username, password, wrong_password, realm, r
     r = kc_api.get_oidc_token(username, password)
     assert r.status_code == 200
     assert r.json()["access_token"] is not None
-

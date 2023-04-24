@@ -11,13 +11,13 @@ playwright install  # installs required browsers
 
 Please make sure you have the proxy running.
 
-Then just run the following command. 
+Then just run the following command.
 
 ```
 pytest --base-url <proxy-base-url> --slowmo 500
 ```
 
-Here `--slowmo` is required because the handler needs some time to block devices/IP, and this 
+Here `--slowmo` is required because the handler needs some time to block devices/IP, and this
 makes the automated tests run at a human-like pace.
 
 We support the following custom command line options defined in `tests/conftest.py`
@@ -25,7 +25,7 @@ We support the following custom command line options defined in `tests/conftest.
 1. `username`: Username to use when logging into the Keycloak admin console. Defaults to `"admin"`
 2. `password` Password to use when logging into the Keycloak admin console. Defaults to `"univention"`
 3. `num-device-block`: Number of failed login attempts for device block. Defaults to `5`.
-4. `num-ip-block`: Number of failed login attempts for IP block. Defaults to `7`. 
+4. `num-ip-block`: Number of failed login attempts for IP block. Defaults to `7`.
 Must be higher than `num-device-block`
 5. `release-duration`: Number of seconds after which blocks are released. Default is `60`.
 6. `realm`: Realm to attempt logins against. Defaults to `master`.

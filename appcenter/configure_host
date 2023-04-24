@@ -11,6 +11,6 @@ ERROR_FILE="$4"
 
 
 
-if [ -n "$action" ] && [ "$action" = "remove" ]; then 
+if [ -n "$action" ] && [ "$action" = "remove" ]; then
     exit 0
 fi

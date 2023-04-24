@@ -153,16 +153,16 @@ public class UsernamePasswordFormRecaptchaAuthenticator extends UsernamePassword
     }
 
     private boolean isRecaptchaRequired(AuthenticationFlowContext context, UserModel user) {
-    	
+
     	MultivaluedMap<String, String> requestHeaders = context.getHttpRequest().getHttpHeaders().getRequestHeaders();
-    	
+
     	System.out.println("HEADER X-SUSPICIOUS-REQUEST " + requestHeaders.get("X-SUSPICIOUS-REQUEST"));
     	List<String> headerValue = requestHeaders.get("X-SUSPICIOUS-REQUEST");
-    	
+
     	if (headerValue == null) {
     		return false;
     	}
-    	
+
     	return true;
     }
 

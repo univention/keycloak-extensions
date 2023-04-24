@@ -6,6 +6,12 @@ A Helm chart for the Keycloak Extensions Handler
 
 **Homepage:** <https://www.univention.de/>
 
+## Requirements
+
+| Repository | Name | Version |
+|------------|------|---------|
+| https://charts.bitnami.com/bitnami | common | ^2.2.2 |
+
 ## Values
 
 | Key | Type | Default | Description |

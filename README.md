@@ -69,7 +69,7 @@ Currently only Google reCaptcha is supported, but Cloudflare and others are easy
 
 A [`docker-compose.yaml`](./docker-compose.yaml) file is provided in the root folder of the repository to ease running the application locally. You can get the application running by:
 
-`docker compose up -d keycloak database`  
+`docker compose up -d keycloak database`
 `docker compose up -d proxy handler`
 
 > Notice the commands are separated, due to an entrypoint not existing to handle awaiting for containers to be ready.

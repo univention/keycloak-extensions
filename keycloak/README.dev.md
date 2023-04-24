@@ -85,7 +85,7 @@ mvn clean install
 
 1. inside `keycloak`, do `mvn eclipse:eclipse` to create the eclipse project files
 2. Open eclipse and navigate:
-    - File 
+    - File
     - Import ...
     - select 'Existing Maven Projects'
     - provide Root Directory (`keycloak`)

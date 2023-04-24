@@ -5,7 +5,7 @@ services:
     image: docker-registry.knut.univention.de/phoenix/keycloak-proxy:develop
     ports:
       - 8181:5000
-    environment: 
+    environment:
       KEYCLOAK_SERVER: @%@keycloak-extensions/proxy/keycloak-server@%@
       KEYCLOAK_PROTOCOL: @%@keycloak-extensions/proxy/keycloak-protocol@%@
       TARGET_EMAILS: @%@keycloak-extensions/notifications/admin-mail@%@

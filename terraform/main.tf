@@ -7,7 +7,7 @@ terraform {
     aws = {
       source = "hashicorp/aws"
       version = "3.7.0"
-    } 
+    }
   }
   backend "http" {
   }
@@ -35,7 +35,7 @@ resource "hcloud_server" "main" {
     project_name   = var.project-name
     purpose        = "primary"
   }
- 
+
   backups = false
 }
 
@@ -122,4 +122,3 @@ resource "aws_route53_record" "ucs-sso" {
     hcloud_server.main
   ]
 }
-

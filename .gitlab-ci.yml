@@ -9,6 +9,7 @@ variables:
   SOUVAP_REGISTRY_USER: gitlab-ci-knut
 
 stages:
+  - lint
   - test
   - release
 
@@ -160,17 +161,14 @@ tests:
   rules:
     - if: $CI_COMMIT_BRANCH # pipelines can't be created for MR, so sticking with only branch
 
-# Ensures that we have the generated files always consistent with the
-# sources.
-lint-helm-docs:
-  stage: test
-  needs: []
+pre-commit:
+  stage: lint
   image:
-    name: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/jnorwood/helm-docs:v1.11.0"
+    name: "gitregistry.knut.univention.de/univention/customers/dataport/upx/container-pre-commit/upx-pre-commit:latest"
     entrypoint: [""]
+  variables:
+    PIP_CACHE_DIR: "${CI_PROJECT_DIR}/.cache/pip"
+    PRE_COMMIT_HOME: "${CI_PROJECT_DIR}/.cache/pre-commit"
   script:
-    - cp -r helm helm-orig
-    - helm-docs -c helm
-    - diff -r helm-orig helm
-  after_script:
-    - 'echo "INFO: Check ./helm/README.md for details how to re-generate the README.md files in the charts."'
+    - git config --global --add safe.directory /builds/univention/customers/dataport/upx/pocs/keycloak-extensions
+    - pre-commit run --all-files

@@ -12,7 +12,6 @@ class KeycloakAPI:
             "realm": realm,
         }
 
-
     def get_oidc_token(self, username, password):
         r = requests.post(
             f'{self.base_url}/realms/{self.realm}/protocol/openid-connect/token',

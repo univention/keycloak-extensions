@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UsernamePasswordFormRecaptchaAuthenticatorFactory extends UsernamePasswordFormFactory {
-	
+
     protected static final String RECAPTCHA_REQUIRED_AUTH_NOTE = "IsRecaptchaRequired";
     protected static final String G_RECAPTCHA_RESPONSE = "g-recaptcha-response";
 	protected static final String SITE_KEY = "site.key";

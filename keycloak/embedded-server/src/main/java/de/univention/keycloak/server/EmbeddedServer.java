@@ -9,7 +9,7 @@ import java.util.Date;
 public class EmbeddedServer {
 
     public static void main(String[] args) throws Throwable {
-    	
+
     	System.out.println("Starting Keycloak Test Server");
         Version.BUILD_TIME = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date());
 

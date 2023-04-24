@@ -5,7 +5,8 @@ class Header(BasePagePart):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.account_menu_button = self.get_by_role("button", name="admin")
-        self.account_menu_dropdown = AccountMenuDropdown(self.get_by_role("menu", name="admin"))
+        self.account_menu_dropdown = AccountMenuDropdown(
+            self.get_by_role("menu", name="admin"))
 
     def check_its_there(self):
         expect(self.account_menu_button).to_be_visible()
