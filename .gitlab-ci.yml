@@ -117,8 +117,8 @@ lint-helm-chart:
     entrypoint: [""]
   script:
     - helm repo add bitnami https://charts.bitnami.com/bitnami
-    - helm dependency build helm
-    - helm lint helm --strict
+    - helm dependency build helm/keycloak-extensions
+    - helm lint helm/keycloak-extensions --strict
 
 
 tests:
