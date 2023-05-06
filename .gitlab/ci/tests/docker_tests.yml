@@ -29,5 +29,8 @@ tests:
     - docker cp e2e-ci:/e2e/test-results/ $CI_PROJECT_DIR/tests/e2e/ || true
     - docker compose --profile=test down
   rules:
+    # TODO: Only fixed this up. Think we have to review the workflow definitions
+    # to ensure that these jobs do run.
+    - if: $CI_PIPELINE_SOURCE == "parent_pipeline"
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH
