@@ -28,3 +28,6 @@ tests:
   after_script:
     - docker cp e2e-ci:/e2e/test-results/ $CI_PROJECT_DIR/tests/e2e/ || true
     - docker compose --profile=test down
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH
