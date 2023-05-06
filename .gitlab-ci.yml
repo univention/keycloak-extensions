@@ -19,7 +19,9 @@ include:
   - project: univention/dist/docker-services
     file: kaniko.yml
   - project: univention/customers/dataport/upx/common-ci
-    file: jobs/package-and-publish-helm-charts.yaml
+    file:
+      - defaults/souvap-workflow.yaml
+      - jobs/package-and-publish-helm-charts.yaml
 
 .push-image-souvap:
   variables:
