@@ -65,6 +65,7 @@ include:
 
 build-keycloak-handler-job:
   stage: release
+  needs: []
   extends: .kaniko
   variables:
     KANIKO_BUILD_CONTEXT: "handler"
@@ -87,6 +88,7 @@ push-image-souvap-handler-job:
 
 build-keycloak-proxy-job:
   stage: release
+  needs: []
   extends: .kaniko
   variables:
     KANIKO_BUILD_CONTEXT: "proxy"
@@ -109,6 +111,7 @@ push-image-souvap-proxy-job:
 
 lint-helm-chart:
   stage: lint
+  needs: []
   image:
     name: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/alpine/helm:3.10.2"
     entrypoint: [""]
@@ -120,6 +123,7 @@ lint-helm-chart:
 
 tests:
   stage: test
+  needs: []
   trigger:
     include: "/.gitlab/ci/tests/docker_tests.yml"
     strategy: depend
@@ -128,6 +132,7 @@ tests:
 
 pre-commit:
   stage: lint
+  needs: []
   image:
     name: "gitregistry.knut.univention.de/univention/customers/dataport/upx/container-pre-commit/upx-pre-commit:latest"
     entrypoint: [""]
