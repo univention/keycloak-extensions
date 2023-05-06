@@ -73,9 +73,6 @@ build-keycloak-handler-job:
     KANIKO_ARGS: "--skip-unused-stages=true --cache=true --cache-repo=$CI_REGISTRY_IMAGE-cache"
   after_script:
     - docker images --all
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH
 
 push-image-souvap-handler-job:
   stage: release
@@ -96,9 +93,6 @@ build-keycloak-proxy-job:
     KANIKO_ARGS: "--skip-unused-stages=true --cache=true --cache-repo=$CI_REGISTRY_IMAGE-cache"
   after_script:
     - docker images --all
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_BRANCH
 
 push-image-souvap-proxy-job:
   stage: release
@@ -127,8 +121,7 @@ tests:
   trigger:
     include: "/.gitlab/ci/tests/docker_tests.yml"
     strategy: depend
-  # rules:
-  #   - if: $CI_COMMIT_BRANCH # pipelines can't be created for MR, so sticking with only branch
+
 
 pre-commit:
   stage: lint
