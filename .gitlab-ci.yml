@@ -108,7 +108,7 @@ push-image-souvap-proxy-job:
     SOUVAP_IMAGE_NAME: "keycloak-proxy"
 
 lint-helm-chart:
-  stage: release
+  stage: lint
   image:
     name: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/alpine/helm:3.10.2"
     entrypoint: [""]
