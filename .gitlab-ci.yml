@@ -11,11 +11,15 @@ variables:
 stages:
   - lint
   - test
+  - package
+  - publish
   - release
 
 include:
   - project: univention/dist/docker-services
     file: kaniko.yml
+  - project: univention/customers/dataport/upx/common-ci
+    file: jobs/package-and-publish-helm-charts.yaml
 
 .push-image-souvap:
   variables:
@@ -111,47 +115,6 @@ lint-helm-chart:
     - helm dependency build helm
     - helm lint helm --strict
 
-package-helm-chart:
-  stage: release
-  needs: []
-  artifacts:
-    paths:
-      - "packages/*.tgz"
-  image:
-    name: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/alpine/helm:3.10.2"
-    entrypoint: [""]
-  script:
-    - 'if [ -z "${RELEASE_VERSION}" ]; then exit 0; fi'
-    - "helm repo add bitnami https://charts.bitnami.com/bitnami"
-    - "helm package --version ${RELEASE_VERSION} --destination ./packages --dependency-update helm"
-  variables:
-    # TODO: Extract the release information from Git.
-    # Compare: https://gitlab.souvap-univention.de/souvap/tooling/charts/openproject-helm-chart/-/blob/souvap/.gitlab-ci.yml#L25
-    RELEASE_VERSION: "0.1.0"
-
-publish-helm-chart:
-  stage: release
-  dependencies:
-    - "package-helm-chart"
-  needs:
-    - "package-helm-chart"
-  image: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/curlimages/curl:latest"
-  script:
-    - 'if [ -z "${RELEASE_VERSION}" ]; then exit 0; fi'
-    - |
-      for _filename in `find packages -type f`;
-      do
-        curl \
-        --request "POST" \
-        --user "${SOUVAP_HELM_ACCESS_USER}:${SOUVAP_HELM_ACCESS_TOKEN}" \
-        --form "chart=@$_filename" \
-        "${SOUVAP_API_V4_URL}/projects/${SOUVAP_HELM_PROJECT_ID}/packages/helm/api/stable/charts";
-      done
-  variables:
-    GIT_STRATEGY: "none"
-    # TODO: Extract the release information from Git.
-    # Compare: https://gitlab.souvap-univention.de/souvap/tooling/charts/openproject-helm-chart/-/blob/souvap/.gitlab-ci.yml#L25
-    RELEASE_VERSION: "0.1.0"
 
 tests:
   stage: test
