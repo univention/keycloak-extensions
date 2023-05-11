@@ -24,6 +24,7 @@ include:
     file:
       - defaults/souvap-workflow.yaml
       - templates/souvap.yaml
+      - jobs/lint-pre-commit.yaml
       - jobs/package-and-publish-helm-charts.yaml
 
 
@@ -85,17 +86,3 @@ tests:
   trigger:
     include: "/.gitlab/ci/tests/docker_tests.yml"
     strategy: depend
-
-
-pre-commit:
-  stage: lint
-  needs: []
-  image:
-    name: "gitregistry.knut.univention.de/univention/customers/dataport/upx/container-pre-commit/upx-pre-commit:latest"
-    entrypoint: [""]
-  variables:
-    PIP_CACHE_DIR: "${CI_PROJECT_DIR}/.cache/pip"
-    PRE_COMMIT_HOME: "${CI_PROJECT_DIR}/.cache/pre-commit"
-  script:
-    - git config --global --add safe.directory /builds/univention/customers/dataport/upx/pocs/keycloak-extensions
-    - pre-commit run --all-files
