@@ -1,4 +1,5 @@
 ---
+
 variables:
   SOUVAP_API_V4_URL: https://gitlab.souvap-univention.de/api/v4
   SOUVAP_HELM_ACCESS_USER: gitlab-ci-knut
@@ -79,6 +80,9 @@ lint-helm-chart:
     - helm dependency build helm/keycloak-extensions
     - helm lint helm/keycloak-extensions --strict
 
+lint-pre-commit:
+  before_script:
+    - "helm repo add bitnami https://charts.bitnami.com/bitnami"
 
 tests:
   stage: test
@@ -86,3 +90,5 @@ tests:
   trigger:
     include: "/.gitlab/ci/tests/docker_tests.yml"
     strategy: depend
+
+...
