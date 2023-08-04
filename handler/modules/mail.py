@@ -33,8 +33,8 @@ import os
 import logging
 import smtplib
 import ssl
+import socket
 from email.mime.text import MIMEText
-from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 
 
@@ -88,10 +88,21 @@ Keycloak.
         context = ssl.create_default_context()
 
         # with smtplib.SMTP_SSL(self.smtp_host, self.smtp_port, context=context) as server:
-        with smtplib.SMTP(self.smtp_host, self.smtp_port) as server:
-            server.ehlo()
-            server.starttls(context=context)
-            server.ehlo()
-            server.login(self.smtp_user, self.smtp_pass)
-            server.sendmail(self.sender, self.receiver,
-                            self.message.as_string())
+        try:
+            with smtplib.SMTP(self.smtp_host, self.smtp_port) as server:
+                server.ehlo()
+                server.starttls(context=context)
+                server.ehlo()
+                server.login(self.smtp_user, self.smtp_pass)
+                server.sendmail(self.sender, self.receiver,
+                                self.message.as_string())
+        except ConnectionRefusedError:
+            self.logger.error(
+                "Connection to mailserver %s refused",
+                self.smtp_host)
+        except socket.gaierror:
+            self.logger.error(
+                "Hostname resolution failed. Check SMTP host address.")
+        except Exception as e:
+            self.logger.error(
+                "An unexpected error occurred while sending the email: %s", e)
