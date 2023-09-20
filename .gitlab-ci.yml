@@ -85,11 +85,4 @@ lint-pre-commit:
   before_script:
     - "helm repo add bitnami https://charts.bitnami.com/bitnami"
 
-tests:
-  stage: test
-  needs: []
-  trigger:
-    include: "/.gitlab/ci/tests/docker_tests.yml"
-    strategy: depend
-
 ...

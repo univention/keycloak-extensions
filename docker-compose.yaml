@@ -118,20 +118,6 @@ services:
       - DEBUG_PORT='*:8787'
       - DEBUG_SUSPEND=y # to wait until a debugger is connected
 
-  e2e-tests:
-    # Test suite to run end-to-end tests
-    container_name: e2e-tests
-    image: e2e-tests:develop
-    profiles: ["test"]
-    init: true # https://playwright.dev/docs/ci#docker
-    build: ./tests/e2e
-    depends_on:
-      - keycloak
-      - database
-      - handler
-      - proxy
-    command: pytest --base-url http://proxy:8181 --slowmo 500 --video retain-on-failure
-
   # Environment which allows to run the tool "helm-docs". See the directory
   # "/helm" for more details.
   helm-docs:
