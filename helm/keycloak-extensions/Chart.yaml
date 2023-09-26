@@ -1,4 +1,5 @@
 ---
+
 apiVersion: v2
 type: application
 name: keycloak-extensions
@@ -15,14 +16,16 @@ appVersion: "21.0.1"
 dependencies:
   - name: "common"
     repository: "https://charts.bitnami.com/bitnami"
-    version: "^2.2.2"
+    version: "^2.12.0"
   - name: "handler"
     repository: "file://./charts/handler"
     version: "0.1.0"
   - name: "postgresql"
     repository: "https://charts.bitnami.com/bitnami"
-    version: "^12.2.2"
+    version: "^12.12.9"
     condition: postgresql.enabled
   - name: "proxy"
     repository: "file://./charts/proxy"
     version: "0.1.0"
+
+...
