@@ -72,6 +72,9 @@ push-image-souvap-proxy-job:
 
 lint-pre-commit:
   before_script:
+    # Change mode from 666 to 600.
+    # This stops helm from complaining about insecure kubeconfig
+    - 'chmod 0600 "${PWD}.tmp/KUBECONFIG"'
     - "helm repo add bitnami https://charts.bitnami.com/bitnami"
 
 tests:
