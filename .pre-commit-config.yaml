@@ -1,3 +1,5 @@
+---
+
 repos:
   - repo: https://github.com/pre-commit/mirrors-autopep8
     rev: v2.0.2
@@ -11,6 +13,7 @@ repos:
         args:
           - -i
         require_serial: false
+
   - repo: https://github.com/pre-commit/mirrors-eslint
     rev: 'v8.39.0'  # Use the sha / tag you want to point at
     hooks:
@@ -20,6 +23,7 @@ repos:
         args: [--fix]
         additional_dependencies:
           - eslint@8.37.0
+
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
@@ -42,6 +46,13 @@ repos:
         entry: check-executables-have-shebangs
         language: python
         types: [text, executable]
+
+  - repo: "https://github.com/gruntwork-io/pre-commit"
+    rev: "v0.1.22"
+    hooks:
+      - id: "helmlint"
+        name: "helmlint"
+
   - repo: https://github.com/norwoodj/helm-docs
     rev: v1.11.0
     hooks:
@@ -61,6 +72,7 @@ repos:
         language: golang
         name: Helm Docs Built
         require_serial: true
+
   - repo: https://github.com/Lucas-C/pre-commit-hooks
     rev: v1.5.1
     hooks:
@@ -85,3 +97,5 @@ repos:
           - /*| *| */
           - --use-current-year
           - --detect-license-in-X-top-lines=35
+
+...

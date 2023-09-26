@@ -70,17 +70,6 @@ push-image-souvap-proxy-job:
     CI_REGISTRY_IMAGE: "$CI_REGISTRY_IMAGE/keycloak-proxy"
     SOUVAP_IMAGE_NAME: "keycloak-proxy"
 
-lint-helm-chart:
-  stage: lint
-  needs: []
-  image:
-    name: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/alpine/helm:3.10.2"
-    entrypoint: [""]
-  script:
-    - helm repo add bitnami https://charts.bitnami.com/bitnami
-    - helm dependency build helm/keycloak-extensions
-    - helm lint helm/keycloak-extensions --strict
-
 lint-pre-commit:
   before_script:
     - "helm repo add bitnami https://charts.bitnami.com/bitnami"
