@@ -1,8 +1,10 @@
-FROM python:3.8-slim-buster
+FROM gitregistry.knut.univention.de/univention/customers/dataport/upx/container-ucs-base/ucs-base-test-520-dev:v0.6.0
 WORKDIR /usr/app/src
 COPY . .
-RUN apt update
-RUN apt install -y git
-RUN /usr/local/bin/python -m pip install --upgrade pip
-RUN pip3 install -r requirements.txt
-CMD ["python", "__main__.py"]
+RUN apt update \
+    && apt install -y git \
+    && apt install -y python3 \
+    && apt install -y python3-pip \
+    && pip3 install --break-system-packages -r requirements.txt \
+    && rm -fr /var/lib/apt/lists/* /var/cache/apt/archives/*
+CMD ["python3", "__main__.py"]

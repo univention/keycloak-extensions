@@ -1,9 +1,12 @@
-FROM node:lts-alpine3.15
+FROM gitregistry.knut.univention.de/univention/customers/dataport/upx/container-ucs-base/ucs-base-505:v0.6.0
 
 COPY . /app
 WORKDIR /app
 
-RUN npm install
+RUN apt update \
+    && apt -y install nodejs npm \
+    && npm install \
+    && rm -fr /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 ENV PORT 8181
 EXPOSE 8181
