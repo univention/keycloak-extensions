@@ -11,38 +11,40 @@ variables:
   SOUVAP_REGISTRY_PATH: souvap/tooling/images/keycloak-extensions
   SOUVAP_REGISTRY_REPO: ${SOUVAP_REGISTRY_HOST}/${SOUVAP_REGISTRY_PATH}
 
-stages:
-  - lint
-  - test
-  - package
-  - publish
-  - release
-
 include:
   - project: "univention/dist/docker-services"
     file: "kaniko.yml"
   - project: "univention/customers/dataport/upx/common-ci"
-    ref: "v0.0.3"
+    ref: "v0.5.0"
     file:
       - "defaults/souvap-workflow.yaml"
+      - "defaults/stages.yaml"
+      - "templates/semantic-release-env.yaml"
       - "templates/souvap.yaml"
+      - "jobs/lint-commit-messages.yaml"
       - "jobs/lint-pre-commit.yaml"
       - "jobs/package-and-publish-helm-charts.yaml"
 
 
+pre-semantic-release:
+  extends: ".pre-semantic-release"
+
 build-keycloak-handler-job:
-  stage: release
-  needs: []
+  stage: "build"
+  needs:
+    - job: "pre-semantic-release"
+      artifacts: true
   extends: .kaniko
   variables:
     KANIKO_BUILD_CONTEXT: "handler"
     CI_REGISTRY_IMAGE: "$CI_REGISTRY_IMAGE/keycloak-handler"
     KANIKO_ARGS: "--skip-unused-stages=true --cache=true --cache-repo=$CI_REGISTRY_IMAGE-cache"
+    VERSION: "${RELEASE_VERSION}"
   after_script:
     - docker images --all
 
 push-image-souvap-handler-job:
-  stage: release
+  stage: "publish"
   needs:
     - job: build-keycloak-handler-job
   extends: .push-image-souvap
@@ -51,18 +53,21 @@ push-image-souvap-handler-job:
     SOUVAP_IMAGE_NAME: "keycloak-handler"
 
 build-keycloak-proxy-job:
-  stage: release
-  needs: []
+  stage: "build"
+  needs:
+    - job: "pre-semantic-release"
+      artifacts: true
   extends: .kaniko
   variables:
     KANIKO_BUILD_CONTEXT: "proxy"
     CI_REGISTRY_IMAGE: "$CI_REGISTRY_IMAGE/keycloak-proxy"
     KANIKO_ARGS: "--skip-unused-stages=true --cache=true --cache-repo=$CI_REGISTRY_IMAGE-cache"
+    VERSION: "${RELEASE_VERSION}"
   after_script:
     - docker images --all
 
 push-image-souvap-proxy-job:
-  stage: release
+  stage: "publish"
   needs:
     - job: build-keycloak-proxy-job
   extends: .push-image-souvap
