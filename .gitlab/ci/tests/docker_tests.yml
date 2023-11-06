@@ -25,9 +25,9 @@ tests:
     expire_in: 1 day
   script:
     - docker compose --profile=test up -d keycloak database
-    - sleep 60
+    - sleep 120
     - docker compose --profile=test up -d proxy handler
-    - sleep 10
+    - sleep 20
     - docker compose --profile=test run --name e2e-ci e2e-tests
   after_script:
     - docker cp e2e-ci:/e2e/test-results/ $CI_PROJECT_DIR/tests/e2e/ || true
