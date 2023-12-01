@@ -19,9 +19,11 @@ services:
   proxy:
     # The proxy in front of Keycloak handling blocks and captcha.
     # More at /proxy/README.md
-    container_name: keycloak-extensions-proxy
-    image: keycloak-extensions-proxy:develop
-    build: ./proxy
+    container_name: keycloak-proxy
+    image: keycloak-proxy:develop
+    build:
+      context: ./proxy
+      dockerfile: ../docker/keycloak-proxy/Dockerfile
     restart: unless-stopped
     ports:
       - 8181:8181
@@ -45,9 +47,11 @@ services:
   handler:
     # The container checking for new events and triggering actions for the proxy.
     # More at /handler/README.md
-    container_name: keycloak-extensions-handler
-    image: keycloak-extensions-handler:develop
-    build: ./handler
+    container_name: keycloak-handler
+    image: keycloak-handler:develop
+    build:
+      context: ./handler
+      dockerfile: ../docker/keycloak-handler/Dockerfile
     restart: unless-stopped
     depends_on:
       - keycloak

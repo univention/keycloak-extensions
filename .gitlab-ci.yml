@@ -1,82 +1,65 @@
 ---
-
-variables:
-  SOUVAP_API_V4_URL: https://gitlab.souvap-univention.de/api/v4
-  SOUVAP_HELM_ACCESS_USER: gitlab-ci-knut
-  SOUVAP_DOCKER_ACCESS_USER: gitlab-ci-knut
-  # TODO: Adjust repository configuration and then remove this line
-  SOUVAP_DOCKER_ACCESS_TOKEN: ${SOUVAP_REGISTRY_TOKEN}
-  SOUVAP_HELM_PROJECT_ID: 77
-  SOUVAP_REGISTRY_HOST: registry.souvap-univention.de
-  SOUVAP_REGISTRY_PATH: souvap/tooling/images/keycloak-extensions
-  SOUVAP_REGISTRY_REPO: ${SOUVAP_REGISTRY_HOST}/${SOUVAP_REGISTRY_PATH}
-
 include:
-  - project: "univention/dist/docker-services"
-    file: "kaniko.yml"
   - project: "univention/customers/dataport/upx/common-ci"
-    ref: "v0.5.4"
+    ref: "v1.9.9"
     file:
-      - "defaults/souvap-workflow.yaml"
       - "defaults/stages.yaml"
-      - "templates/semantic-release-env.yaml"
+      - "defaults/souvap-workflow.yaml"
       - "templates/souvap.yaml"
       - "jobs/lint-commit-messages.yaml"
       - "jobs/lint-pre-commit.yaml"
+      - "jobs/container-build.yaml"
+      - "jobs/semantic-release-env.yaml"
       - "jobs/package-and-publish-helm-charts.yaml"
 
+variables:
+  SOUVAP_HELM_PROJECT_ID: 77
+  SOUVAP_REGISTRY_PATH: "souvap/tooling/images/keycloak-extensions"
+  IMAGE_NAME: "keycloak-extensions"
 
-pre-semantic-release:
-  extends: ".pre-semantic-release"
+lint-pre-commit:
+  before_script:
+    - "helm repo add bitnami https://charts.bitnami.com/bitnami"
 
-build-keycloak-handler-job:
-  stage: "build"
-  needs:
-    - job: "pre-semantic-release"
-      artifacts: true
-  extends: .kaniko
-  variables:
-    KANIKO_BUILD_CONTEXT: "handler"
-    CI_REGISTRY_IMAGE: "$CI_REGISTRY_IMAGE/keycloak-handler"
-    KANIKO_ARGS: "--skip-unused-stages=true --cache=true --cache-repo=$CI_REGISTRY_IMAGE-cache"
-    VERSION: "${RELEASE_VERSION}"
+.build-matrix: &build-matrix
+  - IMAGE_NAME: "keycloak-handler"
+    KANIKO_BUILD_CONTEXT: "$CI_PROJECT_DIR/handler"
+  - IMAGE_NAME: "keycloak-proxy"
+    KANIKO_BUILD_CONTEXT: "$CI_PROJECT_DIR/proxy"
+
+.publish-matrix: &publish-matrix
+  - IMAGE_NAME:
+      - "keycloak-handler"
+      - "keycloak-proxy"
+
+container-build:
+  parallel:
+    matrix: *build-matrix
   after_script:
     - docker images --all
+  variables:
+    KANIKO_ARGS: "--skip-unused-stages=true --cache=true --cache-repo=$CI_REGISTRY_IMAGE/${IMAGE_NAME}-cache"
+    DOCKERFILE_PATH: "${CI_PROJECT_DIR}/docker/${IMAGE_NAME}/Dockerfile"
 
-push-image-souvap-handler-job:
-  stage: "publish"
-  needs:
-    - job: build-keycloak-handler-job
+container-generate-sbom:
+  parallel:
+    matrix: *build-matrix
+
+container-sign:
+  parallel:
+    matrix: *build-matrix
+
+container-security-scan:
+  parallel:
+    matrix: *build-matrix
+
+publish-images:
   extends: .push-image-souvap
-  variables:
-    CI_REGISTRY_IMAGE: "$CI_REGISTRY_IMAGE/keycloak-handler"
-    SOUVAP_IMAGE_NAME: "keycloak-handler"
-
-build-keycloak-proxy-job:
-  stage: "build"
-  needs:
-    - job: "pre-semantic-release"
-      artifacts: true
-  extends: .kaniko
-  variables:
-    KANIKO_BUILD_CONTEXT: "proxy"
-    CI_REGISTRY_IMAGE: "$CI_REGISTRY_IMAGE/keycloak-proxy"
-    KANIKO_ARGS: "--skip-unused-stages=true --cache=true --cache-repo=$CI_REGISTRY_IMAGE-cache"
-    VERSION: "${RELEASE_VERSION}"
-  after_script:
-    - docker images --all
-
-push-image-souvap-proxy-job:
-  stage: "publish"
-  needs:
-    - job: build-keycloak-proxy-job
-  extends: .push-image-souvap
-  variables:
-    CI_REGISTRY_IMAGE: "$CI_REGISTRY_IMAGE/keycloak-proxy"
-    SOUVAP_IMAGE_NAME: "keycloak-proxy"
+  parallel:
+    matrix: *publish-matrix
 
 lint-helm-chart:
-  stage: lint
+  stage: "lint"
   needs: []
   image:
     name: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/alpine/helm:3.10.2"
@@ -86,15 +69,10 @@ lint-helm-chart:
     - helm dependency build helm/keycloak-extensions
     - helm lint helm/keycloak-extensions --strict
 
-lint-pre-commit:
-  before_script:
-    - "helm repo add bitnami https://charts.bitnami.com/bitnami"
-
 tests:
-  stage: test
+  stage: "test"
   needs: []
   trigger:
     include: "/.gitlab/ci/tests/docker_tests.yml"
     strategy: depend
-
 ...
