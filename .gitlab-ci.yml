@@ -1,21 +1,20 @@
 ---
 include:
   - project: "univention/customers/dataport/upx/common-ci"
-    ref: "v1.9.9"
+    ref: "v1.11.1"
     file:
       - "defaults/stages.yaml"
       - "defaults/souvap-workflow.yaml"
       - "templates/souvap.yaml"
       - "jobs/lint-commit-messages.yaml"
       - "jobs/lint-pre-commit.yaml"
-      - "jobs/container-build.yaml"
       - "jobs/semantic-release-env.yaml"
+      - "jobs/container-build-souvap.yaml"
       - "jobs/package-and-publish-helm-charts.yaml"
 
 variables:
   SOUVAP_HELM_PROJECT_ID: 77
   SOUVAP_REGISTRY_PATH: "souvap/tooling/images/keycloak-extensions"
-  IMAGE_NAME: "keycloak-extensions"
 
 lint-pre-commit:
   before_script:
@@ -35,8 +34,6 @@ lint-pre-commit:
 container-build:
   parallel:
     matrix: *build-matrix
-  after_script:
-    - docker images --all
   variables:
     KANIKO_ARGS: "--skip-unused-stages=true --cache=true --cache-repo=$CI_REGISTRY_IMAGE/${IMAGE_NAME}-cache"
     DOCKERFILE_PATH: "${CI_PROJECT_DIR}/docker/${IMAGE_NAME}/Dockerfile"
@@ -53,8 +50,11 @@ container-security-scan:
   parallel:
     matrix: *build-matrix
 
-publish-images:
-  extends: .push-image-souvap
+push-image-souvap:
+  parallel:
+    matrix: *publish-matrix
+
+container-sign-souvap:
   parallel:
     matrix: *publish-matrix
 
