@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.4](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.0.3...v0.0.4) (2023-12-20)
+
+
+### Bug Fixes
+
+* **docker:** update ucs-base 5.2-0 from v0.7.2 ro v0.10.0 ([e59aed1](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/e59aed126727f7845405b0825ae15e01d070c021))
+
 ## [0.0.3](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.0.2...v0.0.3) (2023-12-18)
 
 
