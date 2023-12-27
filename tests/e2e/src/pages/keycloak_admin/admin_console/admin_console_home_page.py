@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2023 Univention GmbH
+
 from pages.base import expect
 from pages.keycloak_admin.admin_console.common.admin_console_page import AdminConsolePage
 from pages.keycloak_admin.admin_login_page import AdminLoginPage

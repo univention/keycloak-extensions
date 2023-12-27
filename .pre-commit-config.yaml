@@ -1,11 +1,14 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2023 Univention GmbH
+
 repos:
   - repo: "https://github.com/compilerla/conventional-pre-commit"
-    rev: "v2.1.1"
+    rev: "v3.0.0"
     hooks:
       - id: "conventional-pre-commit"
         stages: ["commit-msg"]
   - repo: https://github.com/pre-commit/mirrors-autopep8
-    rev: v2.0.2
+    rev: v2.0.4
     hooks:
       - id: autopep8
         name: autopep8
@@ -17,7 +20,7 @@ repos:
           - -i
         require_serial: false
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: 'v8.39.0'  # Use the sha / tag you want to point at
+    rev: "v8.56.0" # Use the sha / tag you want to point at
     hooks:
       - id: eslint
         name: eslint
@@ -26,7 +29,7 @@ repos:
         additional_dependencies:
           - eslint@8.37.0
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.5.0
     hooks:
       - id: check-merge-conflict
         name: check for merge conflicts
@@ -48,7 +51,7 @@ repos:
         language: python
         types: [text, executable]
   - repo: https://github.com/norwoodj/helm-docs
-    rev: v1.11.0
+    rev: v1.12.0
     hooks:
       - id: helm-docs
         args: []
@@ -58,6 +61,7 @@ repos:
         language: script
         name: Helm Docs
         require_serial: true
+        always_run: true
       - id: helm-docs-built
         args: []
         description: Uses auto built 'helm-docs' to create documentation from the Helm chart's 'values.yaml' file, and inserts the result into a corresponding 'README.md' file.
@@ -67,7 +71,7 @@ repos:
         name: Helm Docs Built
         require_serial: true
   - repo: https://github.com/Lucas-C/pre-commit-hooks
-    rev: v1.5.1
+    rev: v1.5.4
     hooks:
       - id: insert-license
         name: insert license in python files
@@ -90,3 +94,10 @@ repos:
           - /*| *| */
           - --use-current-year
           - --detect-license-in-X-top-lines=35
+
+  - repo: "https://git.knut.univention.de/univention/dist/pre-commit-hooks/addlicense"
+    rev: "v1.0.1"
+    hooks:
+      - id: "addlicense"
+        name: "Check or add license headers to files"
+...
