@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.5](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.0.4...v0.0.5) (2023-12-28)
+
+
+### Bug Fixes
+
+* **licensing/ci:** add spdx license headers, add license header checking pre-commit ([e169716](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/e16971686dd6b87abf37756f3377f51c44c718de))
+
 ## [0.0.4](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.0.3...v0.0.4) (2023-12-20)
 
 
