@@ -70,31 +70,6 @@ repos:
         language: golang
         name: Helm Docs Built
         require_serial: true
-  - repo: https://github.com/Lucas-C/pre-commit-hooks
-    rev: v1.5.4
-    hooks:
-      - id: insert-license
-        name: insert license in python files
-        description: Insert license in Python files.
-        files: handler\/.*\.py$
-        args:
-          - --license-filepath
-          - license_header.txt
-          - --use-current-year
-          - --detect-license-in-X-top-lines=35
-      - id: insert-license
-        name: insert license in node files
-        description: Insert license in NodeJS files.
-        files: proxy\/.*\.js$
-        exclude: proxy/public/fingerprintjs/v3.js
-        args:
-          - --license-filepath
-          - license_header.txt
-          - --comment-style
-          - /*| *| */
-          - --use-current-year
-          - --detect-license-in-X-top-lines=35
-
   - repo: "https://git.knut.univention.de/univention/dist/pre-commit-hooks/addlicense"
     rev: "v1.0.1"
     hooks:
