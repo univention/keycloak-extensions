@@ -68,6 +68,13 @@ image:
   tag: "0.1.0"
   imagePullPolicy: "Always"
 
+# -- Credentials to fetch images from private registry.
+# Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+#
+# imagePullSecrets:
+#   - "docker-registry"
+imagePullSecrets: []
+
 ## Container deployment probes
 probes:
   liveness:

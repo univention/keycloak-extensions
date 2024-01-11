@@ -40,6 +40,12 @@ spec:
       securityContext:
         {{ toYaml . | nindent 8 | trim }}
       {{- end }}
+      {{- if .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- range .Values.imagePullSecrets }}
+        - name: "{{ . }}"
+        {{- end }}
+      {{- end }}
       containers:
         - name: "keycloak-bfp-proxy"
           securityContext:

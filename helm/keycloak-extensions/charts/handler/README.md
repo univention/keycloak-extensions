@@ -51,6 +51,7 @@ A Helm chart for the Keycloak Extensions Handler
 | image.registry | string | `"registry.souvap-univention.de"` |  |
 | image.repository | string | `"souvap/tooling/images/keycloak-extensions/keycloak-handler"` |  |
 | image.tag | string | `"0.1.0"` |  |
+| imagePullSecrets | list | `[]` | Credentials to fetch images from private registry. Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/  imagePullSecrets:   - "docker-registry" |
 | ingress | object | `{"enabled":false}` | Kubernetes ingress |
 | ingress.enabled | bool | `false` | Set this to `true` in order to enable the installation on Ingress related objects. |
 | nameOverride | string | `""` |  |

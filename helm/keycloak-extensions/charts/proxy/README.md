@@ -35,6 +35,7 @@ A Helm chart for the Keycloak BFP proxy
 | image.registry | string | `"registry.souvap-univention.de"` |  |
 | image.repository | string | `"souvap/tooling/images/keycloak-extensions/keycloak-proxy"` |  |
 | image.tag | string | `"0.1.0"` |  |
+| imagePullSecrets | list | `[]` | Credentials to fetch images from private registry. Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/  imagePullSecrets:   - "docker-registry" |
 | ingress | object | `{"annotations":{},"enabled":true,"ingressClassName":"nginx","paths":[{"path":"/","pathType":"Prefix"}],"tls":{"enabled":true,"secretName":""}}` | Kubernetes ingress |
 | ingress.enabled | bool | `true` | Set this to `true` in order to enable the installation on Ingress related objects. |
 | nameOverride | string | `""` |  |
