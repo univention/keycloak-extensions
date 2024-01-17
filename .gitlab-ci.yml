@@ -4,7 +4,7 @@
 ---
 include:
   - project: "univention/customers/dataport/upx/common-ci"
-    ref: "v1.12.0"
+    ref: "v1.16.2"
     file:
       - "defaults/stages.yaml"
       - "defaults/souvap-workflow.yaml"
@@ -13,6 +13,7 @@ include:
       - "jobs/semantic-release-env.yaml"
       - "jobs/container-build-souvap.yaml"
       - "jobs/package-and-publish-helm-charts-souvap.yaml"
+      - "jobs/check-debian-updates.yaml"
 
 variables:
   SOUVAP_HELM_PROJECT_ID: 77
@@ -62,6 +63,10 @@ container-sign-souvap:
 lint-helm-chart:
   stage: "lint"
   needs: []
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: "never"
+    - when: "on_success"
   image:
     name: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/alpine/helm:3.10.2"
     entrypoint: [""]
@@ -73,7 +78,17 @@ lint-helm-chart:
 tests:
   stage: "test"
   needs: []
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+      when: "never"
+    - when: "on_success"
   trigger:
     include: "/.gitlab/ci/tests/docker_tests.yml"
     strategy: depend
+
+check-debian-updates:
+  parallel:
+    matrix: *publish-matrix
+  variables:
+    TARGET_IMAGE: "${CI_REGISTRY_IMAGE}/${IMAGE_NAME}:latest"
 ...
