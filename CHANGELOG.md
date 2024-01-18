@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.0.5...v0.1.0) (2024-01-18)
+
+
+### Features
+
+* **ci:** add debian update check jobs for scheduled pipeline ([98c35c8](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/98c35c8df1e90631c1a461ad86207738bf9386c0))
+
+
+### Bug Fixes
+
+* **deps:** add renovate.json ([aefa8cd](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/aefa8cd5e6180aaaf4c803a4e490a426efa15ea8))
+* **helm:** Add imagePullSecrets to helm charts ([e729c35](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/e729c3515d50495eabc2cea26f8eb303fa68dc51))
+* **pre-commit:** remove legacy license hooks ([69f3d0e](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/69f3d0e70275cfd620a07b373ca1a9d72929f732))
+
 ## [0.0.5](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.0.4...v0.0.5) (2023-12-28)
 
 
