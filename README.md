@@ -75,6 +75,22 @@ Currently only Google reCaptcha is supported, but Cloudflare and others are easy
 
 ## Development setup
 
+##### Using Tilt
+This repository provides a `Tiltfile` for easier development. If you are new to
+tilt, please [check their documentation](https://tilt.dev/)
+
+Here are some steps to get you up and running:
+1. Having [tilt](https://tilt.dev) installed in your machine.
+2. Setup `gaia` cluster. Steps for doing so are [here](https://gitlab.souvap-univention.de/groups/souvap/devops/-/wikis/K8s-cluster-legacy).
+    > Note that you need to add your namespace to the Kubeconfig that is provided above.
+3. Run a pipeline in `souvereign-workplace` with the variables specified [here](https://gitlab.souvap-univention.de/souvap/devops/sovereign-workplace/-/pipelines/new?ref=develop&var[NAMESPACE]=uv-username&var[CLUSTER]=gaia&var[DEPLOY_SERVICES]=yes&var[DEPLOY_UMS]=yes&var[DEPLOY_ICS]=yes&var[DEPLOY_OX]=yes&var[ENV_STOP_BEFORE]=yes&var[RUN_TESTS]=no).
+4. `cp tilt_config.json.example tilt_config.json` and fill your values with:
+    1. Your username for [SouvAP GitLab](https://gitlab.souvap-univention.de)
+    2. An access token with `read_registry` and `write_registry` scope generated from [here](https://gitlab.souvap-univention.de/-/profile/personal_access_tokens).
+5. Run `tilt up`.
+
+
+##### Using Docker
 A [`docker-compose.yaml`](./docker-compose.yaml) file is provided in the root folder of the repository to ease running the application locally. You can get the application running by:
 
 `docker compose up -d keycloak database`
