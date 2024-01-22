@@ -236,6 +236,27 @@ const ensureCaptchaProxyRes = async (responseBuffer, proxyRes, req, res) => {
   return responseBuffer;
 };
 
+
+const newDeviceLoginNotification2fa = async (proxyRes, req, res) => {
+  if (req.path.includes("login-actions/required-action") && res.statusCode == 200) {
+    const resCookies = setCookie.parse(proxyRes, { map: true });
+    const rawToken = (
+      resCookies.KEYCLOAK_IDENTITY || resCookies.KEYCLOAK_IDENTITY_LEGACY
+    )?.value;
+    const token = jwt_decode(rawToken);
+    if (Object.keys(req.cookies).includes("DEVICE_FINGERPRINT")) {
+      logger.debug("Login succeeded, notify user if new device.");
+      await saveFingerprintToDeviceRelation(
+        req.cookies.DEVICE_FINGERPRINT,
+        req.cookies.AUTH_SESSION_ID ?? req.cookies.AUTH_SESSION_ID_LEGACY,
+        token.sub
+      );
+    } else {
+      logger.info("Login succeeded, but no fingerprint was returned.");
+    }
+  }
+};
+
 /**
  * @name *\/protocol/saml*
  * @desc
@@ -295,6 +316,22 @@ router.post(
 
     onProxyReq: ensureCaptchaProxyReq,
     onProxyRes: responseInterceptor(ensureCaptchaProxyRes),
+  })
+);
+
+/**
+ * @name *\/login-actions/required-action*
+ * @ desc
+ * Proxy 2FA
+ */
+router.post(
+  "*/login-actions/required-action*",
+  createProxyMiddleware({
+    target: process.env.KEYCLOAK_URL,
+    logLevel: `${process.env.LOG_LEVEL}`.toLowerCase() ?? "info",
+    pathFilter: "**",
+    logger,
+    onProxyRes: newDeviceLoginNotification2fa,
   })
 );
 
