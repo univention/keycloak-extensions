@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.1.0...v0.2.0) (2024-01-23)
+
+
+### Features
+
+* Tiltfile for easier development ([62131b2](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/62131b2407592b4b8d589015fff0ba5f36d799b7))
+
+
+### Bug Fixes
+
+* **proxy:** 2fa new device login notification ([e159bfd](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/e159bfdf136746fd3bc22acac745c2a9ad1359b7))
+
 ## [0.1.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.0.5...v0.1.0) (2024-01-18)
 
 
