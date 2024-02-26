@@ -31,7 +31,7 @@ spec:
           {{- range .Values.ingress.paths }}
           - pathType: {{ .pathType }}
             path: {{ .path }}
-            backend: {{- include "common.ingress.backend" (dict "serviceName" (include "common.names.fullname" $) "servicePort" "http" "context" $) | nindent 14 }}
+            backend: {{- (toYaml .backend) | default (include "common.ingress.backend" (dict "serviceName" (include "common.names.fullname" $) "servicePort" "http" "context" $)) | nindent 14 }}
           {{- end }}
 
 ...
