@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.2.0...v0.2.1) (2024-02-27)
+
+
+### Bug Fixes
+
+* **helmchart:** Enhance ingress templating support (e.g. to allow adding an alternative backend for /[secure] on ingress level) ([4c33c87](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/4c33c8774a2f3b599dd7aa3034d42f9f265b5f1a))
+
 ## [0.2.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.1.0...v0.2.0) (2024-01-23)
 
 
