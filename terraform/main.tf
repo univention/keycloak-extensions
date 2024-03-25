@@ -5,11 +5,11 @@ terraform {
   required_providers {
     hcloud = {
       source = "hetznercloud/hcloud"
-      version = "1.32.2"
+      version = "1.45.0"
     }
     aws = {
       source = "hashicorp/aws"
-      version = "3.7.0"
+      version = "5.42.0"
     }
   }
   backend "http" {

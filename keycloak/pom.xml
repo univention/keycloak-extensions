@@ -29,19 +29,19 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
         <!-- dependency versions -->
-        <lombok.version>1.18.22</lombok.version>
+        <lombok.version>1.18.32</lombok.version>
 
         <keycloak.version>${env.DEV_KEYCLOAK_VERSION}</keycloak.version>
-        <auto-service.version>1.0.1</auto-service.version>
+        <auto-service.version>1.1.1</auto-service.version>
         <httpcomponents.version>4.5.13</httpcomponents.version>
-        <jackson.version>2.13.2</jackson.version>
-        <jackson-databind.version>2.13.2.2</jackson-databind.version>
-        <resteasy-jaxrs.version>4.7.5.Final</resteasy-jaxrs.version>
+        <jackson.version>2.17.0</jackson.version>
+        <jackson-databind.version>2.17.0</jackson-databind.version>
+        <resteasy-jaxrs.version>6.2.8.Final</resteasy-jaxrs.version>
         <jboss-servlet-api.version>2.0.0.Final</jboss-servlet-api.version>
         <testcontainers-keycloak.version>2.1.2</testcontainers-keycloak.version>
         <assertj-core.version>3.22.0</assertj-core.version>
-        <junit-jupiter.version>5.8.2</junit-jupiter.version>
-        <undertow-servlet.version>2.2.14.Final</undertow-servlet.version>
+        <junit-jupiter.version>5.10.2</junit-jupiter.version>
+        <undertow-servlet.version>2.3.12.Final</undertow-servlet.version>
     </properties>
 
     <dependencyManagement>
@@ -101,7 +101,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>3.3.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -109,7 +109,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.10.1</version>
+                <version>3.13.0</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>

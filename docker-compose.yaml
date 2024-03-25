@@ -93,7 +93,7 @@ services:
   database:
     # PostgreSQL database shared between proxy and handler containers.
     container_name: keycloak-extensions-postgres
-    image: postgres:15.1-alpine
+    image: postgres:16.2-alpine
     ports:
       - 5432:5432
     environment:
@@ -144,7 +144,7 @@ services:
   helm-docs:
     profiles:
       - test
-    image: "jnorwood/helm-docs:v1.11.0"
+    image: "jnorwood/helm-docs:v1.13.1"
     command: "-c helm"
     volumes:
       - ./helm:/helm-docs/helm
