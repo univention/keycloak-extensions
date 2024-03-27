@@ -68,7 +68,8 @@ A Helm chart for Kubernetes with its extensions
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| global | object | `{"keycloak":{"adminPassword":"univention","adminRealm":null,"adminUsername":"admin","host":"keycloak","realm":"ucs"},"postgresql":{"auth":{"database":"bfp","password":"correcthorsebatterystaple","postgresPassword":"correcthorsebatterystaple","username":"bfp"},"connection":{"host":"keycloak-extensions-postgresql","port":"5432"}}}` | Global Keycloak Extensions configuration values |
+| global | object | `{"imageRegistry":"gitregistry.knut.univention.de","keycloak":{"adminPassword":"univention","adminRealm":null,"adminUsername":"admin","host":"keycloak","realm":"ucs"},"postgresql":{"auth":{"database":"bfp","password":"correcthorsebatterystaple","postgresPassword":"correcthorsebatterystaple","username":"bfp"},"connection":{"host":"keycloak-extensions-postgresql","port":"5432"}}}` | Global Keycloak Extensions configuration values |
+| global.imageRegistry | string | `"gitregistry.knut.univention.de"` | Container registry address. |
 | global.keycloak | object | `{"adminPassword":"univention","adminRealm":null,"adminUsername":"admin","host":"keycloak","realm":"ucs"}` | External Keycloak settings |
 | global.keycloak.adminPassword | string | `"univention"` | Admin password for Keycloak admin-cli provided user |
 | global.keycloak.adminUsername | string | `"admin"` | Admin user for Keycloak admin-cli |
@@ -89,10 +90,14 @@ A Helm chart for Kubernetes with its extensions
 | handler.appConfig.smtpPassword | string | `"some_password"` |  |
 | handler.appConfig.smtpPort | string | `"587"` |  |
 | handler.appConfig.smtpUsername | string | `"univention"` |  |
+| handler.image.registry | string | `"gitregistry.knut.univention.de"` |  |
+| handler.image.repository | string | `"univention/components/keycloak-extensions/keycloak-handler"` |  |
 | handler.image.tag | string | `"latest"` |  |
 | postgresql | object | `{"enabled":true}` | PostgreSQL settings.  The bitnami helm chart does contain all details of what can be configured: https://github.com/bitnami/charts/tree/main/bitnami/postgresql |
 | postgresql.enabled | bool | `true` | Set to `true` if you want PostgreSQL to be installed as well. |
 | proxy.appConfig.captchaSecretKey | string | `"some_secret_key"` |  |
 | proxy.appConfig.captchaSiteKey | string | `"some_site_key"` |  |
+| proxy.image.registry | string | `"gitregistry.knut.univention.de"` |  |
+| proxy.image.repository | string | `"univention/components/keycloak-extensions/keycloak-proxy"` |  |
 | proxy.image.tag | string | `"latest"` |  |
 | proxy.ingress.host | string | `"sso.example.com"` |  |

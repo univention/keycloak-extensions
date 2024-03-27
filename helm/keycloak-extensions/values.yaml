@@ -4,6 +4,8 @@
 ---
 # -- Global Keycloak Extensions configuration values
 global:
+  # -- Container registry address.
+  imageRegistry: "gitregistry.knut.univention.de"
   # -- External Keycloak settings
   keycloak:
     # -- Host where keycloak is accessible (specify port if needed)
@@ -37,6 +39,8 @@ global:
 # Handler sub-chart specific values
 handler:
   image:
+    registry: "gitregistry.knut.univention.de"
+    repository: "univention/components/keycloak-extensions/keycloak-handler"
     tag: "latest"
   appConfig:
     captchaProtectionEnable: "false"
@@ -57,6 +61,8 @@ postgresql:
 # Proxy sub-chart specific values
 proxy:
   image:
+    registry: "gitregistry.knut.univention.de"
+    repository: "univention/components/keycloak-extensions/keycloak-proxy"
     tag: "latest"
   appConfig:
     captchaSiteKey: "some_site_key"
