@@ -1,15 +1,6 @@
 dependencies:
 - name: common
   repository: https://charts.bitnami.com/bitnami
-  version: 2.2.4
-- name: handler
-  repository: file://./charts/handler
-  version: 0.1.0
-- name: postgresql
-  repository: https://charts.bitnami.com/bitnami
-  version: 12.2.7
-- name: proxy
-  repository: file://./charts/proxy
-  version: 0.1.0
-digest: sha256:a8da45da5c5080ff1bf8bd257a408d595ba0b05d4a91ff20e74b422bac5efb03
-generated: "2023-04-04T14:24:34.781205494+02:00"
+  version: 2.19.1
+digest: sha256:d2505ddf1fa3c454459e2e88585b3141a62b80e46a15c220dfa2fdc0f024ecfb
+generated: "2024-03-28T04:28:30.402478+01:00"
