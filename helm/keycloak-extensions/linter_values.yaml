@@ -1,0 +1,21 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2024 Univention GmbH
+
+---
+postgresql:
+  # -- Set to `true` if you want PostgreSQL to be installed as well.
+  enabled: true
+  connection:
+    host: "linting-host"
+    port: "linting-port"
+  auth:
+    username: "linting-username"
+    password: "linting-password"
+    database: "linting-database"
+
+keycloak:
+  host: "linting-host"
+  adminUsername: "linting-adminUsername"
+  adminPassword: "linting-adminPassword"
+  realm: "linting-realm"
+  adminRealm: "linting-adminRealm"

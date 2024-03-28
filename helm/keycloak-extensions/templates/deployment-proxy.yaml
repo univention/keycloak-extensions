@@ -1,0 +1,90 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2023 Univention GmbH
+
+---
+
+apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
+kind: Deployment
+metadata:
+  name: {{ printf "%s-proxy" (include "common.names.fullname" .) }}
+  labels:
+    {{- include "common.labels.standard" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.proxy.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "common.labels.matchLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap-proxy.yaml") . | sha256sum }}
+        {{- with .Values.proxy.podAnnotations }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "common.labels.standard" . | nindent 8 }}
+    spec:
+      {{- with .Values.proxy.affinity }}
+      affinity:
+        {{ toYaml . | nindent 8 | trim }}
+      {{- end }}
+      {{- with .Values.proxy.tolerations }}
+      tolerations:
+        {{ toYaml . | nindent 8 | trim }}
+      {{- end }}
+      {{- with .Values.proxy.nodeSelector }}
+      nodeSelector:
+        {{ toYaml . | nindent 8 | trim }}
+      {{- end }}
+      {{- with .Values.proxy.podSecurityContext }}
+      securityContext:
+        {{ toYaml . | nindent 8 | trim }}
+      {{- end }}
+      {{- if .Values.proxy.imagePullSecrets }}
+      imagePullSecrets:
+        {{- range .Values.proxy.imagePullSecrets }}
+        - name: "{{ . }}"
+        {{- end }}
+      {{- end }}
+      containers:
+        - name: "keycloak-bfp-proxy"
+          securityContext:
+            {{- toYaml .Values.proxy.securityContext | nindent 12 }}
+          image: "{{ .Values.proxy.image.registry }}/{{ .Values.proxy.image.repository }}{{ if .Values.proxy.image.sha256 }}@sha256:{{ .Values.proxy.image.sha256 }}{{ else }}:{{ .Values.proxy.image.tag }}{{ end }}"
+          imagePullPolicy: {{ .Values.proxy.image.imagePullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{ printf "%s-proxy" (include "common.names.fullname" .) }}
+          ports:
+            {{- range $key, $value := .Values.proxy.service.ports }}
+            - name: {{ $key }}
+              containerPort: {{ $value.containerPort }}
+              protocol: {{ $value.protocol }}
+            {{- end }}
+          # TODO: add readiness endpoints to the proxy
+          # {{- if .Values.proxy.probes.liveness.enabled }}
+          # livenessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          #   initialDelaySeconds: {{ .Values.proxy.probes.liveness.initialDelaySeconds }}
+          #   timeoutSeconds: {{ .Values.proxy.probes.liveness.timeoutSeconds }}
+          #   periodSeconds: {{ .Values.proxy.probes.liveness.periodSeconds }}
+          #   failureThreshold: {{ .Values.proxy.probes.liveness.failureThreshold }}
+          #   successThreshold: {{ .Values.proxy.probes.liveness.successThreshold }}
+          # {{- end }}
+          # {{- if .Values.proxy.probes.readiness.enabled }}
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          #   initialDelaySeconds: {{ .Values.proxy.probes.readiness.initialDelaySeconds }}
+          #   timeoutSeconds: {{ .Values.proxy.probes.readiness.timeoutSeconds }}
+          #   periodSeconds: {{ .Values.proxy.probes.readiness.periodSeconds }}
+          #   failureThreshold: {{ .Values.proxy.probes.readiness.failureThreshold }}
+          #   successThreshold: {{ .Values.proxy.probes.readiness.successThreshold }}
+          # {{- end }}
+          resources:
+            {{- toYaml .Values.proxy.resources | nindent 12 }}
+
+...

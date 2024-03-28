@@ -34,32 +34,226 @@ global:
       # -- Currently unused
       postgresPassword: "correcthorsebatterystaple"
 
-# Handler sub-chart specific values
-handler:
-  image:
-    tag: "latest"
-  appConfig:
-    captchaProtectionEnable: "false"
-    smtpHost: "mail.example.org"
-    smtpPort: "587"
-    smtpUsername: "univention"
-    smtpPassword: "some_password"
-    mailFrom: "univention@example.org"
-
 # -- PostgreSQL settings.
 #
 # The bitnami helm chart does contain all details of what can be configured:
 # https://github.com/bitnami/charts/tree/main/bitnami/postgresql
 postgresql:
-  # -- Set to `true` if you want PostgreSQL to be installed as well.
-  enabled: true
+  connection:
+    host: ""
+    port: ""
+  auth:
+    username: ""
+    password: ""
+    database: ""
 
-# Proxy sub-chart specific values
-proxy:
-  image:
-    tag: "latest"
+keycloak:
+  host: ""
+  adminUsername: ""
+  adminPassword: ""
+  realm: ""
+  adminRealm: ""
+
+handler:
+  ## Global values
+  affinity: {}
+  environment: {}
+  nodeSelector: {}
+  podAnnotations: {}
+  podSecurityContext: {}
+  replicaCount: 1
+  securityContext: {}
+  tolerations: []
+
+  # -- Application configuration of the Handler
   appConfig:
+    # -- Application LOG level: `DEBUG`, `INFO`, `WARN` or `ERROR`
+    logLevel: "DEBUG"
+    # -- Number of failed login attempts within the minutes of `EVENTS_RETENTION_MINUTES` to trigger an IP block. Should be grater than `FAILED_ATTEMPTS_FOR_DEVICE_BLOCK` if it is enabled
+    failedAttemptsForIpBlock: 7
+    # -- Number of failed login attempts within the minutes of `EVENTS_RETENTION_MINUTES` to trigger a device block. Should be greater than `FAILED_ATTEMPTS_FOR_CAPTCHA_TRIGGER` if it is enabled
+    failedAttemptsForDeviceBlock: 5
+    # -- Number of failed login attempts within the minutes of `EVENTS_RETENTION_MINUTES` to enforce reCaptcha prompt
+    failedAttemptsForCaptchaTrigger: 3
+    # -- Minutes to buffer Keycloak events locally, allowing to persist more than the configured in Keycloak
+    eventsRetentionPeriod: 10
+    # -- Minutes to automatically expire actions such as IP and device blocks and reCaptcha prompt
+    autoExpireRuleInMins: 5
+    # -- Whether to enable device blocking
+    deviceProtectionEnable: "True"
+    # -- Whether to enable IP blocking
+    ipProtectionEnable: "True"
+    # -- Whether to enable reCaptcha prompting protection
+    captchaProtectionEnable: "True"
+    # -- Email SMTP hostname
+    smtpHost: "mail.example.org"
+    # -- Email SMTP port
+    smtpPort: "587"
+    # -- Username for SMTP authentication
+    smtpUsername: "univention"
+    # -- Password for SMTP authentication
+    smtpPassword: "some_password"
+    # -- Email to send emails from
+    mailFrom: "univention@example.org"
+    # -- Subject for email notification to users on New Device Login
+    newDeviceLoginSubject: "New device login"
+
+  # -- Kubernetes ingress
+  ingress:
+    # -- Set this to `true` in order to enable the installation on Ingress related objects.
+    enabled: false
+
+  ## Docker image
+  image:
+    registry: "gitregistry.knut.univention.de"
+    repository: "univention/components/keycloak-extensions/keycloak-handler"
+    tag: "latest"
+    imagePullPolicy: "IfNotPresent"
+
+  # -- Credentials to fetch images from private registry.
+  # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  #
+  # imagePullSecrets:
+  #   - "docker-registry"
+  imagePullSecrets: []
+
+  ## Container deployment probes
+  probes:
+    liveness:
+      enabled: false
+
+    readiness:
+      enabled: false
+
+  ## Deployment resources
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "4Gi"
+      cpu: "4"
+
+  ## Kubernetes service
+  service:
+    enabled: false
+
+proxy:
+  affinity: {}
+  environment: {}
+  nodeSelector: {}
+  podAnnotations: {}
+  podSecurityContext: {}
+  replicaCount: 1
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+      - ALL
+    privileged: false
+    readOnlyRootFilesystem: true
+    runAsGroup: 1000
+    runAsNonRoot: true
+    runAsUser: 1000
+    seccompProfile:
+      type: RuntimeDefault
+  tolerations: []
+
+  # -- Application configuration of the Proxy
+  appConfig:
+    # -- Proxy log level: `debug`, `info`, `warn` or `error`
+    logLevel: "debug"
+    # -- The Google reCaptcha v2 site key generated from [their admin site](https://www.google.com/recaptcha/admin/)
     captchaSiteKey: "some_site_key"
     captchaSecretKey: "some_secret_key"
+
+  # -- Global Keycloak Extensions configuration values
+  # global:
+  #   # -- External Keycloak settings
+  #   keycloak:
+  #     # -- Host where keycloak is accessible (specify port if needed)
+  #     host: "sso.example.com"
+  #   # -- PostgreSQL global settings
+  #   postgresql:
+  #     connection:
+  #       # -- Hostname or IP address of the server hosting the PostgreSQL database
+  #       host: "keycloak-extensions-postgresql"
+  #       # -- Port number that the PostgreSQL database is exposed on
+  #       port: "5432"
+  #     auth:
+  #       # -- Database for the proxy and handler to use
+  #       database: "bfp"
+  #       # -- User for the PostgreSQL database
+  #       username: "bfp"
+  #       # -- Password for the PostgreSQL database
+  #       password: "correcthorsebatterystaple"
+
+  # -- Kubernetes ingress
   ingress:
-    host: "sso.example.com"
+    # -- Set this to `true` in order to enable the installation on Ingress related objects.
+    enabled: true
+    ingressClassName: "nginx"
+    annotations: {}
+    ## define hostname
+    # host: "sso.example.com"
+    paths:
+      - pathType: "Prefix"
+        path: "/"
+    tls:
+      enabled: true
+      secretName: ""
+
+  ## Docker image
+  image:
+    registry: "git.knut.univention.de"
+    repository: "univention/components/keycloak-extensions/keycloak-proxy"
+    tag: "latest"
+    imagePullPolicy: "IfNotPresent"
+
+  # -- Credentials to fetch images from private registry.
+  # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  #
+  # imagePullSecrets:
+  #   - "docker-registry"
+  imagePullSecrets: []
+
+  ## Container deployment probes
+  probes:
+    liveness:
+      enabled: false
+      initialDelaySeconds: 120
+      timeoutSeconds: 3
+      periodSeconds: 30
+      failureThreshold: 3
+      successThreshold: 1
+
+    readiness:
+      enabled: false
+      initialDelaySeconds: 30
+      timeoutSeconds: 3
+      periodSeconds: 15
+      failureThreshold: 30
+      successThreshold: 1
+
+  ## Deployment resources
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "4Gi"
+      cpu: "4"
+
+  ## Kubernetes service
+  service:
+    enabled: true
+    type: "ClusterIP"
+    ports:
+      http:
+        containerPort: 8181
+        port: 8181
+        protocol: "TCP"
+
+    sessionAffinity:
+      enabled: false
+      timeoutSeconds: 10800

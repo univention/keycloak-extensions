@@ -1,0 +1,89 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2023 Univention GmbH
+
+---
+
+apiVersion: {{ include "common.capabilities.deployment.apiVersion" . }}
+kind: Deployment
+metadata:
+  name: {{ printf "%s-handler" (include "common.names.fullname" .) }}
+  labels:
+    {{- include "common.labels.standard" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.handler.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "common.labels.matchLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap-handler.yaml") . | sha256sum }}
+        {{- with .Values.handler.podAnnotations }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "common.labels.standard" . | nindent 8 }}
+    spec:
+      {{- with .Values.handler.affinity }}
+      affinity:
+        {{ toYaml . | nindent 8 | trim }}
+      {{- end }}
+      {{- with .Values.handler.tolerations }}
+      tolerations:
+        {{ toYaml . | nindent 8 | trim }}
+      {{- end }}
+      {{- with .Values.handler.nodeSelector }}
+      nodeSelector:
+        {{ toYaml . | nindent 8 | trim }}
+      {{- end }}
+      {{- with .Values.handler.podSecurityContext }}
+      securityContext:
+        {{ toYaml . | nindent 8 | trim }}
+      {{- end }}
+      {{- if .Values.handler.imagePullSecrets }}
+      imagePullSecrets:
+        {{- range .Values.handler.imagePullSecrets }}
+        - name: "{{ . }}"
+        {{- end }}
+      {{- end }}
+      containers:
+        - name: "keycloak-bfp-handler"
+          securityContext:
+            {{- toYaml .Values.handler.securityContext | nindent 12 }}
+          image: "{{ .Values.handler.image.registry }}/{{ .Values.handler.image.repository }}{{ if .Values.handler.image.sha256 }}@sha256:{{ .Values.handler.image.sha256 }}{{ else }}:{{ .Values.handler.image.tag }}{{ end }}"
+          imagePullPolicy: {{ .Values.handler.image.imagePullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{ printf "%s-handler" (include "common.names.fullname" .) }}
+          ports:
+            {{- range $key, $value := .Values.handler.service.ports }}
+            - name: {{ $key }}
+              containerPort: {{ $value.containerPort }}
+              protocol: {{ $value.protocol }}
+            {{- end }}
+          {{- if .Values.handler.probes.liveness.enabled }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: {{ .Values.handler.probes.liveness.initialDelaySeconds }}
+            timeoutSeconds: {{ .Values.handler.probes.liveness.timeoutSeconds }}
+            periodSeconds: {{ .Values.handler.probes.liveness.periodSeconds }}
+            failureThreshold: {{ .Values.handler.probes.liveness.failureThreshold }}
+            successThreshold: {{ .Values.handler.probes.liveness.successThreshold }}
+          {{- end }}
+          {{- if .Values.handler.probes.readiness.enabled }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: {{ .Values.handler.probes.readiness.initialDelaySeconds }}
+            timeoutSeconds: {{ .Values.handler.probes.readiness.timeoutSeconds }}
+            periodSeconds: {{ .Values.handler.probes.readiness.periodSeconds }}
+            failureThreshold: {{ .Values.handler.probes.readiness.failureThreshold }}
+            successThreshold: {{ .Values.handler.probes.readiness.successThreshold }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.handler.resources | nindent 12 }}
+
+...

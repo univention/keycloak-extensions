@@ -1,0 +1,42 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2023 Univention GmbH
+
+{{- if .Values.proxy.ingress.enabled -}}
+---
+
+apiVersion: {{ include "common.capabilities.ingress.apiVersion" . }}
+kind: Ingress
+metadata:
+  name: {{ printf "%s-proxy" (include "common.names.fullname" .) }}
+  labels:
+    {{- include "common.labels.standard" . | nindent 4 }}
+  {{- with .Values.proxy.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.proxy.ingress.ingressClassName }}
+  ingressClassName: {{ .Values.proxy.ingress.ingressClassName }}
+  {{- end }}
+  {{- if .Values.proxy.ingress.tls.enabled }}
+  tls:
+    - hosts:
+        - {{ .Values.proxy.ingress.host | quote }}
+      secretName: "{{ .Values.proxy.ingress.tls.secretName }}"
+  {{- end }}
+  rules:
+    - host: {{ .Values.proxy.ingress.host | quote }}
+      http:
+        paths:
+          {{- range .Values.proxy.ingress.paths }}
+          - pathType: {{ .pathType }}
+            path: {{ .path }}
+            {{- if .backend }}
+            backend: {{- (toYaml .backend) | nindent 14 }}
+            {{- else }}
+            backend: {{- default (include "common.ingress.backend" (dict "serviceName" (printf "%s-proxy" (include "common.names.fullname" $)) "servicePort" "http" "context" $)) | nindent 14 }}
+            {{- end }}
+          {{- end }}
+
+...
+{{- end }}

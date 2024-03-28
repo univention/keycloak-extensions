@@ -1,34 +1,34 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # SPDX-FileCopyrightText: 2023 Univention GmbH
 
-{{- if .Values.ingress.enabled -}}
+{{- if .Values.handler.ingress.enabled -}}
 ---
 
 apiVersion: {{ include "common.capabilities.ingress.apiVersion" . }}
 kind: Ingress
 metadata:
-  name: {{ include "common.names.fullname" . }}
+  name: {{ printf "%s-proxy" (include "common.names.fullname" .) }}
   labels:
     {{- include "common.labels.standard" . | nindent 4 }}
-  {{- with .Values.ingress.annotations }}
+  {{- with .Values.handler.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  {{- if .Values.ingress.ingressClassName }}
-  ingressClassName: {{ .Values.ingress.ingressClassName }}
+  {{- if .Values.handler.ingress.ingressClassName }}
+  ingressClassName: {{ .Values.handler.ingress.ingressClassName }}
   {{- end }}
-  {{- if .Values.ingress.tls.enabled }}
+  {{- if .Values.handler.ingress.tls.enabled }}
   tls:
     - hosts:
-        - {{ .Values.ingress.host | quote }}
-      secretName: "{{ .Values.ingress.tls.secretName }}"
+        - {{ .Values.handler.ingress.host | quote }}
+      secretName: "{{ .Values.handler.ingress.tls.secretName }}"
   {{- end }}
   rules:
-    - host: {{ .Values.ingress.host | quote }}
+    - host: {{ .Values.handler.ingress.host | quote }}
       http:
         paths:
-          {{- range .Values.ingress.paths }}
+          {{- range .Values.handler.ingress.paths }}
           - pathType: {{ .pathType }}
             path: {{ .path }}
             {{- if .backend }}
