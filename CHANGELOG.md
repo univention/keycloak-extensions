@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.2](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.2.1...v0.2.2) (2024-04-02)
+
+
+### Bug Fixes
+
+* **ci:** update common-ci from v1.16.2 to v1.25.0 ([11b209e](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/11b209e45ba426a4ff6a026121202d60df621b78))
+* **helm/values:** add missing image parameters ([54c0006](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/54c0006ff2bd9abd6903a914222199817d3b0431))
+
 ## [0.2.1](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.2.0...v0.2.1) (2024-02-27)
 
 
