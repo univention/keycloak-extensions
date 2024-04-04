@@ -186,7 +186,7 @@ proxy:
 
   ## Docker image
   image:
-    registry: "git.knut.univention.de"
+    registry: "gitregistry.knut.univention.de"
     repository: "univention/components/keycloak-extensions/keycloak-proxy"
     tag: "latest"
     imagePullPolicy: "IfNotPresent"

@@ -82,7 +82,7 @@ A Helm chart for Kubernetes with its extensions
 | proxy.appConfig.logLevel | string | `"debug"` | Proxy log level: `debug`, `info`, `warn` or `error` |
 | proxy.environment | object | `{}` |  |
 | proxy.image.imagePullPolicy | string | `"IfNotPresent"` |  |
-| proxy.image.registry | string | `"git.knut.univention.de"` |  |
+| proxy.image.registry | string | `"gitregistry.knut.univention.de"` |  |
 | proxy.image.repository | string | `"univention/components/keycloak-extensions/keycloak-proxy"` |  |
 | proxy.image.tag | string | `"latest"` |  |
 | proxy.imagePullSecrets | list | `[]` | Credentials to fetch images from private registry. Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/  imagePullSecrets:   - "docker-registry" |
