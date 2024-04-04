@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.2.2...v0.3.0) (2024-04-04)
+
+
+### Features
+
+* **helm:** major refactoring ([d540031](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/d5400318ac5155aee662d887c2460842422bd2b9))
+
 ## [0.2.2](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.2.1...v0.2.2) (2024-04-02)
 
 
