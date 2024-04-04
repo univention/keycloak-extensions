@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.3.0...v0.3.1) (2024-04-04)
+
+
+### Bug Fixes
+
+* **helm:** change default gitregistry for proxy so packaged charts contain proper digests ([85f1e80](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/85f1e806c1c6d0d45c339d7a145c6a66689feecb))
+
 ## [0.3.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.2.2...v0.3.0) (2024-04-04)
 
 
