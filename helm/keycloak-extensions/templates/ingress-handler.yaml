@@ -7,9 +7,12 @@
 apiVersion: {{ include "common.capabilities.ingress.apiVersion" . }}
 kind: Ingress
 metadata:
-  name: {{ printf "%s-proxy" (include "common.names.fullname" .) }}
+  name: {{ printf "%s-handler" (include "common.names.fullname" .) }}
   labels:
-    {{- include "common.labels.standard" . | nindent 4 }}
+    {{- $commonLabels := include "common.labels.standard" . | fromYaml }}
+    {{- $uiLabels := dict "app.kubernetes.io/name" (printf "%s-handler" (include "common.names.fullname" .)) }}
+    {{- $mergedLabels := merge $uiLabels $commonLabels}}
+    {{- toYaml $mergedLabels | nindent 4 }}
   {{- with .Values.handler.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}

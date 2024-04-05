@@ -9,7 +9,10 @@ metadata:
   name: {{ printf "%s-handler" (include "common.names.fullname" .) }}
   namespace: {{ include "common.names.namespace" . | quote }}
   labels:
-    {{- include "common.labels.standard" . | nindent 4 }}
+    {{- $commonLabels := include "common.labels.standard" . | fromYaml }}
+    {{- $uiLabels := dict "app.kubernetes.io/name" (printf "%s-handler" (include "common.names.fullname" .)) }}
+    {{- $mergedLabels := merge $uiLabels $commonLabels}}
+    {{- toYaml $mergedLabels | nindent 4 }}
     {{- if .Values.handler.additionalLabels }}
     {{- include "common.tplvalues.render" ( dict "value" .Values.handler.additionalLabels "context" . ) | nindent 4 }}
     {{- end }}
