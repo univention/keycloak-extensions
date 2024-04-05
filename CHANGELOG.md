@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.3.1...v0.3.2) (2024-04-05)
+
+
+### Bug Fixes
+
+* refactor labels in ingress, configmap, service, and deployment templates for umbrella compatibility ([4bfd588](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/4bfd58883bb3a26536bc050dcade7a766e07b788))
+
 ## [0.3.1](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.3.0...v0.3.1) (2024-04-04)
 
 
