@@ -13,6 +13,9 @@ metadata:
     {{- $uiLabels := dict "app.kubernetes.io/name" (printf "%s-handler" (include "common.names.fullname" .)) }}
     {{- $mergedLabels := merge $uiLabels $commonLabels}}
     {{- toYaml $mergedLabels | nindent 4 }}
+  {{- if .Values.handler.service.additionalAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.handler.service.additionalAnnotations "context" . ) | nindent 4 }}
+  {{- end }}
 spec:
   type: {{ .Values.handler.service.type }}
   {{- if .Values.handler.service.sessionAffinity.enabled }}

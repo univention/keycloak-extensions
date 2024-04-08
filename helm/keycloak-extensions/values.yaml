@@ -66,8 +66,92 @@ handler:
   replicaCount: 1
   securityContext: {}
   tolerations: []
-
+  # -- Additional custom annotations to add to deployments.
+  additionalAnnotations: {}
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+    ## @param serviceAccount.automountServiceAccountToken Allows auto mount of ServiceAccountToken on the serviceAccount created
+    ## Can be set to false if pods using this serviceAccount do not need to use K8s API
+    ##
+    automountServiceAccountToken: false
+    # -- Additional custom labels for the ServiceAccount.
+    labels: {}
+  ## Configure extra options for liveness, readiness and startup probes
+  ## @param handler.livenessProbe.enabled Enable livenessProbe on PostgreSQL Primary containers
+  ## @param handler.livenessProbe.initialDelaySeconds Initial delay seconds for livenessProbe
+  ## @param handler.livenessProbe.periodSeconds Period seconds for livenessProbe
+  ## @param handler.livenessProbe.timeoutSeconds Timeout seconds for livenessProbe
+  ## @param handler.livenessProbe.failureThreshold Failure threshold for livenessProbe
+  ## @param handler.livenessProbe.successThreshold Success threshold for livenessProbe
+  ## @param handler.livenessProbe.command Command for the livenessProbe
+  ##
+  livenessProbe:
+    enabled: false
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+    command: |
+      exit 0
+  ## @param handler.readinessProbe.enabled Enable readinessProbe on PostgreSQL Primary containers
+  ## @param handler.readinessProbe.initialDelaySeconds Initial delay seconds for readinessProbe
+  ## @param handler.readinessProbe.periodSeconds Period seconds for readinessProbe
+  ## @param handler.readinessProbe.timeoutSeconds Timeout seconds for readinessProbe
+  ## @param handler.readinessProbe.failureThreshold Failure threshold for readinessProbe
+  ## @param handler.readinessProbe.successThreshold Success threshold for readinessProbe
+  ## @param handler.readinessProbe.command Command for the readinessProbe
+  ##
+  readinessProbe:
+    enabled: false
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+    command: |
+      exit 0
+  ## @param handler.startupProbe.enabled Enable startupProbe on PostgreSQL Primary containers
+  ## @param handler.startupProbe.initialDelaySeconds Initial delay seconds for startupProbe
+  ## @param handler.startupProbe.periodSeconds Period seconds for startupProbe
+  ## @param handler.startupProbe.timeoutSeconds Timeout seconds for startupProbe
+  ## @param handler.startupProbe.failureThreshold Failure threshold for startupProbe
+  ## @param handler.startupProbe.successThreshold Success threshold for startupProbe
+  ## @param handler.startupProbe.command Command for the startupProbe
+  ##
+  startupProbe:
+    enabled: false
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 1
+    failureThreshold: 15
+    successThreshold: 1
+    command: |
+      exit 0
+  ## @param handler.customLivenessProbe Custom livenessProbe that overrides the default one
+  ##
+  customLivenessProbe: {}
+  ## @param handler.customReadinessProbe Custom readinessProbe that overrides the default one
+  ##
+  customReadinessProbe: {}
+  ## @param handler.customStartupProbe Custom startupProbe that overrides the default one
+  ##
+  customStartupProbe: {}
+  ## @param handler.lifecycleHooks for the handler container to automate configuration before or after startup
+  ##
+  lifecycleHooks: {}
   # -- Application configuration of the Handler
+  # -- In seconds, time the given to the pod needs to terminate gracefully.
+  # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods
+  terminationGracePeriodSeconds: ""
+
+  # -- Application configuration of the handler
   appConfig:
     # -- Application LOG level: `DEBUG`, `INFO`, `WARN` or `ERROR`
     logLevel: "DEBUG"
@@ -119,14 +203,6 @@ handler:
   #   - "docker-registry"
   imagePullSecrets: []
 
-  ## Container deployment probes
-  probes:
-    liveness:
-      enabled: false
-
-    readiness:
-      enabled: false
-
   ## Deployment resources
   resources:
     requests:
@@ -139,6 +215,8 @@ handler:
   ## Kubernetes service
   service:
     enabled: false
+    # -- Additional custom annotations to add to service.
+    additionalAnnotations: {}
 
 proxy:
   affinity: {}
@@ -160,8 +238,82 @@ proxy:
     seccompProfile:
       type: RuntimeDefault
   tolerations: []
+  # -- Additional custom annotations to add to deployments.
+  additionalAnnotations: {}
+  serviceAccount:
+    # Specifies whether a service account should be created
+    create: true
+    # Annotations to add to the service account
+    annotations: {}
+    # The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+    ## @param serviceAccount.automountServiceAccountToken Allows auto mount of ServiceAccountToken on the serviceAccount created
+    ## Can be set to false if pods using this serviceAccount do not need to use K8s API
+    ##
+    automountServiceAccountToken: false
+    # -- Additional custom labels for the ServiceAccount.
+    labels: {}
+  ## Configure extra options for liveness, readiness and startup probes
+  ## @param proxy.livenessProbe.enabled Enable livenessProbe on PostgreSQL Primary containers
+  ## @param proxy.livenessProbe.initialDelaySeconds Initial delay seconds for livenessProbe
+  ## @param proxy.livenessProbe.periodSeconds Period seconds for livenessProbe
+  ## @param proxy.livenessProbe.timeoutSeconds Timeout seconds for livenessProbe
+  ## @param proxy.livenessProbe.failureThreshold Failure threshold for livenessProbe
+  ## @param proxy.livenessProbe.successThreshold Success threshold for livenessProbe
+  ##
+  livenessProbe:
+    enabled: false
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+  ## @param proxy.readinessProbe.enabled Enable readinessProbe on PostgreSQL Primary containers
+  ## @param proxy.readinessProbe.initialDelaySeconds Initial delay seconds for readinessProbe
+  ## @param proxy.readinessProbe.periodSeconds Period seconds for readinessProbe
+  ## @param proxy.readinessProbe.timeoutSeconds Timeout seconds for readinessProbe
+  ## @param proxy.readinessProbe.failureThreshold Failure threshold for readinessProbe
+  ## @param proxy.readinessProbe.successThreshold Success threshold for readinessProbe
+  ##
+  readinessProbe:
+    enabled: false
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    successThreshold: 1
+  ## @param proxy.startupProbe.enabled Enable startupProbe on PostgreSQL Primary containers
+  ## @param proxy.startupProbe.initialDelaySeconds Initial delay seconds for startupProbe
+  ## @param proxy.startupProbe.periodSeconds Period seconds for startupProbe
+  ## @param proxy.startupProbe.timeoutSeconds Timeout seconds for startupProbe
+  ## @param proxy.startupProbe.failureThreshold Failure threshold for startupProbe
+  ## @param proxy.startupProbe.successThreshold Success threshold for startupProbe
+  ##
+  startupProbe:
+    enabled: false
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 1
+    failureThreshold: 15
+    successThreshold: 1
+  ## @param proxy.customLivenessProbe Custom livenessProbe that overrides the default one
+  ##
+  customLivenessProbe: {}
+  ## @param proxy.customReadinessProbe Custom readinessProbe that overrides the default one
+  ##
+  customReadinessProbe: {}
+  ## @param proxy.customStartupProbe Custom startupProbe that overrides the default one
+  ##
+  customStartupProbe: {}
+  ## @param handler.lifecycleHooks for the proxy container to automate configuration before or after startup
+  ##
+  lifecycleHooks: {}
+  # -- In seconds, time the given to the pod needs to terminate gracefully.
+  # Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods
+  terminationGracePeriodSeconds: ""
 
-  # -- Application configuration of the Proxy
+  # -- Application configuration of the proxy
   appConfig:
     # -- Proxy log level: `debug`, `info`, `warn` or `error`
     logLevel: "debug"
@@ -198,24 +350,6 @@ proxy:
   #   - "docker-registry"
   imagePullSecrets: []
 
-  ## Container deployment probes
-  probes:
-    liveness:
-      enabled: false
-      initialDelaySeconds: 120
-      timeoutSeconds: 3
-      periodSeconds: 30
-      failureThreshold: 3
-      successThreshold: 1
-
-    readiness:
-      enabled: false
-      initialDelaySeconds: 30
-      timeoutSeconds: 3
-      periodSeconds: 15
-      failureThreshold: 30
-      successThreshold: 1
-
   ## Deployment resources
   resources:
     requests:
@@ -229,6 +363,8 @@ proxy:
   service:
     enabled: true
     type: "ClusterIP"
+    # -- Additional custom annotations to add to service.
+    additionalAnnotations: {}
     ports:
       http:
         containerPort: 8181

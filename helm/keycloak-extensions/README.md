@@ -32,8 +32,9 @@ A Helm chart for Kubernetes with its extensions
 | global.postgresql.connection | object | `{"host":"","port":""}` | Connextion details |
 | global.postgresql.connection.host | string | `""` | Hostname or IP address of the server hosting the PostgreSQL database |
 | global.postgresql.connection.port | string | `""` | Port number that the PostgreSQL database is exposed on |
+| handler.additionalAnnotations | object | `{}` | Additional custom annotations to add to deployments. |
 | handler.affinity | object | `{}` |  |
-| handler.appConfig | object | `{"autoExpireRuleInMins":5,"captchaProtectionEnable":"True","deviceProtectionEnable":"True","eventsRetentionPeriod":10,"failedAttemptsForCaptchaTrigger":3,"failedAttemptsForDeviceBlock":5,"failedAttemptsForIpBlock":7,"ipProtectionEnable":"True","logLevel":"DEBUG","mailFrom":"univention@example.org","newDeviceLoginSubject":"New device login","smtpHost":"mail.example.org","smtpPassword":"some_password","smtpPort":"587","smtpUsername":"univention"}` | Application configuration of the Handler |
+| handler.appConfig | object | `{"autoExpireRuleInMins":5,"captchaProtectionEnable":"True","deviceProtectionEnable":"True","eventsRetentionPeriod":10,"failedAttemptsForCaptchaTrigger":3,"failedAttemptsForDeviceBlock":5,"failedAttemptsForIpBlock":7,"ipProtectionEnable":"True","logLevel":"DEBUG","mailFrom":"univention@example.org","newDeviceLoginSubject":"New device login","smtpHost":"mail.example.org","smtpPassword":"some_password","smtpPort":"587","smtpUsername":"univention"}` | Application configuration of the handler |
 | handler.appConfig.autoExpireRuleInMins | int | `5` | Minutes to automatically expire actions such as IP and device blocks and reCaptcha prompt |
 | handler.appConfig.captchaProtectionEnable | string | `"True"` | Whether to enable reCaptcha prompting protection |
 | handler.appConfig.deviceProtectionEnable | string | `"True"` | Whether to enable device blocking |
@@ -49,6 +50,9 @@ A Helm chart for Kubernetes with its extensions
 | handler.appConfig.smtpPassword | string | `"some_password"` | Password for SMTP authentication |
 | handler.appConfig.smtpPort | string | `"587"` | Email SMTP port |
 | handler.appConfig.smtpUsername | string | `"univention"` | Username for SMTP authentication |
+| handler.customLivenessProbe | object | `{}` |  |
+| handler.customReadinessProbe | object | `{}` |  |
+| handler.customStartupProbe | object | `{}` |  |
 | handler.environment | object | `{}` |  |
 | handler.image.imagePullPolicy | string | `"IfNotPresent"` |  |
 | handler.image.registry | string | `"gitregistry.knut.univention.de"` |  |
@@ -57,18 +61,45 @@ A Helm chart for Kubernetes with its extensions
 | handler.imagePullSecrets | list | `[]` | Credentials to fetch images from private registry. Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/  imagePullSecrets:   - "docker-registry" |
 | handler.ingress | object | `{"enabled":false}` | Kubernetes ingress |
 | handler.ingress.enabled | bool | `false` | Set this to `true` in order to enable the installation on Ingress related objects. |
+| handler.lifecycleHooks | object | `{}` |  |
+| handler.livenessProbe.command | string | `"exit 0\n"` |  |
+| handler.livenessProbe.enabled | bool | `false` |  |
+| handler.livenessProbe.failureThreshold | int | `6` |  |
+| handler.livenessProbe.initialDelaySeconds | int | `30` |  |
+| handler.livenessProbe.periodSeconds | int | `10` |  |
+| handler.livenessProbe.successThreshold | int | `1` |  |
+| handler.livenessProbe.timeoutSeconds | int | `5` |  |
 | handler.nodeSelector | object | `{}` |  |
 | handler.podAnnotations | object | `{}` |  |
 | handler.podSecurityContext | object | `{}` |  |
-| handler.probes.liveness.enabled | bool | `false` |  |
-| handler.probes.readiness.enabled | bool | `false` |  |
+| handler.readinessProbe.command | string | `"exit 0\n"` |  |
+| handler.readinessProbe.enabled | bool | `false` |  |
+| handler.readinessProbe.failureThreshold | int | `6` |  |
+| handler.readinessProbe.initialDelaySeconds | int | `5` |  |
+| handler.readinessProbe.periodSeconds | int | `10` |  |
+| handler.readinessProbe.successThreshold | int | `1` |  |
+| handler.readinessProbe.timeoutSeconds | int | `5` |  |
 | handler.replicaCount | int | `1` |  |
 | handler.resources.limits.cpu | string | `"4"` |  |
 | handler.resources.limits.memory | string | `"4Gi"` |  |
 | handler.resources.requests.cpu | string | `"250m"` |  |
 | handler.resources.requests.memory | string | `"512Mi"` |  |
 | handler.securityContext | object | `{}` |  |
+| handler.service.additionalAnnotations | object | `{}` | Additional custom annotations to add to service. |
 | handler.service.enabled | bool | `false` |  |
+| handler.serviceAccount.annotations | object | `{}` |  |
+| handler.serviceAccount.automountServiceAccountToken | bool | `false` |  |
+| handler.serviceAccount.create | bool | `true` |  |
+| handler.serviceAccount.labels | object | `{}` | Additional custom labels for the ServiceAccount. |
+| handler.serviceAccount.name | string | `""` |  |
+| handler.startupProbe.command | string | `"exit 0\n"` |  |
+| handler.startupProbe.enabled | bool | `false` |  |
+| handler.startupProbe.failureThreshold | int | `15` |  |
+| handler.startupProbe.initialDelaySeconds | int | `30` |  |
+| handler.startupProbe.periodSeconds | int | `10` |  |
+| handler.startupProbe.successThreshold | int | `1` |  |
+| handler.startupProbe.timeoutSeconds | int | `1` |  |
+| handler.terminationGracePeriodSeconds | string | `""` | In seconds, time the given to the pod needs to terminate gracefully. Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods |
 | handler.tolerations | list | `[]` |  |
 | keycloak.adminPassword | string | `""` |  |
 | keycloak.adminRealm | string | `""` |  |
@@ -76,10 +107,14 @@ A Helm chart for Kubernetes with its extensions
 | keycloak.host | string | `""` |  |
 | keycloak.realm | string | `""` |  |
 | postgresql | object | `{"auth":{"database":"","password":"","username":""},"connection":{"host":"","port":""}}` | PostgreSQL settings.  The bitnami helm chart does contain all details of what can be configured: https://github.com/bitnami/charts/tree/main/bitnami/postgresql |
+| proxy.additionalAnnotations | object | `{}` | Additional custom annotations to add to deployments. |
 | proxy.affinity | object | `{}` |  |
-| proxy.appConfig | object | `{"captchaSecretKey":"some_secret_key","captchaSiteKey":"some_site_key","logLevel":"debug"}` | Application configuration of the Proxy |
+| proxy.appConfig | object | `{"captchaSecretKey":"some_secret_key","captchaSiteKey":"some_site_key","logLevel":"debug"}` | Application configuration of the proxy |
 | proxy.appConfig.captchaSiteKey | string | `"some_site_key"` | The Google reCaptcha v2 site key generated from [their admin site](https://www.google.com/recaptcha/admin/) |
 | proxy.appConfig.logLevel | string | `"debug"` | Proxy log level: `debug`, `info`, `warn` or `error` |
+| proxy.customLivenessProbe | object | `{}` |  |
+| proxy.customReadinessProbe | object | `{}` |  |
+| proxy.customStartupProbe | object | `{}` |  |
 | proxy.environment | object | `{}` |  |
 | proxy.image.imagePullPolicy | string | `"IfNotPresent"` |  |
 | proxy.image.registry | string | `"gitregistry.knut.univention.de"` |  |
@@ -88,21 +123,22 @@ A Helm chart for Kubernetes with its extensions
 | proxy.imagePullSecrets | list | `[]` | Credentials to fetch images from private registry. Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/  imagePullSecrets:   - "docker-registry" |
 | proxy.ingress | object | `{"annotations":{},"enabled":true,"ingressClassName":"nginx","paths":[{"path":"/","pathType":"Prefix"}],"tls":{"enabled":true,"secretName":""}}` | Kubernetes ingress |
 | proxy.ingress.enabled | bool | `true` | Set this to `true` in order to enable the installation on Ingress related objects. |
+| proxy.lifecycleHooks | object | `{}` |  |
+| proxy.livenessProbe.enabled | bool | `false` |  |
+| proxy.livenessProbe.failureThreshold | int | `6` |  |
+| proxy.livenessProbe.initialDelaySeconds | int | `30` |  |
+| proxy.livenessProbe.periodSeconds | int | `10` |  |
+| proxy.livenessProbe.successThreshold | int | `1` |  |
+| proxy.livenessProbe.timeoutSeconds | int | `5` |  |
 | proxy.nodeSelector | object | `{}` |  |
 | proxy.podAnnotations | object | `{}` |  |
 | proxy.podSecurityContext | object | `{}` |  |
-| proxy.probes.liveness.enabled | bool | `false` |  |
-| proxy.probes.liveness.failureThreshold | int | `3` |  |
-| proxy.probes.liveness.initialDelaySeconds | int | `120` |  |
-| proxy.probes.liveness.periodSeconds | int | `30` |  |
-| proxy.probes.liveness.successThreshold | int | `1` |  |
-| proxy.probes.liveness.timeoutSeconds | int | `3` |  |
-| proxy.probes.readiness.enabled | bool | `false` |  |
-| proxy.probes.readiness.failureThreshold | int | `30` |  |
-| proxy.probes.readiness.initialDelaySeconds | int | `30` |  |
-| proxy.probes.readiness.periodSeconds | int | `15` |  |
-| proxy.probes.readiness.successThreshold | int | `1` |  |
-| proxy.probes.readiness.timeoutSeconds | int | `3` |  |
+| proxy.readinessProbe.enabled | bool | `false` |  |
+| proxy.readinessProbe.failureThreshold | int | `6` |  |
+| proxy.readinessProbe.initialDelaySeconds | int | `5` |  |
+| proxy.readinessProbe.periodSeconds | int | `10` |  |
+| proxy.readinessProbe.successThreshold | int | `1` |  |
+| proxy.readinessProbe.timeoutSeconds | int | `5` |  |
 | proxy.replicaCount | int | `1` |  |
 | proxy.resources.limits.cpu | string | `"4"` |  |
 | proxy.resources.limits.memory | string | `"4Gi"` |  |
@@ -116,6 +152,7 @@ A Helm chart for Kubernetes with its extensions
 | proxy.securityContext.runAsNonRoot | bool | `true` |  |
 | proxy.securityContext.runAsUser | int | `1000` |  |
 | proxy.securityContext.seccompProfile.type | string | `"RuntimeDefault"` |  |
+| proxy.service.additionalAnnotations | object | `{}` | Additional custom annotations to add to service. |
 | proxy.service.enabled | bool | `true` |  |
 | proxy.service.ports.http.containerPort | int | `8181` |  |
 | proxy.service.ports.http.port | int | `8181` |  |
@@ -123,4 +160,16 @@ A Helm chart for Kubernetes with its extensions
 | proxy.service.sessionAffinity.enabled | bool | `false` |  |
 | proxy.service.sessionAffinity.timeoutSeconds | int | `10800` |  |
 | proxy.service.type | string | `"ClusterIP"` |  |
+| proxy.serviceAccount.annotations | object | `{}` |  |
+| proxy.serviceAccount.automountServiceAccountToken | bool | `false` |  |
+| proxy.serviceAccount.create | bool | `true` |  |
+| proxy.serviceAccount.labels | object | `{}` | Additional custom labels for the ServiceAccount. |
+| proxy.serviceAccount.name | string | `""` |  |
+| proxy.startupProbe.enabled | bool | `false` |  |
+| proxy.startupProbe.failureThreshold | int | `15` |  |
+| proxy.startupProbe.initialDelaySeconds | int | `30` |  |
+| proxy.startupProbe.periodSeconds | int | `10` |  |
+| proxy.startupProbe.successThreshold | int | `1` |  |
+| proxy.startupProbe.timeoutSeconds | int | `1` |  |
+| proxy.terminationGracePeriodSeconds | string | `""` | In seconds, time the given to the pod needs to terminate gracefully. Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods |
 | proxy.tolerations | list | `[]` |  |

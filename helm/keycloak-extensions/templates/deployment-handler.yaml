@@ -12,6 +12,9 @@ metadata:
       {{- $uiLabels := dict "app.kubernetes.io/name" (printf "%s-handler" (include "common.names.fullname" .)) }}
       {{- $mergedLabels := merge $uiLabels $commonLabels}}
       {{- toYaml $mergedLabels | nindent 4 }}
+  {{- if .Values.handler.additionalAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.handler.additionalAnnotations "context" . ) | nindent 4 }}
+  {{- end }}
 spec:
   replicas: {{ .Values.handler.replicaCount }}
   selector:
@@ -54,6 +57,12 @@ spec:
         - name: "{{ . }}"
         {{- end }}
       {{- end }}
+      {{- if .Values.handler.serviceAccount.create }}
+      serviceAccountName: {{ include "common.names.fullname" . }}
+      {{- end }}
+      {{- if .Values.handler.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ .Values.handler.terminationGracePeriodSeconds }}
+      {{- end }}
       containers:
         - name: "keycloak-bfp-handler"
           securityContext:
@@ -69,29 +78,55 @@ spec:
               containerPort: {{ $value.containerPort }}
               protocol: {{ $value.protocol }}
             {{- end }}
-          {{- if .Values.handler.probes.liveness.enabled }}
+          {{- if .Values.handler.customLivenessProbe }}
+          livenessProbe: {{- include "common.tplvalues.render" (dict "value" .Values.handler.customLivenessProbe "context" $) | nindent 12 }}
+          {{- else if .Values.handler.livenessProbe.enabled }}
           livenessProbe:
-            httpGet:
-              path: /
-              port: http
-            initialDelaySeconds: {{ .Values.handler.probes.liveness.initialDelaySeconds }}
-            timeoutSeconds: {{ .Values.handler.probes.liveness.timeoutSeconds }}
-            periodSeconds: {{ .Values.handler.probes.liveness.periodSeconds }}
-            failureThreshold: {{ .Values.handler.probes.liveness.failureThreshold }}
-            successThreshold: {{ .Values.handler.probes.liveness.successThreshold }}
+            exec:
+              - /bin/bash
+              - -c
+              - |
+                {{- .Values.handler.livenessProbe.command | nindent 16 }}
+            initialDelaySeconds: {{ .Values.handler.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.handler.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.handler.livenessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.handler.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.handler.livenessProbe.failureThreshold }}
           {{- end }}
-          {{- if .Values.handler.probes.readiness.enabled }}
+          {{- if .Values.handler.customReadinessProbe }}
+          readinessProbe: {{- include "common.tplvalues.render" (dict "value" .Values.handler.customReadinessProbe "context" $) | nindent 12 }}
+          {{- else if .Values.handler.readinessProbe.enabled }}
           readinessProbe:
-            httpGet:
-              path: /
-              port: http
-            initialDelaySeconds: {{ .Values.handler.probes.readiness.initialDelaySeconds }}
-            timeoutSeconds: {{ .Values.handler.probes.readiness.timeoutSeconds }}
-            periodSeconds: {{ .Values.handler.probes.readiness.periodSeconds }}
-            failureThreshold: {{ .Values.handler.probes.readiness.failureThreshold }}
-            successThreshold: {{ .Values.handler.probes.readiness.successThreshold }}
+            exec:
+              - /bin/bash
+              - -c
+              - |
+                {{- .Values.handler.readinessProbe.command | nindent 16 }}
+            initialDelaySeconds: {{ .Values.handler.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.handler.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.handler.readinessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.handler.readinessProbe.successThreshold }}
+            failureThreshold: {{ .Values.handler.readinessProbe.failureThreshold }}
+          {{- end }}
+          {{- if .Values.handler.customStartupProbe }}
+          startupProbe: {{- include "common.tplvalues.render" (dict "value" .Values.handler.customStartupProbe "context" $) | nindent 12 }}
+          {{- else if .Values.handler.startupProbe.enabled }}
+          startupProbe:
+            exec:
+              - /bin/bash
+              - -c
+              - |
+                {{- .Values.handler.startupProbe.command | nindent 16 }}
+            initialDelaySeconds: {{ .Values.handler.startupProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.handler.startupProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.handler.startupProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.handler.startupProbe.successThreshold }}
+            failureThreshold: {{ .Values.handler.startupProbe.failureThreshold }}
           {{- end }}
           resources:
             {{- toYaml .Values.handler.resources | nindent 12 }}
+          {{- if .Values.handler.lifecycleHooks }}
+          lifecycle: {{- include "common.tplvalues.render" (dict "value" .Values.handler.lifecycleHooks "context" $) | nindent 12 }}
+          {{- end }}
 
 ...
