@@ -24,7 +24,7 @@
 			<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.10.1</version>
+                <version>3.13.0</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
@@ -32,7 +32,7 @@
             </plugin>
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
-                <version>3.0.2.Final</version>
+                <version>4.2.2.Final</version>
                 <artifactId>wildfly-maven-plugin</artifactId>
                 <configuration>
                     <skip>false</skip>
@@ -72,14 +72,14 @@
           <groupId>org.apache.httpcomponents</groupId>
           <artifactId>httpcore</artifactId>
           <scope>provided</scope>
-          <version>4.4.13</version>
+          <version>4.4.16</version>
         </dependency>
 
         <dependency>
           <groupId>org.apache.httpcomponents</groupId>
           <artifactId>httpclient</artifactId>
           <scope>provided</scope>
-          <version>4.5.13</version>
+          <version>4.5.14</version>
         </dependency>
 
         <dependency>
