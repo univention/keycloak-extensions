@@ -58,7 +58,7 @@ spec:
         {{- end }}
       {{- end }}
       {{- if .Values.handler.serviceAccount.create }}
-      serviceAccountName: {{ include "common.names.fullname" . }}
+      serviceAccountName: {{ printf "%s-handler" (include "common.names.fullname" .) }}
       {{- end }}
       {{- if .Values.handler.terminationGracePeriodSeconds }}
       terminationGracePeriodSeconds: {{ .Values.handler.terminationGracePeriodSeconds }}

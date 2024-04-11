@@ -57,6 +57,7 @@ keycloak:
   adminRealm: ""
 
 handler:
+  enabled: true
   ## Global values
   affinity: {}
   environment: {}
@@ -219,6 +220,7 @@ handler:
     additionalAnnotations: {}
 
 proxy:
+  enabled: true
   affinity: {}
   environment: {}
   nodeSelector: {}
