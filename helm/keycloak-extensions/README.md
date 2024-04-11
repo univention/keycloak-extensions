@@ -53,6 +53,7 @@ A Helm chart for Kubernetes with its extensions
 | handler.customLivenessProbe | object | `{}` |  |
 | handler.customReadinessProbe | object | `{}` |  |
 | handler.customStartupProbe | object | `{}` |  |
+| handler.enabled | bool | `true` |  |
 | handler.environment | object | `{}` |  |
 | handler.image.imagePullPolicy | string | `"IfNotPresent"` |  |
 | handler.image.registry | string | `"gitregistry.knut.univention.de"` |  |
@@ -115,6 +116,7 @@ A Helm chart for Kubernetes with its extensions
 | proxy.customLivenessProbe | object | `{}` |  |
 | proxy.customReadinessProbe | object | `{}` |  |
 | proxy.customStartupProbe | object | `{}` |  |
+| proxy.enabled | bool | `true` |  |
 | proxy.environment | object | `{}` |  |
 | proxy.image.imagePullPolicy | string | `"IfNotPresent"` |  |
 | proxy.image.registry | string | `"gitregistry.knut.univention.de"` |  |
