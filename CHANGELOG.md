@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.3.3](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.3.2...v0.3.3) (2024-04-25)
+
+
+### Bug Fixes
+
+* add support for additional Kubernetes parameters ([ef89dfa](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/ef89dfa62236db2da944c6fbea1c5291d6ca755b))
+* handler and proxy default enabled, fix service account names ([dfdfdf9](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/dfdfdf9992d88ebf742029d4abf1a2956ccf3dd7))
+* handler and proxy default enabled, fix service account names ([af4b83c](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/af4b83ccf2d0b8313dd97311250b100312e5a638))
+
 ## [0.3.2](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.3.1...v0.3.2) (2024-04-05)
 
 
