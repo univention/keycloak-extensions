@@ -16,27 +16,14 @@ A Helm chart for Kubernetes with its extensions
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| global | object | `{"imageRegistry":"gitregistry.knut.univention.de","keycloak":{"adminPassword":"","adminRealm":null,"adminUsername":"","host":"","realm":""},"postgresql":{"auth":{"database":"","password":"","postgresPassword":"","username":""},"connection":{"host":"","port":""}}}` | Global Keycloak Extensions configuration values |
+| global | object | `{"imageRegistry":"gitregistry.knut.univention.de","keycloak":{"realm":""},"nubusDeployment":false}` | Global Keycloak Extensions configuration values |
 | global.imageRegistry | string | `"gitregistry.knut.univention.de"` | Container registry address. |
-| global.keycloak | object | `{"adminPassword":"","adminRealm":null,"adminUsername":"","host":"","realm":""}` | External Keycloak settings |
-| global.keycloak.adminPassword | string | `""` | Admin password for Keycloak admin-cli provided user |
-| global.keycloak.adminUsername | string | `""` | Admin user for Keycloak admin-cli |
-| global.keycloak.host | string | `""` | Host where keycloak is accessible (specify port if needed) |
-| global.keycloak.realm | string | `""` | Keycloak realm to listen events on (master allows to listen for all realms) |
-| global.postgresql | object | `{"auth":{"database":"","password":"","postgresPassword":"","username":""},"connection":{"host":"","port":""}}` | PostgreSQL settings |
-| global.postgresql.auth | object | `{"database":"","password":"","postgresPassword":"","username":""}` | Authentication details |
-| global.postgresql.auth.database | string | `""` | Database for the proxy and handler to use |
-| global.postgresql.auth.password | string | `""` | Password for the PostgreSQL database |
-| global.postgresql.auth.postgresPassword | string | `""` | Currently unused |
-| global.postgresql.auth.username | string | `""` | User for the PostgreSQL database |
-| global.postgresql.connection | object | `{"host":"","port":""}` | Connextion details |
-| global.postgresql.connection.host | string | `""` | Hostname or IP address of the server hosting the PostgreSQL database |
-| global.postgresql.connection.port | string | `""` | Port number that the PostgreSQL database is exposed on |
+| global.nubusDeployment | bool | `false` | Indicates wether this chart is part of a Nubus deployment. |
 | handler.additionalAnnotations | object | `{}` | Additional custom annotations to add to deployments. |
 | handler.affinity | object | `{}` |  |
-| handler.appConfig | object | `{"autoExpireRuleInMins":5,"captchaProtectionEnable":"True","deviceProtectionEnable":"True","eventsRetentionPeriod":10,"failedAttemptsForCaptchaTrigger":3,"failedAttemptsForDeviceBlock":5,"failedAttemptsForIpBlock":7,"ipProtectionEnable":"True","logLevel":"DEBUG","mailFrom":"univention@example.org","newDeviceLoginSubject":"New device login","smtpHost":"mail.example.org","smtpPassword":"some_password","smtpPort":"587","smtpUsername":"univention"}` | Application configuration of the handler |
+| handler.appConfig | object | `{"autoExpireRuleInMins":5,"captchaProtectionEnable":"False","deviceProtectionEnable":"True","eventsRetentionPeriod":10,"failedAttemptsForCaptchaTrigger":3,"failedAttemptsForDeviceBlock":5,"failedAttemptsForIpBlock":7,"ipProtectionEnable":"True","logLevel":"DEBUG","mailFrom":"univention@example.org","newDeviceLoginSubject":"New device login"}` | Application configuration of the handler |
 | handler.appConfig.autoExpireRuleInMins | int | `5` | Minutes to automatically expire actions such as IP and device blocks and reCaptcha prompt |
-| handler.appConfig.captchaProtectionEnable | string | `"True"` | Whether to enable reCaptcha prompting protection |
+| handler.appConfig.captchaProtectionEnable | string | `"False"` | Whether to enable reCaptcha prompting protection |
 | handler.appConfig.deviceProtectionEnable | string | `"True"` | Whether to enable device blocking |
 | handler.appConfig.eventsRetentionPeriod | int | `10` | Minutes to buffer Keycloak events locally, allowing to persist more than the configured in Keycloak |
 | handler.appConfig.failedAttemptsForCaptchaTrigger | int | `3` | Number of failed login attempts within the minutes of `EVENTS_RETENTION_MINUTES` to enforce reCaptcha prompt |
@@ -46,10 +33,6 @@ A Helm chart for Kubernetes with its extensions
 | handler.appConfig.logLevel | string | `"DEBUG"` | Application LOG level: `DEBUG`, `INFO`, `WARN` or `ERROR` |
 | handler.appConfig.mailFrom | string | `"univention@example.org"` | Email to send emails from |
 | handler.appConfig.newDeviceLoginSubject | string | `"New device login"` | Subject for email notification to users on New Device Login |
-| handler.appConfig.smtpHost | string | `"mail.example.org"` | Email SMTP hostname |
-| handler.appConfig.smtpPassword | string | `"some_password"` | Password for SMTP authentication |
-| handler.appConfig.smtpPort | string | `"587"` | Email SMTP port |
-| handler.appConfig.smtpUsername | string | `"univention"` | Username for SMTP authentication |
 | handler.customLivenessProbe | object | `{}` |  |
 | handler.customReadinessProbe | object | `{}` |  |
 | handler.customStartupProbe | object | `{}` |  |
@@ -102,16 +85,26 @@ A Helm chart for Kubernetes with its extensions
 | handler.startupProbe.timeoutSeconds | int | `1` |  |
 | handler.terminationGracePeriodSeconds | string | `""` | In seconds, time the given to the pod needs to terminate gracefully. Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods |
 | handler.tolerations | list | `[]` |  |
-| keycloak.adminPassword | string | `""` |  |
-| keycloak.adminRealm | string | `""` |  |
-| keycloak.adminUsername | string | `""` |  |
-| keycloak.host | string | `""` |  |
-| keycloak.realm | string | `""` |  |
-| postgresql | object | `{"auth":{"database":"","password":"","username":""},"connection":{"host":"","port":""}}` | PostgreSQL settings.  The bitnami helm chart does contain all details of what can be configured: https://github.com/bitnami/charts/tree/main/bitnami/postgresql |
+| keycloak | object | `{"auth":{"credentialSecret":{"key":"password","name":""},"masterRealm":"master","password":"","realm":"","username":""},"connection":{"host":""}}` | Keycloak settings. |
+| keycloak.auth.credentialSecret | object | `{"key":"password","name":""}` | Keycloak password secret reference. |
+| keycloak.auth.masterRealm | string | `"master"` | Keycloak master realm. |
+| keycloak.auth.password | string | `""` | Keycloak password. |
+| keycloak.auth.realm | string | `""` | Keycloak realm. |
+| keycloak.auth.username | string | `""` | Keycloak user. |
+| keycloak.connection | object | `{"host":""}` | Connection parameters. |
+| keycloak.connection.host | string | `""` | Keycloak host. |
+| postgresql | object | `{"auth":{"credentialSecret":{"key":"password","name":""},"database":"","password":"","username":""},"connection":{"host":"","port":""}}` | PostgreSQL settings. |
+| postgresql.auth.credentialSecret | object | `{"key":"password","name":""}` | PostgreSQL password secret reference. |
+| postgresql.auth.database | string | `""` | PostgreSQL database. |
+| postgresql.auth.password | string | `""` | PostgreSQL user password. |
+| postgresql.auth.username | string | `""` | PostgreSQL user. |
+| postgresql.connection | object | `{"host":"","port":""}` | Connection parameters. |
+| postgresql.connection.host | string | `""` | PostgreSQL host. |
+| postgresql.connection.port | string | `""` | PostgreSQL port. |
 | proxy.additionalAnnotations | object | `{}` | Additional custom annotations to add to deployments. |
 | proxy.affinity | object | `{}` |  |
-| proxy.appConfig | object | `{"captchaSecretKey":"some_secret_key","captchaSiteKey":"some_site_key","logLevel":"debug"}` | Application configuration of the proxy |
-| proxy.appConfig.captchaSiteKey | string | `"some_site_key"` | The Google reCaptcha v2 site key generated from [their admin site](https://www.google.com/recaptcha/admin/) |
+| proxy.appConfig | object | `{"captcha":{"captchaSecretKey":"some_secret_key","captchaSiteKey":"some_site_key","credentialSecret":{"name":"","secretKeyKey":"secret_key","siteKeyKey":"site_key"}},"logLevel":"debug"}` | Application configuration of the proxy |
+| proxy.appConfig.captcha | object | `{"captchaSecretKey":"some_secret_key","captchaSiteKey":"some_site_key","credentialSecret":{"name":"","secretKeyKey":"secret_key","siteKeyKey":"site_key"}}` | The Google reCaptcha v2 site key generated from [their admin site](https://www.google.com/recaptcha/admin/) |
 | proxy.appConfig.logLevel | string | `"debug"` | Proxy log level: `debug`, `info`, `warn` or `error` |
 | proxy.customLivenessProbe | object | `{}` |  |
 | proxy.customReadinessProbe | object | `{}` |  |
@@ -123,7 +116,7 @@ A Helm chart for Kubernetes with its extensions
 | proxy.image.repository | string | `"univention/components/keycloak-extensions/keycloak-proxy"` |  |
 | proxy.image.tag | string | `"latest"` |  |
 | proxy.imagePullSecrets | list | `[]` | Credentials to fetch images from private registry. Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/  imagePullSecrets:   - "docker-registry" |
-| proxy.ingress | object | `{"annotations":{},"enabled":true,"ingressClassName":"nginx","paths":[{"path":"/","pathType":"Prefix"}],"tls":{"enabled":true,"secretName":""}}` | Kubernetes ingress |
+| proxy.ingress | object | `{"annotations":{},"enabled":true,"ingressClassName":"","paths":[{"path":"/admin","pathType":"Prefix"},{"path":"/realms","pathType":"Prefix"},{"path":"/resources","pathType":"Prefix"},{"path":"/fingerprintjs","pathType":"Prefix"}],"tls":{"enabled":true,"secretName":""}}` | Kubernetes ingress |
 | proxy.ingress.enabled | bool | `true` | Set this to `true` in order to enable the installation on Ingress related objects. |
 | proxy.lifecycleHooks | object | `{}` |  |
 | proxy.livenessProbe.enabled | bool | `false` |  |
@@ -175,3 +168,10 @@ A Helm chart for Kubernetes with its extensions
 | proxy.startupProbe.timeoutSeconds | int | `1` |  |
 | proxy.terminationGracePeriodSeconds | string | `""` | In seconds, time the given to the pod needs to terminate gracefully. Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods |
 | proxy.tolerations | list | `[]` |  |
+| smtp | object | `{"auth":{"credentialSecret":{"key":"password","name":""},"password":"","username":""},"connection":{"host":"","port":"587"}}` | SMTP settings. |
+| smtp.auth.credentialSecret | object | `{"key":"password","name":""}` | SMTP password secret reference. |
+| smtp.auth.password | string | `""` | Password for SMTP authentication |
+| smtp.auth.username | string | `""` | Username for SMTP authentication |
+| smtp.connection | object | `{"host":"","port":"587"}` | Connection parameters. |
+| smtp.connection.host | string | `""` | Email SMTP hostname |
+| smtp.connection.port | string | `"587"` | Email SMTP port |

@@ -4,57 +4,71 @@
 ---
 # -- Global Keycloak Extensions configuration values
 global:
+  # -- Indicates wether this chart is part of a Nubus deployment.
+  nubusDeployment: false
   # -- Container registry address.
   imageRegistry: "gitregistry.knut.univention.de"
-  # -- External Keycloak settings
   keycloak:
-    # -- Host where keycloak is accessible (specify port if needed)
-    host: ""
-    # -- Admin user for Keycloak admin-cli
-    adminUsername: ""
-    # -- Admin password for Keycloak admin-cli provided user
-    adminPassword: ""
-    # -- Keycloak realm to listen events on (master allows to listen for all realms)
     realm: ""
-    adminRealm:
-  # -- PostgreSQL settings
-  postgresql:
-    # -- Connextion details
-    connection:
-      # -- Hostname or IP address of the server hosting the PostgreSQL database
-      host: ""
-      # -- Port number that the PostgreSQL database is exposed on
-      port: ""
-    # -- Authentication details
-    auth:
-      # -- Database for the proxy and handler to use
-      database: ""
-      # -- User for the PostgreSQL database
-      username: ""
-      # -- Password for the PostgreSQL database
-      password: ""
-      # -- Currently unused
-      postgresPassword: ""
 
 # -- PostgreSQL settings.
-#
-# The bitnami helm chart does contain all details of what can be configured:
-# https://github.com/bitnami/charts/tree/main/bitnami/postgresql
 postgresql:
+  # -- Connection parameters.
   connection:
+    # -- PostgreSQL host.
     host: ""
+    # -- PostgreSQL port.
     port: ""
   auth:
+    # -- PostgreSQL user.
     username: ""
-    password: ""
+    # -- PostgreSQL database.
     database: ""
+    # -- PostgreSQL user password.
+    password: ""
+    # -- PostgreSQL password secret reference.
+    credentialSecret:
+      name: ""
+      key: "password"
 
+# -- Keycloak settings.
 keycloak:
-  host: ""
-  adminUsername: ""
-  adminPassword: ""
-  realm: ""
-  adminRealm: ""
+  # -- Connection parameters.
+  connection:
+    # -- Keycloak host.
+    host: ""
+  auth:
+    # -- Keycloak user.
+    username: ""
+    # -- Keycloak password.
+    password: ""
+    # -- Keycloak realm.
+    realm: ""
+    # -- Keycloak master realm.
+    masterRealm:
+      "master"
+      # -- Keycloak password secret reference.
+    credentialSecret:
+      name: ""
+      key: "password"
+
+# -- SMTP settings.
+smtp:
+  # -- Connection parameters.
+  connection:
+    # -- Email SMTP hostname
+    host: ""
+    # -- Email SMTP port
+    port: "587"
+  auth:
+    # -- Username for SMTP authentication
+    username: ""
+    # -- Password for SMTP authentication
+    password: ""
+    # -- SMTP password secret reference.
+    credentialSecret:
+      name: ""
+      key: "password"
 
 handler:
   enabled: true
@@ -171,15 +185,7 @@ handler:
     # -- Whether to enable IP blocking
     ipProtectionEnable: "True"
     # -- Whether to enable reCaptcha prompting protection
-    captchaProtectionEnable: "True"
-    # -- Email SMTP hostname
-    smtpHost: "mail.example.org"
-    # -- Email SMTP port
-    smtpPort: "587"
-    # -- Username for SMTP authentication
-    smtpUsername: "univention"
-    # -- Password for SMTP authentication
-    smtpPassword: "some_password"
+    captchaProtectionEnable: "False"
     # -- Email to send emails from
     mailFrom: "univention@example.org"
     # -- Subject for email notification to users on New Device Login
@@ -231,7 +237,7 @@ proxy:
     allowPrivilegeEscalation: false
     capabilities:
       drop:
-      - ALL
+        - ALL
     privileged: false
     readOnlyRootFilesystem: true
     runAsGroup: 1000
@@ -320,20 +326,31 @@ proxy:
     # -- Proxy log level: `debug`, `info`, `warn` or `error`
     logLevel: "debug"
     # -- The Google reCaptcha v2 site key generated from [their admin site](https://www.google.com/recaptcha/admin/)
-    captchaSiteKey: "some_site_key"
-    captchaSecretKey: "some_secret_key"
+    captcha:
+      credentialSecret:
+        name: ""
+        siteKeyKey: "site_key"
+        secretKeyKey: "secret_key"
+      captchaSiteKey: "some_site_key"
+      captchaSecretKey: "some_secret_key"
 
   # -- Kubernetes ingress
   ingress:
     # -- Set this to `true` in order to enable the installation on Ingress related objects.
     enabled: true
-    ingressClassName: "nginx"
+    ingressClassName: ""
     annotations: {}
     ## define hostname
     # host: "sso.example.com"
     paths:
       - pathType: "Prefix"
-        path: "/"
+        path: "/admin"
+      - pathType: "Prefix"
+        path: "/realms"
+      - pathType: "Prefix"
+        path: "/resources"
+      - pathType: "Prefix"
+        path: "/fingerprintjs"
     tls:
       enabled: true
       secretName: ""

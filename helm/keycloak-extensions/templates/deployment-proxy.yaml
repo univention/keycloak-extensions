@@ -72,6 +72,15 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ printf "%s-proxy" (include "common.names.fullname" .) }}
+          env:
+            - name: KC_PASS
+              {{- include "keycloak-extensions.keycloak.auth.password" . | nindent 14 }}
+            - name: POSTGRES_PASSWORD
+              {{- include "keycloak-extensions.postgresql.auth.password" . | nindent 14 }}
+            - name: CAPTCHA_SITE_KEY
+              {{- include "keycloak-extensions.captcha.captchaSiteKey" . | nindent 14 }}
+            - name: CAPTCHA_SECRET_KEY
+              {{- include "keycloak-extensions.captcha.captchaSecretKey" . | nindent 14 }}
           ports:
             {{- range $key, $value := .Values.proxy.service.ports }}
             - name: {{ $key }}

@@ -72,6 +72,13 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ printf "%s-handler" (include "common.names.fullname" .) }}
+          env:
+            - name: KC_PASS
+              {{- include "keycloak-extensions.keycloak.auth.password" . | nindent 14 }}
+            - name: POSTGRES_PASSWORD
+              {{- include "keycloak-extensions.postgresql.auth.password" . | nindent 14 }}
+            - name: SMTP_PASSWORD
+              {{- include "keycloak-extensions.smtp.auth.password" . | nindent 14 }}
           ports:
             {{- range $key, $value := .Values.handler.service.ports }}
             - name: {{ $key }}
