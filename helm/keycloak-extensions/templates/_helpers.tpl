@@ -165,8 +165,6 @@ master
 {{- .Values.smtp.connection.host -}}
 {{- else if .Values.global.nubusDeployment -}}
 {{- printf "%s-smtp" .Release.Name -}}
-{{- else -}}
-{{- required ".Values.smtp.connection.host must be defined." .Values.smtp.connection.host -}}
 {{- end -}}
 {{- end -}}
 
@@ -179,7 +177,7 @@ master
 {{- end -}}
 
 {{- define "keycloak-extensions.smtp.auth.username" -}}
-{{- required ".Values.smtp.auth.username must be defined.." .Values.smtp.auth.username -}}
+{{- .Values.smtp.auth.username -}}
 {{- end -}}
 
 {{- define "keycloak-extensions.smtp.auth.credentialSecret.name" -}}
@@ -202,7 +200,7 @@ valueFrom:
     name: {{ include "keycloak-extensions.smtp.auth.credentialSecret.name" . | quote }}
     key: {{ .Values.smtp.auth.credentialSecret.key | quote }}
 {{- else -}}
-value: {{ required ".Values.smtp.auth.password is required." .Values.smtp.auth.password | quote }}
+value: {{ .Values.smtp.auth.password | quote }}
 {{- end -}}
 {{- end -}}
 
