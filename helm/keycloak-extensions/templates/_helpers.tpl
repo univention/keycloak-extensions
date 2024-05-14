@@ -62,7 +62,7 @@ value: {{ required ".Values.postgresql.auth.password is required." .Values.postg
 {{- if .Values.postgresql.auth.database -}}
 {{- .Values.postgresql.auth.database -}}
 {{- else if .Values.global.nubusDeployment -}}
-keycloak
+keycloak_extensions
 {{- else -}}
 {{- required ".Values.postgresql.auth.database must be defined." .Values.postgresql.auth.database -}}
 {{- end -}}
