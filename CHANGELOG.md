@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.4.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.3.3...v0.4.0) (2024-05-14)
+
+
+### Features
+
+* changes to support the refactored umbrella values in a nubus deployment ([3943129](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/39431291d58c4e9fd25d7fc4f69ad4ac57301112))
+
+
+### Bug Fixes
+
+* allow for empty values in smtp configuration ([759416b](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/759416bab541cf92d8bd5938a5bd2c88c8bc369b))
+* change default nubus database for keycloak-extensions to keycloak_extensions ([25e9093](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/25e90933839fde69e2a9837cde2f5fe8cb33966c))
+
 ## [0.3.3](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.3.2...v0.3.3) (2024-04-25)
 
 
