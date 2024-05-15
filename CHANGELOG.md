@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.4.0...v0.4.1) (2024-05-15)
+
+
+### Bug Fixes
+
+* Update base image to version 0.12.0 ([2ae3cd6](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/2ae3cd6c250403208a8f1b4d5ae62346db92622f))
+
 ## [0.4.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.3.3...v0.4.0) (2024-05-14)
 
 
