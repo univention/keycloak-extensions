@@ -16,8 +16,8 @@ A Helm chart for Kubernetes with its extensions
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| global | object | `{"imageRegistry":"gitregistry.knut.univention.de","keycloak":{"realm":""},"nubusDeployment":false}` | Global Keycloak Extensions configuration values |
-| global.imageRegistry | string | `"gitregistry.knut.univention.de"` | Container registry address. |
+| global | object | `{"imageRegistry":"artifacts.software-univention.de","keycloak":{"realm":""},"nubusDeployment":false}` | Global Keycloak Extensions configuration values |
+| global.imageRegistry | string | `"artifacts.software-univention.de"` | Container registry address. |
 | global.nubusDeployment | bool | `false` | Indicates wether this chart is part of a Nubus deployment. |
 | handler.additionalAnnotations | object | `{}` | Additional custom annotations to add to deployments. |
 | handler.affinity | object | `{}` |  |
@@ -39,8 +39,8 @@ A Helm chart for Kubernetes with its extensions
 | handler.enabled | bool | `true` |  |
 | handler.environment | object | `{}` |  |
 | handler.image.imagePullPolicy | string | `"IfNotPresent"` |  |
-| handler.image.registry | string | `"gitregistry.knut.univention.de"` |  |
-| handler.image.repository | string | `"univention/components/keycloak-extensions/keycloak-handler"` |  |
+| handler.image.registry | string | `"artifacts.software-univention.de"` |  |
+| handler.image.repository | string | `"nubus-dev/images/keycloak-handler"` |  |
 | handler.image.tag | string | `"latest"` |  |
 | handler.imagePullSecrets | list | `[]` | Credentials to fetch images from private registry. Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/  imagePullSecrets:   - "docker-registry" |
 | handler.ingress | object | `{"enabled":false}` | Kubernetes ingress |
@@ -112,8 +112,8 @@ A Helm chart for Kubernetes with its extensions
 | proxy.enabled | bool | `true` |  |
 | proxy.environment | object | `{}` |  |
 | proxy.image.imagePullPolicy | string | `"IfNotPresent"` |  |
-| proxy.image.registry | string | `"gitregistry.knut.univention.de"` |  |
-| proxy.image.repository | string | `"univention/components/keycloak-extensions/keycloak-proxy"` |  |
+| proxy.image.registry | string | `"artifacts.software-univention.de"` |  |
+| proxy.image.repository | string | `"nubus-dev/images/keycloak-proxy"` |  |
 | proxy.image.tag | string | `"latest"` |  |
 | proxy.imagePullSecrets | list | `[]` | Credentials to fetch images from private registry. Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/  imagePullSecrets:   - "docker-registry" |
 | proxy.ingress | object | `{"annotations":{},"enabled":true,"ingressClassName":"","paths":[{"path":"/admin","pathType":"Prefix"},{"path":"/realms","pathType":"Prefix"},{"path":"/resources","pathType":"Prefix"},{"path":"/fingerprintjs","pathType":"Prefix"}],"tls":{"enabled":true,"secretName":""}}` | Kubernetes ingress |
