@@ -198,7 +198,7 @@ handler:
 
   ## Docker image
   image:
-    registry: "artifacts.software-univention.de"
+    registry: ""
     repository: "nubus-dev/images/keycloak-handler"
     tag: "latest"
     imagePullPolicy: "IfNotPresent"
@@ -357,7 +357,7 @@ proxy:
 
   ## Docker image
   image:
-    registry: "artifacts.software-univention.de"
+    registry: ""
     repository: "nubus-dev/images/keycloak-proxy"
     tag: "latest"
     imagePullPolicy: "IfNotPresent"

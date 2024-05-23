@@ -39,7 +39,7 @@ A Helm chart for Kubernetes with its extensions
 | handler.enabled | bool | `true` |  |
 | handler.environment | object | `{}` |  |
 | handler.image.imagePullPolicy | string | `"IfNotPresent"` |  |
-| handler.image.registry | string | `"artifacts.software-univention.de"` |  |
+| handler.image.registry | string | `""` |  |
 | handler.image.repository | string | `"nubus-dev/images/keycloak-handler"` |  |
 | handler.image.tag | string | `"latest"` |  |
 | handler.imagePullSecrets | list | `[]` | Credentials to fetch images from private registry. Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/  imagePullSecrets:   - "docker-registry" |
@@ -112,7 +112,7 @@ A Helm chart for Kubernetes with its extensions
 | proxy.enabled | bool | `true` |  |
 | proxy.environment | object | `{}` |  |
 | proxy.image.imagePullPolicy | string | `"IfNotPresent"` |  |
-| proxy.image.registry | string | `"artifacts.software-univention.de"` |  |
+| proxy.image.registry | string | `""` |  |
 | proxy.image.repository | string | `"nubus-dev/images/keycloak-proxy"` |  |
 | proxy.image.tag | string | `"latest"` |  |
 | proxy.imagePullSecrets | list | `[]` | Credentials to fetch images from private registry. Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/  imagePullSecrets:   - "docker-registry" |
