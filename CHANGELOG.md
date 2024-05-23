@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.1](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.5.0...v0.5.1) (2024-05-23)
+
+
+### Bug Fixes
+
+* use global registry ([7bdc9a8](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/7bdc9a84853b6e668ea5151e9237faddc08412c6))
+
 ## [0.5.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.4.1...v0.5.0) (2024-05-23)
 
 
