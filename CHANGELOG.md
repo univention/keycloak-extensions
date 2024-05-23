@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.4.1...v0.5.0) (2024-05-23)
+
+
+### Features
+
+* push to harbor ([bcf633b](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/bcf633b58daaa8fe649a09a3bc29870735b7b281))
+
 ## [0.4.1](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.4.0...v0.4.1) (2024-05-15)
 
 
