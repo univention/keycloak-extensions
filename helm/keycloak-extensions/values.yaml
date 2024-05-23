@@ -6,8 +6,6 @@
 global:
   # -- Indicates wether this chart is part of a Nubus deployment.
   nubusDeployment: false
-  # -- Container registry address.
-  imageRegistry: "artifacts.software-univention.de"
   keycloak:
     realm: ""
 
@@ -198,7 +196,8 @@ handler:
 
   ## Docker image
   image:
-    registry: ""
+    # -- Container registry address.
+    registry: "artifacts.software-univention.de"
     repository: "nubus-dev/images/keycloak-handler"
     tag: "latest"
     imagePullPolicy: "IfNotPresent"
@@ -357,7 +356,8 @@ proxy:
 
   ## Docker image
   image:
-    registry: ""
+    # -- Container registry address.
+    registry: "artifacts.software-univention.de"
     repository: "nubus-dev/images/keycloak-proxy"
     tag: "latest"
     imagePullPolicy: "IfNotPresent"

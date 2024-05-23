@@ -16,8 +16,7 @@ A Helm chart for Kubernetes with its extensions
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| global | object | `{"imageRegistry":"artifacts.software-univention.de","keycloak":{"realm":""},"nubusDeployment":false}` | Global Keycloak Extensions configuration values |
-| global.imageRegistry | string | `"artifacts.software-univention.de"` | Container registry address. |
+| global | object | `{"keycloak":{"realm":""},"nubusDeployment":false}` | Global Keycloak Extensions configuration values |
 | global.nubusDeployment | bool | `false` | Indicates wether this chart is part of a Nubus deployment. |
 | handler.additionalAnnotations | object | `{}` | Additional custom annotations to add to deployments. |
 | handler.affinity | object | `{}` |  |
@@ -39,7 +38,7 @@ A Helm chart for Kubernetes with its extensions
 | handler.enabled | bool | `true` |  |
 | handler.environment | object | `{}` |  |
 | handler.image.imagePullPolicy | string | `"IfNotPresent"` |  |
-| handler.image.registry | string | `""` |  |
+| handler.image.registry | string | `"artifacts.software-univention.de"` | Container registry address. |
 | handler.image.repository | string | `"nubus-dev/images/keycloak-handler"` |  |
 | handler.image.tag | string | `"latest"` |  |
 | handler.imagePullSecrets | list | `[]` | Credentials to fetch images from private registry. Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/  imagePullSecrets:   - "docker-registry" |
@@ -112,7 +111,7 @@ A Helm chart for Kubernetes with its extensions
 | proxy.enabled | bool | `true` |  |
 | proxy.environment | object | `{}` |  |
 | proxy.image.imagePullPolicy | string | `"IfNotPresent"` |  |
-| proxy.image.registry | string | `""` |  |
+| proxy.image.registry | string | `"artifacts.software-univention.de"` | Container registry address. |
 | proxy.image.repository | string | `"nubus-dev/images/keycloak-proxy"` |  |
 | proxy.image.tag | string | `"latest"` |  |
 | proxy.imagePullSecrets | list | `[]` | Credentials to fetch images from private registry. Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/  imagePullSecrets:   - "docker-registry" |
