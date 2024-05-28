@@ -13,13 +13,7 @@ metadata:
     {{- $uiLabels := dict "app.kubernetes.io/name" (printf "%s-proxy" (include "common.names.fullname" .)) }}
     {{- $mergedLabels := merge $uiLabels $commonLabels}}
     {{- toYaml $mergedLabels | nindent 4 }}
-  annotations:
-    cert-manager.io/cluster-issuer: {{ include "keycloak-extensions.ingress.certManagerIssuer" . | quote }}
-    nginx.org/proxy-buffer-size: "8k"
-    nginx.ingress.kubernetes.io/proxy-buffer-size: "8k"
-  {{- with .Values.proxy.ingress.annotations }}
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.proxy.ingress.annotations  "context" .) | nindent 4 }}
 spec:
   ingressClassName: {{ include "keycloak-extensions.ingress.ingressClassName" . }}
   {{- if .Values.proxy.ingress.tls.enabled }}

@@ -338,7 +338,10 @@ proxy:
     # -- Set this to `true` in order to enable the installation on Ingress related objects.
     enabled: true
     ingressClassName: ""
-    annotations: {}
+    annotations:
+      cert-manager.io/cluster-issuer: '{{ include "keycloak-extensions.ingress.certManagerIssuer" . }}'
+      nginx.org/proxy-buffer-size: "8k"
+      nginx.ingress.kubernetes.io/proxy-buffer-size: "8k"
     ## define hostname
     # host: "sso.example.com"
     paths:

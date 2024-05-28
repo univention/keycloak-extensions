@@ -2,6 +2,9 @@
 # SPDX-FileCopyrightText: 2024 Univention GmbH
 
 ---
+global:
+  certManagerIssuer: "linting-issuer"
+
 postgresql:
   connection:
     host: "linting-host"
@@ -12,8 +15,15 @@ postgresql:
     database: "linting-database"
 
 keycloak:
-  host: "linting-host"
-  adminUsername: "linting-adminUsername"
-  adminPassword: "linting-adminPassword"
-  realm: "linting-realm"
-  adminRealm: "linting-adminRealm"
+  auth:
+    username: "linting-adminUsername"
+    password: "linting-adminPassword"
+    realm: "linting-realm"
+  connection:
+    host: "linting-host"
+
+proxy:
+  ingress:
+    ingressClassName: "linting-ingress"
+    tls:
+      secretName: "linting-secret"
