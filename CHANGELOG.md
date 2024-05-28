@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.5.1...v0.6.0) (2024-05-28)
+
+
+### Features
+
+* Allow to customize all ingress annotations ([1eb011b](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/1eb011bf7fb63d2a6e34edeedb29bc51063f8458))
+
 ## [0.5.1](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.5.0...v0.5.1) (2024-05-23)
 
 
