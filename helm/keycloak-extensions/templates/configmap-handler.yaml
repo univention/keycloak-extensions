@@ -37,6 +37,7 @@ data:
   DEVICE_PROTECTION_ENABLE: "{{ .Values.handler.appConfig.deviceProtectionEnable }}"
   IP_PROTECTION_ENABLE: "{{ .Values.handler.appConfig.ipProtectionEnable }}"
   CAPTCHA_PROTECTION_ENABLE: "{{ .Values.handler.appConfig.captchaProtectionEnable }}"
+  NEW_DEVICE_LOGIN_NOTIFICATION_ENABLE: "{{ .Values.handler.appConfig.newDeviceLoginNotificationEnable }}"
   NEW_DEVICE_LOGIN_SUBJECT: "{{ .Values.handler.appConfig.newDeviceLoginSubject }}"
   SMTP_HOST: {{ include "keycloak-extensions.smtp.connection.host" . | quote }}
   SMTP_PORT: {{ include "keycloak-extensions.smtp.connection.port" . | quote }}

@@ -23,10 +23,10 @@ an IP, a device or enforcing reCaptcha. The handler does the following:
 - `POSTGRES_PASSWORD`: This variable stores the password used to authenticate with the PostgreSQL database.
 - `POSTGRES_PORT`: This variable stores the port number that the PostgreSQL database is listening on.
 - `LOG_LEVEL`: `DEBUG`, `INFO`, `WARN` or `ERROR`.
-- `FAILED_ATTEMPTS_FOR_IP_BLOCK`: Number of failed login attempts within the minutes of `EVENTS_RETENTION_MINUTES` to trigger an IP block. Should be grater than `FAILED_ATTEMPTS_FOR_DEVICE_BLOCK` if it is enabled. Example: `7`.
-- `FAILED_ATTEMPTS_FOR_DEVICE_BLOCK`: Number of failed login attempts within the minutes of `EVENTS_RETENTION_MINUTES` to trigger a device block. Should be greater than `FAILED_ATTEMPTS_FOR_CAPTCHA_TRIGGER` if it is enabled. Example: `5`.
-- `FAILED_ATTEMPTS_FOR_CAPTCHA_TRIGGER`: Number of failed login attempts within the minutes of `EVENTS_RETENTION_MINUTES` to enforce reCaptcha prompt. Example: `3`.
-- `EVENTS_RETENTION_MINUTES`: Minutes to buffer Keycloak events locally, allowing to persist more than the configured in Keycloak. Example: `1`.
+- `FAILED_ATTEMPTS_FOR_IP_BLOCK`: Number of failed login attempts within the minutes of `EVENTS_RETENTION_PERIOD` to trigger an IP block. Should be grater than `FAILED_ATTEMPTS_FOR_DEVICE_BLOCK` if it is enabled. Example: `7`.
+- `FAILED_ATTEMPTS_FOR_DEVICE_BLOCK`: Number of failed login attempts within the minutes of `EVENTS_RETENTION_PERIOD` to trigger a device block. Should be greater than `FAILED_ATTEMPTS_FOR_CAPTCHA_TRIGGER` if it is enabled. Example: `5`.
+- `FAILED_ATTEMPTS_FOR_CAPTCHA_TRIGGER`: Number of failed login attempts within the minutes of `EVENTS_RETENTION_PERIOD` to enforce reCaptcha prompt. Example: `3`.
+- `EVENTS_RETENTION_PERIOD`: Minutes to buffer Keycloak events locally, allowing to persist more than the configured in Keycloak. Example: `1`.
 - `AUTO_EXPIRE_RULE_IN_MINS`: Minutes to automatically expire actions such as IP and device blocks and reCaptcha prompt. Example: `1`.
 - `DEVICE_PROTECTION_ENABLE`: Whether to enable device blocking. `True` or `False`.
 - `IP_PROTECTION_ENABLE`: Whether to enable IP blocking. `True` or `False`.

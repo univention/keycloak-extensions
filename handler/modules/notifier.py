@@ -51,6 +51,11 @@ class Notifier:
             level=log_level,
         )
         self.logger = logging.getLogger(__name__)
+        self.enabled = (
+            os.environ.get(
+                "NEW_DEVICE_LOGIN_NOTIFICATION_ENABLE", "true").lower()
+            == "true"
+        )
 
     def notify_user(self, user_id: str, details: dict):
         user_email = self.keycloak.get_user_email(user_id)
@@ -68,6 +73,8 @@ class Notifier:
         e.send()
 
     def notify_new_logins(self):
+        if not self.enabled:
+            return
         new_logins = session.query(Device).filter(
             Device.is_notified == False).all()
         self.logger.debug(

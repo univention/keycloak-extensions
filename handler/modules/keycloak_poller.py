@@ -1,7 +1,7 @@
 # Like what you see? Join us!
 # https://www.univention.com/about-us/careers/vacancies/
 #
-# Copyright 2020-2023 Univention GmbH
+# Copyright 2020-2024 Univention GmbH
 #
 # https://www.univention.de/
 #
@@ -30,14 +30,9 @@
 #
 
 import datetime
+import logging
 import os
 import sys
-import logging
-import time
-
-from modules import mail
-from database import session
-from models.device import Device
 
 from keycloak import KeycloakAdmin
 
@@ -49,11 +44,12 @@ class KeycloakPoller:
         Initialize KeycloakPoller
         """
         # Configure logging
-        log_level = os.environ.get('LOG_LEVEL', 'INFO')
+        log_level = os.environ.get("LOG_LEVEL", "INFO")
         logging.basicConfig(
-            format='%(asctime)s %(levelname)s %(message)s',
-            datefmt='%d/%m/%Y %I:%M:%S',
-            level=log_level)
+            format="%(asctime)s %(levelname)s %(message)s",
+            datefmt="%d/%m/%Y %I:%M:%S",
+            level=log_level,
+        )
         self.logger = logging.getLogger(__name__)
 
         self.connect()
@@ -61,7 +57,7 @@ class KeycloakPoller:
         self.last_notified_event = None
         self.events = []
         self.retention_period = int(
-            os.environ.get("EVENTS_RETENTION_MINUTES", 10))
+            os.environ.get("EVENTS_RETENTION_PERIOD", 10))
 
     def connect(self):
         """
@@ -78,7 +74,7 @@ class KeycloakPoller:
                 password=os.environ.get("KC_PASS", None),
                 realm_name=os.environ.get("KC_REALM", None),
                 user_realm_name=user_realm_name,
-                verify=True
+                verify=True,
             )
         # FIXME: more fine granular exception handling
         except Exception as e:
@@ -93,9 +89,13 @@ class KeycloakPoller:
         # See `GET /{realm}/events` at https://www.keycloak.org/docs-api/18.0/rest-api/index.html
         filterDate = {
             # datetime.datetime.now().strftime("%y-%d-%m"),
-            "dateFrom": (datetime.datetime.now() - datetime.timedelta(days=1)).strftime("%Y-%m-%d"),
-            "dateTo": (datetime.datetime.now() + datetime.timedelta(days=1)).strftime("%Y-%m-%d"),
-            "type": ["LOGIN_ERROR"]
+            "dateFrom": (datetime.datetime.now() - datetime.timedelta(days=1)).strftime(
+                "%Y-%m-%d"
+            ),
+            "dateTo": (datetime.datetime.now() + datetime.timedelta(days=1)).strftime(
+                "%Y-%m-%d"
+            ),
+            "type": ["LOGIN_ERROR"],
         }
         # FIXME: if polling every seconds, we are assuming there will be less than 1k failed login attempts per second (if more, we would lose events)
         last_query_length = 0
@@ -103,12 +103,12 @@ class KeycloakPoller:
             filterDate.update({"max": i * 10})
             try:
                 events = self.kc_admin.get_events(filterDate)
-            except Exception as e:
+            except Exception:
                 self.logger.debug("Renewing Keycloak connection")
                 self.connect()
                 events = self.kc_admin.get_events(filterDate)
             if self.last_polled_event in events:
-                events = events[:events.index(self.last_polled_event)]
+                events = events[: events.index(self.last_polled_event)]
                 break
             if last_query_length == len(events):
                 break
@@ -124,8 +124,12 @@ class KeycloakPoller:
         """
         new_events = self.get_new_events()
         self.events.extend(new_events)
-        self.events = [e for e in self.events if (
-            datetime.datetime.now().timestamp() - e["time"]/1000)/60 < self.retention_period]
+        self.events = [
+            e
+            for e in self.events
+            if (datetime.datetime.now().timestamp() - e["time"] / 1000) / 60
+            < self.retention_period
+        ]
         return self.events
 
     def get_user_email(self, user_id):
