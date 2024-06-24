@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.6.1](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.6.0...v0.6.1) (2024-06-24)
+
+
+### Bug Fixes
+
+* avoid failure if a user has no email ([69cc802](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/69cc802aa350981d40830f1c46c10f90cdecd8a1))
+* default to 1 minute for event retention and expiry ([ce918ab](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/ce918ab7151b63f33af5cef1ad22d0ca833522c4))
+* wrong env variable name EVENTS_RETENTION_MINUTES and allow disabling email notifications ([60eb62b](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/60eb62bb0d606c9ef2a13cfce1652c999cff9bec))
+
 ## [0.6.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.5.1...v0.6.0) (2024-05-28)
 
 
