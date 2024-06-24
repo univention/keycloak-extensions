@@ -175,9 +175,9 @@ handler:
     # -- Number of failed login attempts within the minutes of `EVENTS_RETENTION_MINUTES` to enforce reCaptcha prompt
     failedAttemptsForCaptchaTrigger: 3
     # -- Minutes to buffer Keycloak events locally, allowing to persist more than the configured in Keycloak
-    eventsRetentionPeriod: 10
+    eventsRetentionPeriod: 1
     # -- Minutes to automatically expire actions such as IP and device blocks and reCaptcha prompt
-    autoExpireRuleInMins: 5
+    autoExpireRuleInMins: 1
     # -- Whether to enable device blocking
     deviceProtectionEnable: "True"
     # -- Whether to enable IP blocking
