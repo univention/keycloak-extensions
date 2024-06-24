@@ -1,7 +1,7 @@
 # Like what you see? Join us!
 # https://www.univention.com/about-us/careers/vacancies/
 #
-# Copyright 2020-2023 Univention GmbH
+# Copyright 2020-2024 Univention GmbH
 #
 # https://www.univention.de/
 #
@@ -29,10 +29,11 @@
 # <https://www.gnu.org/licenses/>.
 #
 
-import os
 import logging
+import os
 
 from database import session
+from keycloak.exceptions import KeycloakGetError
 from models.device import Device
 from modules import mail
 
@@ -43,17 +44,22 @@ class Notifier:
         self.keycloak = keycloak
 
         # Configure logging
-        log_level = os.environ.get('LOG_LEVEL', 'INFO')
+        log_level = os.environ.get("LOG_LEVEL", "INFO")
         logging.basicConfig(
-            format='%(asctime)s %(levelname)s %(message)s',
-            datefmt='%d/%m/%Y %I:%M:%S',
-            level=log_level)
+            format="%(asctime)s %(levelname)s %(message)s",
+            datefmt="%d/%m/%Y %I:%M:%S",
+            level=log_level,
+        )
         self.logger = logging.getLogger(__name__)
 
     def notify_user(self, user_id: str, details: dict):
         user_email = self.keycloak.get_user_email(user_id)
-        self.logger.info("Notifying user %s about login at %s with fingerprint %s",
-                         user_id, details["Time"], details["Fingerprint"])
+        self.logger.info(
+            "Notifying user %s about login at %s with fingerprint %s",
+            user_id,
+            details["Time"],
+            details["Fingerprint"],
+        )
         if user_email is None:
             self.logger.warn(
                 "User %s does not have an email address!", user_id)
@@ -65,16 +71,26 @@ class Notifier:
         new_logins = session.query(Device).filter(
             Device.is_notified == False).all()
         self.logger.debug(
-            "Found %d logins that have no notifications yet", len(new_logins))
+            "Found %d logins that have no notifications yet", len(new_logins)
+        )
 
         for new_login in new_logins:
-            self.notify_user(
-                new_login.user_id,
-                {
-                    "Time": new_login.created_at,
-                    "Device ID": new_login.keycloak_device_id,
-                    "Fingerprint": new_login.fingerprint_device_id
-                })
-            new_login.is_notified = True
+            try:
+                self.notify_user(
+                    new_login.user_id,
+                    {
+                        "Time": new_login.created_at,
+                        "Device ID": new_login.keycloak_device_id,
+                        "Fingerprint": new_login.fingerprint_device_id,
+                    },
+                )
+            except KeycloakGetError as e:
+                self.logger.warning(
+                    "Could not notify user %s about new login. Probably the user has no email.",
+                    new_login.user_id,
+                )
+                self.logger.debug(e)
+                # NOTE: we cannot notify users with no email address
+                new_login.is_notified = True
 
         session.commit()
