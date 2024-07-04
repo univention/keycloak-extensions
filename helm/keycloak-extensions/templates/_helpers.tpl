@@ -12,7 +12,7 @@ These template definitions are only used in this chart and do not relate to temp
 {{- else if .Values.global.nubusDeployment -}}
 {{- printf "%s-postgresql" .Release.Name -}}
 {{- else -}}
-{{- required ".Values.postgresql.connection.host or .Values.global.postgresql.connection.host must be defined." tpl (coalesce .Values.postgresql.connection.host .Values.global.postgresql.connection.host) . -}}
+{{- required ".Values.postgresql.connection.host or .Values.global.postgresql.connection.host must be defined." (coalesce .Values.postgresql.connection.host .Values.global.postgresql.connection.host) -}}
 {{- end -}}
 {{- end -}}
 
