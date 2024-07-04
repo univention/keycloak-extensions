@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.6.1...v0.7.0) (2024-07-04)
+
+
+### Features
+
+* support global postgres ([6455891](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/6455891ce9d9e2ab736ccb903dba3a52fbf3ed48))
+
 ## [0.6.1](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.6.0...v0.6.1) (2024-06-24)
 
 
