@@ -16,7 +16,7 @@ A Helm chart for Kubernetes with its extensions
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| global | object | `{"keycloak":{"realm":""},"nubusDeployment":false}` | Global Keycloak Extensions configuration values |
+| global | object | `{"keycloak":{"realm":""},"nubusDeployment":false,"postgresql":{"connection":{"host":"","port":""}}}` | Global Keycloak Extensions configuration values |
 | global.nubusDeployment | bool | `false` | Indicates wether this chart is part of a Nubus deployment. |
 | handler.additionalAnnotations | object | `{}` | Additional custom annotations to add to deployments. |
 | handler.affinity | object | `{}` |  |

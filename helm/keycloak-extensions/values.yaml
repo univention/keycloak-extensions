@@ -8,6 +8,10 @@ global:
   nubusDeployment: false
   keycloak:
     realm: ""
+  postgresql:
+    connection:
+      host: ""
+      port: ""
 
 # -- PostgreSQL settings.
 postgresql:
