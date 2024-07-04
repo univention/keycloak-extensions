@@ -18,7 +18,7 @@ These template definitions are only used in this chart and do not relate to temp
 
 {{- define "keycloak-extensions.postgresql.connection.port" -}}
 {{- if or .Values.postgresql.connection.port .Values.global.postgresql.connection.port -}}
-{{- tpl ( coalesce .Values.postgresql.connection.port .Values.global.postgresql.connection.port ) .-}}
+{{- tpl ( coalesce .Values.postgresql.connection.port .Values.global.postgresql.connection.port ) . -}}
 {{- else -}}
 5432
 {{- end -}}
