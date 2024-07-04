@@ -7,18 +7,18 @@ SPDX-License-Identifier: AGPL-3.0-only
 These template definitions are only used in this chart and do not relate to templates defined elsewhere.
 */}}
 {{- define "keycloak-extensions.postgresql.connection.host" -}}
-{{- if .Values.postgresql.connection.host -}}
-{{- .Values.postgresql.connection.host -}}
+{{- if or .Values.postgresql.connection.host .Values.global.postgresql.connection.host -}}
+{{- tpl ( coalesce .Values.postgresql.connection.host .Values.global.postgresql.connection.host ) . -}}
 {{- else if .Values.global.nubusDeployment -}}
 {{- printf "%s-postgresql" .Release.Name -}}
 {{- else -}}
-{{- required ".Values.postgresql.connection.host must be defined." .Values.postgresql.connection.host -}}
+{{- required ".Values.postgresql.connection.host or .Values.global.postgresql.connection.host must be defined." (coalesce .Values.postgresql.connection.host .Values.global.postgresql.connection.host) -}}
 {{- end -}}
 {{- end -}}
 
 {{- define "keycloak-extensions.postgresql.connection.port" -}}
-{{- if .Values.postgresql.connection.port -}}
-{{- .Values.postgresql.connection.port -}}
+{{- if or .Values.postgresql.connection.port .Values.global.postgresql.connection.port -}}
+{{- tpl ( coalesce .Values.postgresql.connection.port .Values.global.postgresql.connection.port ) . -}}
 {{- else -}}
 5432
 {{- end -}}
