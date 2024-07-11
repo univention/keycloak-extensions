@@ -62,7 +62,13 @@ smtp:
     host: ""
     # -- Email SMTP port
     port: "587"
+    # -- Require SSL/TLS encryption for connection.
+    ssl: false
+    # -- Use StartTLS for traffic encryption:
+    starttls: true
   auth:
+    # -- Enable SMTP authentication
+    enabled: true
     # -- Username for SMTP authentication
     username: ""
     # -- Password for SMTP authentication

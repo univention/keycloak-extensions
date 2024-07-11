@@ -50,11 +50,18 @@ class Email:
         self.sender = os.environ.get("MAIL_FROM", None)
         self.smtp_user = os.environ.get("SMTP_USERNAME", None)
         self.smtp_pass = os.environ.get("SMTP_PASSWORD", None)
+        self.smtp_auth_enabled = os.environ.get(
+            "SMTP_AUTH_ENABLED", "true").lower() == "true"
         assert self.sender is not None
-        assert self.smtp_user is not None
-        assert self.smtp_pass is not None
+        if self.smtp_auth_enabled:
+            assert self.smtp_user is not None
+            assert self.smtp_pass is not None
         self.smtp_host = os.environ.get("SMTP_HOST", None)
         self.smtp_port = int(os.environ.get("SMTP_PORT", 587))
+        self.smtp_ssl = os.environ.get(
+            "SMTP_SSL_ENABLED", "false").lower() == "true"
+        self.smtp_starttls = os.environ.get(
+            "SMTP_STARTTLS_ENABLED", "true").lower() == "true"
 
         # Configure logging
         log_level = os.environ.get('LOG_LEVEL', 'INFO')
@@ -87,13 +94,19 @@ Keycloak.
         self.logger.debug("")
         context = ssl.create_default_context()
 
-        # with smtplib.SMTP_SSL(self.smtp_host, self.smtp_port, context=context) as server:
         try:
-            with smtplib.SMTP(self.smtp_host, self.smtp_port) as server:
+            if self.smtp_ssl:
+                server = smtplib.SMTP_SSL(self.smtp_host, self.smtp_port)
+            else:
+                server = smtplib.SMTP(self.smtp_host, self.smtp_port)
+
+            with server:
                 server.ehlo()
-                server.starttls(context=context)
-                server.ehlo()
-                server.login(self.smtp_user, self.smtp_pass)
+                if self.smtp_starttls and not self.smtp_ssl:
+                    server.starttls(context=context)
+                    server.ehlo()
+                if self.smtp_auth_enabled:
+                    server.login(self.smtp_user, self.smtp_pass)
                 server.sendmail(self.sender, self.receiver,
                                 self.message.as_string())
         except ConnectionRefusedError:

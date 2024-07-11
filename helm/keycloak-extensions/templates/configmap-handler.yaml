@@ -42,6 +42,9 @@ data:
   SMTP_HOST: {{ include "keycloak-extensions.smtp.connection.host" . | quote }}
   SMTP_PORT: {{ include "keycloak-extensions.smtp.connection.port" . | quote }}
   SMTP_USERNAME: {{ include "keycloak-extensions.smtp.auth.username" . | quote }}
+  SMTP_AUTH_ENABLED: {{ .Values.smtp.auth.enabled | quote }}
+  SMTP_SSL_ENABLED: {{ .Values.smtp.connection.ssl | quote }}
+  SMTP_STARTTLS_ENABLED: {{ .Values.smtp.connection.starttls | quote }}
   MAIL_FROM: "{{ .Values.handler.appConfig.mailFrom }}"
 
 ...

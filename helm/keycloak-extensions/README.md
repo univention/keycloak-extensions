@@ -168,10 +168,13 @@ A Helm chart for Kubernetes with its extensions
 | proxy.startupProbe.timeoutSeconds | int | `1` |  |
 | proxy.terminationGracePeriodSeconds | string | `""` | In seconds, time the given to the pod needs to terminate gracefully. Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods |
 | proxy.tolerations | list | `[]` |  |
-| smtp | object | `{"auth":{"credentialSecret":{"key":"password","name":""},"password":"","username":""},"connection":{"host":"","port":"587"}}` | SMTP settings. |
+| smtp | object | `{"auth":{"credentialSecret":{"key":"password","name":""},"enabled":true,"password":"","username":""},"connection":{"host":"","port":"587","ssl":false,"starttls":true}}` | SMTP settings. |
 | smtp.auth.credentialSecret | object | `{"key":"password","name":""}` | SMTP password secret reference. |
+| smtp.auth.enabled | bool | `true` | Enable SMTP authentication |
 | smtp.auth.password | string | `""` | Password for SMTP authentication |
 | smtp.auth.username | string | `""` | Username for SMTP authentication |
-| smtp.connection | object | `{"host":"","port":"587"}` | Connection parameters. |
+| smtp.connection | object | `{"host":"","port":"587","ssl":false,"starttls":true}` | Connection parameters. |
 | smtp.connection.host | string | `""` | Email SMTP hostname |
 | smtp.connection.port | string | `"587"` | Email SMTP port |
+| smtp.connection.ssl | bool | `false` | Require SSL/TLS encryption for connection. |
+| smtp.connection.starttls | bool | `true` | Use StartTLS for traffic encryption: |
