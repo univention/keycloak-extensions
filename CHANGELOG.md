@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.7.0...v0.8.0) (2024-07-12)
+
+
+### Features
+
+* **smtp:** Add support for SSL/TLS more and no-auth environments ([78b736c](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/78b736c59fb616ed0f81f032188498ee517e5a9b))
+
 ## [0.7.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.6.1...v0.7.0) (2024-07-04)
 
 
