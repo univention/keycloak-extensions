@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.1](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.9.0...v0.9.1) (2024-07-31)
+
+
+### Bug Fixes
+
+* **handler:** Retry on get user email failed authentication ([e37ee92](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/e37ee920c14b88f58fc0322e13ae22ce16bf5861))
+
 ## [0.9.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.8.0...v0.9.0) (2024-07-31)
 
 
