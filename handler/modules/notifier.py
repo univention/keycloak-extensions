@@ -91,6 +91,9 @@ class Notifier:
                         "Fingerprint": new_login.fingerprint_device_id,
                     },
                 )
+                self.logger.debug(
+                    "Marking user as notified of new device login")
+                new_login.is_notified = True
             except KeycloakGetError as e:
                 self.logger.warning(
                     "Could not notify user %s about new login. Probably the user has no email.",

@@ -29,29 +29,31 @@
 # <https://www.gnu.org/licenses/>.
 #
 
-import os
 import logging
+import os
 import smtplib
-import ssl
 import socket
-from email.mime.text import MIMEText
+import ssl
 from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 
 class Email:
     def __init__(self, receiver, details):
         self.receiver = receiver
         self.message = MIMEMultipart()
-        self.message['To'] = receiver
-        self.message['Subject'] = os.environ.get(
-            "NEW_DEVICE_LOGIN_SUBJECT", "New device login")
-        self.message['From'] = os.environ.get("MAIL_FROM", None)
+        self.message["To"] = receiver
+        self.message["Subject"] = os.environ.get(
+            "NEW_DEVICE_LOGIN_SUBJECT", "New device login"
+        )
+        self.message["From"] = os.environ.get("MAIL_FROM", None)
         self.generate_body(details)
         self.sender = os.environ.get("MAIL_FROM", None)
         self.smtp_user = os.environ.get("SMTP_USERNAME", None)
         self.smtp_pass = os.environ.get("SMTP_PASSWORD", None)
-        self.smtp_auth_enabled = os.environ.get(
-            "SMTP_AUTH_ENABLED", "true").lower() == "true"
+        self.smtp_auth_enabled = (
+            os.environ.get("SMTP_AUTH_ENABLED", "true").lower() == "true"
+        )
         assert self.sender is not None
         if self.smtp_auth_enabled:
             assert self.smtp_user is not None
@@ -60,15 +62,17 @@ class Email:
         self.smtp_port = int(os.environ.get("SMTP_PORT", 587))
         self.smtp_ssl = os.environ.get(
             "SMTP_SSL_ENABLED", "false").lower() == "true"
-        self.smtp_starttls = os.environ.get(
-            "SMTP_STARTTLS_ENABLED", "true").lower() == "true"
+        self.smtp_starttls = (
+            os.environ.get("SMTP_STARTTLS_ENABLED", "true").lower() == "true"
+        )
 
         # Configure logging
-        log_level = os.environ.get('LOG_LEVEL', 'INFO')
+        log_level = os.environ.get("LOG_LEVEL", "INFO")
         logging.basicConfig(
-            format='%(asctime)s %(levelname)s %(message)s',
-            datefmt='%d/%m/%Y %I:%M:%S',
-            level=log_level)
+            format="%(asctime)s %(levelname)s %(message)s",
+            datefmt="%d/%m/%Y %I:%M:%S",
+            level=log_level,
+        )
         self.logger = logging.getLogger(__name__)
 
     def generate_body(self, details: dict):
@@ -91,7 +95,6 @@ Keycloak.
 
     def send(self):
         self.logger.debug(f"Sending email to {self.receiver}")
-        self.logger.debug("")
         context = ssl.create_default_context()
 
         try:
@@ -109,13 +112,14 @@ Keycloak.
                     server.login(self.smtp_user, self.smtp_pass)
                 server.sendmail(self.sender, self.receiver,
                                 self.message.as_string())
+            self.logger.debug("Successfully sent email to %s", self.receiver)
         except ConnectionRefusedError:
             self.logger.error(
-                "Connection to mailserver %s refused",
-                self.smtp_host)
+                "Connection to mailserver %s refused", self.smtp_host)
         except socket.gaierror:
             self.logger.error(
                 "Hostname resolution failed. Check SMTP host address.")
         except Exception as e:
             self.logger.error(
-                "An unexpected error occurred while sending the email: %s", e)
+                "An unexpected error occurred while sending the email: %s", e
+            )

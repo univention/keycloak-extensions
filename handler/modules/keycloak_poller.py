@@ -34,6 +34,8 @@ import logging
 import os
 import sys
 
+from keycloak.exceptions import KeycloakAuthenticationError
+
 from keycloak import KeycloakAdmin
 
 
@@ -133,5 +135,10 @@ class KeycloakPoller:
         return self.events
 
     def get_user_email(self, user_id):
-        user = self.kc_admin.get_user(user_id)
+        try:
+            user = self.kc_admin.get_user(user_id)
+        except KeycloakAuthenticationError:
+            self.logger.debug("Renewing Keycloak connection")
+            self.connect()
+            user = self.kc_admin.get_user(user_id)
         return user.get("email", None)
