@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.8.0...v0.9.0) (2024-07-31)
+
+
+### Features
+
+* update python-keycloak ([e088f1e](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/e088f1edd536b1041a80f5b2755ae9667f55f1dd))
+
 ## [0.8.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.7.0...v0.8.0) (2024-07-12)
 
 
