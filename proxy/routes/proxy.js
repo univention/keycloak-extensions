@@ -65,8 +65,8 @@ const fetchBlockActions = async (req, _, next) => {
     req.socket.remoteAddress.split(":").at(-1);
   req._ipBlockActions = await getActionCountForIP(ip, "ip");
   req._deviceBlockActions = await getActionCountForDevice(
-    req.cookies.AUTH_SESSION_ID ?? req.cookies.AUTH_SESSION_ID_LEGACY,
-    "device"
+    req.cookies.AUTH_SESSION_ID_LEGACY ?? req.cookies.AUTH_SESSION_ID,
+    "device",
   );
   logger.debug(`FETCH BLOCK ACTIONS FOR IP ${ip}`);
   next();
@@ -79,7 +79,7 @@ const fetchCaptchaActions = async (req, _, next) => {
   req._ipCaptchaActions = await getActionCountForIP(ip, "captcha");
   req._deviceCaptchaActions = await getActionCountForDevice(
     req.cookies.AUTH_SESSION_ID ?? req.cookies.AUTH_SESSION_ID_LEGACY,
-    "captcha"
+    "captcha",
   );
   next();
 };
@@ -112,7 +112,7 @@ const applyBlocks = (req, res, next) => {
       "Content-Type": "text/plain",
     });
     res.end(
-      "Too many failed login attempts on this device. Wait for cooldown."
+      "Too many failed login attempts on this device. Wait for cooldown.",
     );
   }
 };
@@ -144,7 +144,7 @@ const loginMiddleware = createProxyMiddleware({
         (proxyRes.headers["content-type"] ?? "").includes("text/html")
       ) {
         logger.debug(
-          `Injecting FingerprintJS script into ${req.method} ${req.path}`
+          `Injecting FingerprintJS script into ${req.method} ${req.path}`,
         );
         let response = responseBuffer.toString("utf8"); // Convert buffer to string
         response = injectFingerprintJS(response);
@@ -156,7 +156,7 @@ const loginMiddleware = createProxyMiddleware({
         return response;
       }
       return responseBuffer;
-    }
+    },
   ),
 });
 
@@ -184,10 +184,10 @@ const ensureCaptchaProxyReq = async (proxyReq, req, res) => {
       }
       if (body["g-recaptcha-response"]) {
         logger.debug(
-          `Captcha challenge token: ${body["g-recaptcha-response"]}`
+          `Captcha challenge token: ${body["g-recaptcha-response"]}`,
         );
         const isCaptchaValid = await googleCaptchaCheck(
-          body["g-recaptcha-response"]
+          body["g-recaptcha-response"],
         );
         if (!isCaptchaValid) {
           // res.status(200).end('Invalid captcha')
@@ -211,7 +211,7 @@ const ensureCaptchaProxyRes = async (responseBuffer, proxyRes, req, res) => {
     )?.value;
     if (rawToken === undefined) {
       logger.warn(
-        "POST to login-actions/authenticate without Keycloak identity tokens!"
+        "POST to login-actions/authenticate without Keycloak identity tokens!",
       );
       if (res.statusCode === 200 && captchaPromptScheduled(req)) {
         logger.debug("Prompting for reCaptcha");
@@ -227,7 +227,7 @@ const ensureCaptchaProxyRes = async (responseBuffer, proxyRes, req, res) => {
       await saveFingerprintToDeviceRelation(
         req.cookies.DEVICE_FINGERPRINT,
         req.cookies.AUTH_SESSION_ID ?? req.cookies.AUTH_SESSION_ID_LEGACY,
-        token.sub
+        token.sub,
       );
     } else {
       logger.info("Login succeeded, but no fingerprint was returned.");
@@ -236,9 +236,11 @@ const ensureCaptchaProxyRes = async (responseBuffer, proxyRes, req, res) => {
   return responseBuffer;
 };
 
-
 const newDeviceLoginNotification2fa = async (proxyRes, req, res) => {
-  if (req.path.includes("login-actions/required-action") && res.statusCode == 200) {
+  if (
+    req.path.includes("login-actions/required-action") &&
+    res.statusCode == 200
+  ) {
     const resCookies = setCookie.parse(proxyRes, { map: true });
     const rawToken = (
       resCookies.KEYCLOAK_IDENTITY || resCookies.KEYCLOAK_IDENTITY_LEGACY
@@ -249,7 +251,7 @@ const newDeviceLoginNotification2fa = async (proxyRes, req, res) => {
       await saveFingerprintToDeviceRelation(
         req.cookies.DEVICE_FINGERPRINT,
         req.cookies.AUTH_SESSION_ID ?? req.cookies.AUTH_SESSION_ID_LEGACY,
-        token.sub
+        token.sub,
       );
     } else {
       logger.info("Login succeeded, but no fingerprint was returned.");
@@ -293,7 +295,7 @@ router.post(
         proxyReq.setHeader("x-forwarded-for", ip);
       }
     },
-  })
+  }),
 );
 
 /**
@@ -316,7 +318,7 @@ router.post(
 
     onProxyReq: ensureCaptchaProxyReq,
     onProxyRes: responseInterceptor(ensureCaptchaProxyRes),
-  })
+  }),
 );
 
 /**
@@ -332,7 +334,7 @@ router.post(
     pathFilter: "**",
     logger,
     onProxyRes: newDeviceLoginNotification2fa,
-  })
+  }),
 );
 
 /**
@@ -347,7 +349,7 @@ router.use(
     logLevel: `${process.env.LOG_LEVEL}`.toLowerCase() ?? "info",
     pathFilter: "**",
     logger,
-  })
+  }),
 );
 
 module.exports = router;
