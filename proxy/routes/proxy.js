@@ -65,10 +65,21 @@ const fetchBlockActions = async (req, _, next) => {
     req.socket.remoteAddress.split(":").at(-1);
   req._ipBlockActions = await getActionCountForIP(ip, "ip");
   req._deviceBlockActions = await getActionCountForDevice(
-    req.cookies.AUTH_SESSION_ID_LEGACY ?? req.cookies.AUTH_SESSION_ID,
+    (req.cookies.AUTH_SESSION_ID ?? req.cookies.AUTH_SESSION_ID_LEGACY).split(
+      ".",
+    )[0],
     "device",
   );
-  logger.debug(`FETCH BLOCK ACTIONS FOR IP ${ip}`);
+  logger.debug(
+    `FETCH BLOCK ACTIONS FOR IP ${ip}: ${req._ipBlockActions} actions found`,
+  );
+  logger.debug(
+    `FETCH BLOCK ACTIONS FOR DEVICE ${
+      (req.cookies.AUTH_SESSION_ID ?? req.cookies.AUTH_SESSION_ID_LEGACY).split(
+        ".",
+      )[0]
+    }: ${req._deviceBlockActions} actions found`,
+  );
   next();
 };
 
@@ -78,7 +89,9 @@ const fetchCaptchaActions = async (req, _, next) => {
     req.socket.remoteAddress.split(":").at(-1);
   req._ipCaptchaActions = await getActionCountForIP(ip, "captcha");
   req._deviceCaptchaActions = await getActionCountForDevice(
-    req.cookies.AUTH_SESSION_ID ?? req.cookies.AUTH_SESSION_ID_LEGACY,
+    (req.cookies.AUTH_SESSION_ID ?? req.cookies.AUTH_SESSION_ID_LEGACY).split(
+      ".",
+    )[0],
     "captcha",
   );
   next();
@@ -226,7 +239,9 @@ const ensureCaptchaProxyRes = async (responseBuffer, proxyRes, req, res) => {
       logger.debug("Login succeeded, notify user if new device.");
       await saveFingerprintToDeviceRelation(
         req.cookies.DEVICE_FINGERPRINT,
-        req.cookies.AUTH_SESSION_ID ?? req.cookies.AUTH_SESSION_ID_LEGACY,
+        (
+          req.cookies.AUTH_SESSION_ID ?? req.cookies.AUTH_SESSION_ID_LEGACY
+        ).split(".")[0],
         token.sub,
       );
     } else {
@@ -250,7 +265,9 @@ const newDeviceLoginNotification2fa = async (proxyRes, req, res) => {
       logger.debug("Login succeeded, notify user if new device.");
       await saveFingerprintToDeviceRelation(
         req.cookies.DEVICE_FINGERPRINT,
-        req.cookies.AUTH_SESSION_ID ?? req.cookies.AUTH_SESSION_ID_LEGACY,
+        (
+          req.cookies.AUTH_SESSION_ID ?? req.cookies.AUTH_SESSION_ID_LEGACY
+        ).split(".")[0],
         token.sub,
       );
     } else {
