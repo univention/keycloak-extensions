@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.3](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.9.2...v0.9.3) (2024-08-04)
+
+
+### Bug Fixes
+
+* **proxy:** use legacy identifier first ([95f5759](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/95f5759d0762e075dc8b2ca585ab46621e8f26d6))
+
 ## [0.9.2](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.9.1...v0.9.2) (2024-08-04)
 
 
