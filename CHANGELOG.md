@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.4](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.9.3...v0.9.4) (2024-08-05)
+
+
+### Bug Fixes
+
+* **proxy:** handle calls with no cookie ([adae1e8](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/adae1e865f1d7dff103caf102ac84f0be1a91f59))
+
 ## [0.9.3](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.9.2...v0.9.3) (2024-08-04)
 
 
