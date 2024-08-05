@@ -64,20 +64,20 @@ const fetchBlockActions = async (req, _, next) => {
     req.headers["x-forwarded-for"] ||
     req.socket.remoteAddress.split(":").at(-1);
   req._ipBlockActions = await getActionCountForIP(ip, "ip");
-  req._deviceBlockActions = await getActionCountForDevice(
-    (req.cookies.AUTH_SESSION_ID ?? req.cookies.AUTH_SESSION_ID_LEGACY).split(
-      ".",
-    )[0],
-    "device",
-  );
   logger.debug(
     `FETCH BLOCK ACTIONS FOR IP ${ip}: ${req._ipBlockActions} actions found`,
   );
+  req._deviceBlockActions = await getActionCountForDevice(
+    (
+      req.cookies.AUTH_SESSION_ID ??
+      req.cookies.AUTH_SESSION_ID_LEGACY ??
+      ""
+    ).split(".")[0],
+    "device",
+  );
   logger.debug(
     `FETCH BLOCK ACTIONS FOR DEVICE ${
-      (req.cookies.AUTH_SESSION_ID ?? req.cookies.AUTH_SESSION_ID_LEGACY).split(
-        ".",
-      )[0]
+      req.cookies.AUTH_SESSION_ID ?? req.cookies.AUTH_SESSION_ID_LEGACY
     }: ${req._deviceBlockActions} actions found`,
   );
   next();
@@ -89,9 +89,11 @@ const fetchCaptchaActions = async (req, _, next) => {
     req.socket.remoteAddress.split(":").at(-1);
   req._ipCaptchaActions = await getActionCountForIP(ip, "captcha");
   req._deviceCaptchaActions = await getActionCountForDevice(
-    (req.cookies.AUTH_SESSION_ID ?? req.cookies.AUTH_SESSION_ID_LEGACY).split(
-      ".",
-    )[0],
+    (
+      req.cookies.AUTH_SESSION_ID ??
+      req.cookies.AUTH_SESSION_ID_LEGACY ??
+      ""
+    ).split(".")[0],
     "captcha",
   );
   next();
