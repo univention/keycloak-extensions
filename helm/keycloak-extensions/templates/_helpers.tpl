@@ -253,7 +253,9 @@ value: {{ required ".Values.proxy.appConfig.captcha.captchaSecretKey required." 
 {{- end -}}
 
 {{- define "keycloak-extensions.ingress.proxy.tls.secretName" -}}
-{{- if .Values.global.nubusDeployment -}}
+{{- if .Values.proxy.ingress.tls.secretName -}}
+{{- tpl .Values.proxy.ingress.tls.secretName . -}}
+{{- else if .Values.global.nubusDeployment -}}
 {{- printf "%s-keycloak-extensions-proxy-tls" .Release.Name -}}
 {{- else -}}
 {{- required ".Values.proxy.ingress.tls.secretName must be defined." .Values.proxy.ingress.tls.secretName -}}
