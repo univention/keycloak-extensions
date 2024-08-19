@@ -116,7 +116,10 @@ A Helm chart for Kubernetes with its extensions
 | proxy.image.repository | string | `"nubus-dev/images/keycloak-proxy"` |  |
 | proxy.image.tag | string | `"latest"` |  |
 | proxy.imagePullSecrets | list | `[]` | Credentials to fetch images from private registry. Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/  imagePullSecrets:   - "docker-registry" |
-| proxy.ingress | object | `{"annotations":{"cert-manager.io/cluster-issuer":"{{ include \"keycloak-extensions.ingress.certManagerIssuer\" . }}","nginx.ingress.kubernetes.io/proxy-buffer-size":"8k","nginx.org/proxy-buffer-size":"8k"},"enabled":true,"ingressClassName":"","paths":[{"path":"/admin","pathType":"Prefix"},{"path":"/realms","pathType":"Prefix"},{"path":"/resources","pathType":"Prefix"},{"path":"/fingerprintjs","pathType":"Prefix"}],"tls":{"enabled":true,"secretName":""}}` | Kubernetes ingress |
+| proxy.ingress | object | `{"annotations":{"nginx.ingress.kubernetes.io/proxy-buffer-size":"8k","nginx.org/proxy-buffer-size":"8k"},"certManager":{"enabled":true,"issuerRef":{"kind":"ClusterIssuer","name":""}},"enabled":true,"ingressClassName":"","paths":[{"path":"/admin","pathType":"Prefix"},{"path":"/realms","pathType":"Prefix"},{"path":"/resources","pathType":"Prefix"},{"path":"/fingerprintjs","pathType":"Prefix"}],"tls":{"enabled":true,"secretName":""}}` | Kubernetes ingress |
+| proxy.ingress.certManager.enabled | bool | `true` | Enable cert-manager.io annotaion. |
+| proxy.ingress.certManager.issuerRef.kind | string | `"ClusterIssuer"` | Type of Issuer, f.e. "Issuer" or "ClusterIssuer". |
+| proxy.ingress.certManager.issuerRef.name | string | `""` | Name of cert-manager.io Issuer resource. |
 | proxy.ingress.enabled | bool | `true` | Set this to `true` in order to enable the installation on Ingress related objects. |
 | proxy.lifecycleHooks | object | `{}` |  |
 | proxy.livenessProbe.enabled | bool | `false` |  |

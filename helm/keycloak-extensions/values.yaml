@@ -350,8 +350,18 @@ proxy:
     # -- Set this to `true` in order to enable the installation on Ingress related objects.
     enabled: true
     ingressClassName: ""
+    # Request certificates via cert-manager.io annotation
+    certManager:
+      # -- Enable cert-manager.io annotaion.
+      enabled: true
+
+      # Issuer reference.
+      issuerRef:
+        # -- Name of cert-manager.io Issuer resource.
+        name: ""
+        # -- Type of Issuer, f.e. "Issuer" or "ClusterIssuer".
+        kind: "ClusterIssuer"
     annotations:
-      cert-manager.io/cluster-issuer: '{{ include "keycloak-extensions.ingress.certManagerIssuer" . }}'
       nginx.org/proxy-buffer-size: "8k"
       nginx.ingress.kubernetes.io/proxy-buffer-size: "8k"
     ## define hostname
