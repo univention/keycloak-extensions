@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.10.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.9.4...v0.10.0) (2024-08-21)
+
+
+### Features
+
+* **keycloak-extensions:** Add certManager template for ingress ([21b69ae](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/21b69ae0da5a863dbac230bb13bc7e6c1e466981))
+
+
+### Bug Fixes
+
+* **keycloak-extensions:** Use proxy tls secretName when provided ([2ebe1f8](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/2ebe1f88ea6c3f29117225f67c95b07d98b62b79))
+
 ## [0.9.4](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.9.3...v0.9.4) (2024-08-05)
 
 
