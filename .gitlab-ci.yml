@@ -4,7 +4,7 @@
 ---
 include:
   - project: "univention/customers/dataport/upx/common-ci"
-    ref: "v1.30.5"
+    ref: "v1.32.0"
     file:
       - "defaults/stages.yaml"
       - "defaults/nubus-workflow.yaml"
@@ -64,7 +64,7 @@ lint-helm-chart:
       when: "never"
     - when: "on_success"
   image:
-    name: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/alpine/helm:3.10.2"
+    name: "registry.opencode.de/bmi/opendesk/components/platform-development/images/helm:1.0.2"
     entrypoint: [""]
   script:
     - helm repo add bitnami https://charts.bitnami.com/bitnami
