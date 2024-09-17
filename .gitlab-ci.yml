@@ -4,7 +4,7 @@
 ---
 include:
   - project: "univention/customers/dataport/upx/common-ci"
-    ref: "feat/malware-scanning"
+    ref: "v1.33.0"
     file:
       - "defaults/stages.yaml"
       - "defaults/nubus-workflow.yaml"
@@ -40,19 +40,15 @@ container-build:
     KANIKO_ARGS: "--skip-unused-stages=true --cache=true --cache-repo=$CI_REGISTRY_IMAGE/${IMAGE_NAME}-cache"
     DOCKERFILE_PATH: "${CI_PROJECT_DIR}/docker/${IMAGE_NAME}/Dockerfile"
 
-container-generate-sbom:
-  parallel:
-    matrix: *build-matrix
-
-container-sign-external:
-  parallel:
-    matrix: *build-matrix
-
-push-image-external:
+container-malware-scan:
   parallel:
     matrix: *publish-matrix
 
 container-sign-external:
+  parallel:
+    matrix: *publish-matrix
+
+push-image-external:
   parallel:
     matrix: *publish-matrix
 
