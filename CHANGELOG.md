@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.12.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.11.0...v0.12.0) (2024-09-26)
+
+
+### Features
+
+* **ci:** enable malware scanning, disable sbom generation ([eb929cc](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/eb929cc1f1bdbf6e9f2f1f4aa7dcb7c781575e1c))
+* **ci:** enable malware scanning, disable sbom generation ([2b763d4](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/2b763d46dc7f508d143b3a99a36166b46e749844))
+
 ## [0.11.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.10.0...v0.11.0) (2024-09-13)
 
 
