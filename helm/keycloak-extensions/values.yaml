@@ -13,6 +13,21 @@ global:
       host: ""
       port: ""
 
+  smtp:
+    connection:
+      host: ~
+      port: ~
+
+      # TODO: TLS / StartTLS related configuration handling
+      ssl: ~
+      starttls: ~
+
+    auth:
+      username: ~
+      password: ~
+      existingSecret:
+        name: ~
+
 # -- PostgreSQL settings.
 postgresql:
   # -- Connection parameters.
@@ -73,10 +88,10 @@ smtp:
     username: ""
     # -- Password for SMTP authentication
     password: ""
-    # -- SMTP password secret reference.
-    credentialSecret:
-      name: ""
-      key: "password"
+
+    # -- Reference an existing Secret
+    existingSecret:
+      name: ~
 
 handler:
   enabled: true

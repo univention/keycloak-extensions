@@ -180,31 +180,8 @@ master
 {{- .Values.smtp.auth.username -}}
 {{- end -}}
 
-{{- define "keycloak-extensions.smtp.auth.credentialSecret.name" -}}
-{{- if .Values.smtp.auth.credentialSecret.name -}}
-{{- .Values.smtp.auth.credentialSecret.name -}}
-{{- else if .Values.global.nubusDeployment -}}
-{{- printf "%s-keycloak-extensions-smtp-credentials" .Release.Name -}}
-{{- end -}}
-{{- end -}}
-
-{{- define "keycloak-extensions.smtp.auth.password" -}}
-{{- if .Values.smtp.auth.credentialSecret.name -}}
-valueFrom:
-  secretKeyRef:
-    name: {{ .Values.smtp.auth.credentialSecret.name | quote }}
-    key: {{ .Values.smtp.auth.credentialSecret.key | quote }}
-{{- else if .Values.global.nubusDeployment -}}
-valueFrom:
-  secretKeyRef:
-    name: {{ include "keycloak-extensions.smtp.auth.credentialSecret.name" . | quote }}
-    key: {{ .Values.smtp.auth.credentialSecret.key | quote }}
-{{- else -}}
-value: {{ .Values.smtp.auth.password | quote }}
-{{- end -}}
-{{- end -}}
-
 {{- define "keycloak-extensions.captcha.credentialSecret.name" -}}
+# TODO: This looks like a bug
 {{- if .Values.smtp.auth.credentialSecret.name -}}
 {{- .Values.smtp.auth.credentialSecret.name -}}
 {{- else if .Values.global.nubusDeployment -}}
