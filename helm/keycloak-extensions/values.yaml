@@ -226,7 +226,7 @@ handler:
     # -- Container registry address.
     registry: "artifacts.software-univention.de"
     repository: "nubus-dev/images/keycloak-handler"
-    tag: "latest"
+    tag: "0.12.0"
     imagePullPolicy: "IfNotPresent"
 
   # -- Credentials to fetch images from private registry.
@@ -399,7 +399,7 @@ proxy:
     # -- Container registry address.
     registry: "artifacts.software-univention.de"
     repository: "nubus-dev/images/keycloak-proxy"
-    tag: "latest"
+    tag: "0.12.0"
     imagePullPolicy: "IfNotPresent"
 
   # -- Credentials to fetch images from private registry.
