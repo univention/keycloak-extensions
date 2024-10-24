@@ -87,7 +87,7 @@ spec:
                   # locally.
                   {{- $existingSecret := ternary .Values.smtp.auth.existingSecret .Values.global.smtp.auth.existingSecret (not (empty .Values.smtp.auth.existingSecret.name)) }}
                   name: {{ tpl (include "common.secrets.name" (dict "existingSecret" $existingSecret "defaultNameSuffix" "smtp" "context" .)) . }}
-                  key: "password"
+                  key: {{ include "common.secrets.key" (dict "existingSecret" $existingSecret "key" "password") }}
           ports:
             {{- range $key, $value := .Values.handler.service.ports }}
             - name: {{ $key }}
