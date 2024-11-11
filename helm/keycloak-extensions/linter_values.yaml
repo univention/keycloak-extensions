@@ -11,14 +11,20 @@ postgresql:
     port: "linting-port"
   auth:
     username: "linting-username"
-    password: "linting-password"
     database: "linting-database"
+    existingSecret:
+      name: "custom-postgres-credentials"
+      keyMapping:
+        password: "custom-password"
 
 keycloak:
   auth:
     username: "linting-adminUsername"
-    password: "linting-adminPassword"
     realm: "linting-realm"
+    existingSecret:
+      name: "custom-keycloak-credentials"
+      keyMapping:
+        adminPassword: "admin_password"
   connection:
     host: "linting-host"
 

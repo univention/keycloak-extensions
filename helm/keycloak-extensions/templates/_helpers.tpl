@@ -24,40 +24,6 @@ These template definitions are only used in this chart and do not relate to temp
 {{- end -}}
 {{- end -}}
 
-{{- define "keycloak-extensions.postgresql.auth.username" -}}
-{{- if .Values.postgresql.auth.username -}}
-{{- .Values.postgresql.auth.username -}}
-{{- else if .Values.global.nubusDeployment -}}
-keycloak_extensions
-{{- else -}}
-{{- required ".Values.postgresql.auth.username must be defined." .Values.postgresql.auth.username -}}
-{{- end -}}
-{{- end -}}
-
-{{- define "keycloak-extensions.postgresql.auth.credentialSecret.name" -}}
-{{- if .Values.postgresql.auth.credentialSecret.name -}}
-{{- .Values.postgresql.auth.credentialSecret.name -}}
-{{- else if .Values.global.nubusDeployment -}}
-{{- printf "%s-keycloak-extensions-postgresql-credentials" .Release.Name -}}
-{{- end -}}
-{{- end -}}
-
-{{- define "keycloak-extensions.postgresql.auth.password" -}}
-{{- if .Values.postgresql.auth.credentialSecret.name -}}
-valueFrom:
-  secretKeyRef:
-    name: {{ .Values.postgresql.auth.credentialSecret.name | quote }}
-    key: {{ .Values.postgresql.auth.credentialSecret.key | quote }}
-{{- else if .Values.global.nubusDeployment -}}
-valueFrom:
-  secretKeyRef:
-    name: {{ include "keycloak-extensions.postgresql.auth.credentialSecret.name" . | quote }}
-    key: {{ .Values.postgresql.auth.credentialSecret.key | quote }}
-{{- else -}}
-value: {{ required ".Values.postgresql.auth.password is required." .Values.postgresql.auth.password | quote }}
-{{- end -}}
-{{- end -}}
-
 {{- define "keycloak-extensions.postgresql.auth.database" -}}
 {{- if .Values.postgresql.auth.database -}}
 {{- .Values.postgresql.auth.database -}}
@@ -106,40 +72,6 @@ http
 {{- printf "%s/admin" $baseUrl -}}
 {{- end -}}
 
-{{- define "keycloak-extensions.keycloak.auth.username" -}}
-{{- if .Values.keycloak.auth.username -}}
-{{- .Values.keycloak.auth.username -}}
-{{- else if .Values.global.nubusDeployment -}}
-kcadmin
-{{- else -}}
-{{- required ".Values.keycloak.auth.username must be defined." .Values.keycloak.auth.username -}}
-{{- end -}}
-{{- end -}}
-
-{{- define "keycloak-extensions.keycloak.auth.credentialSecret.name" -}}
-{{- if .Values.keycloak.auth.credentialSecret.name -}}
-{{- .Values.keycloak.auth.credentialSecret.name -}}
-{{- else if .Values.global.nubusDeployment -}}
-{{- printf "%s-keycloak-extensions-keycloak-credentials" .Release.Name -}}
-{{- end -}}
-{{- end -}}
-
-{{- define "keycloak-extensions.keycloak.auth.password" -}}
-{{- if .Values.keycloak.auth.credentialSecret.name -}}
-valueFrom:
-  secretKeyRef:
-    name: {{ .Values.keycloak.auth.credentialSecret.name | quote }}
-    key: {{ .Values.keycloak.auth.credentialSecret.key | quote }}
-{{- else if .Values.global.nubusDeployment -}}
-valueFrom:
-  secretKeyRef:
-    name: {{ include "keycloak-extensions.keycloak.auth.credentialSecret.name" . | quote }}
-    key: {{ .Values.keycloak.auth.credentialSecret.key | quote }}
-{{- else -}}
-value: {{ required ".Values.keycloak.auth.password is required." .Values.keycloak.auth.password | quote }}
-{{- end -}}
-{{- end -}}
-
 {{- define "keycloak-extensions.keycloak.auth.realm" -}}
 {{- if .Values.keycloak.auth.realm -}}
 {{- .Values.keycloak.auth.realm -}}
@@ -173,64 +105,6 @@ master
 {{- .Values.smtp.connection.port -}}
 {{- else -}}
 587
-{{- end -}}
-{{- end -}}
-
-{{- define "keycloak-extensions.smtp.auth.username" -}}
-{{- .Values.smtp.auth.username -}}
-{{- end -}}
-
-{{- define "keycloak-extensions.smtp.auth.credentialSecret.name" -}}
-{{- if .Values.smtp.auth.credentialSecret.name -}}
-{{- .Values.smtp.auth.credentialSecret.name -}}
-{{- else if .Values.global.nubusDeployment -}}
-{{- printf "%s-keycloak-extensions-smtp-credentials" .Release.Name -}}
-{{- end -}}
-{{- end -}}
-
-{{- define "keycloak-extensions.smtp.auth.password" -}}
-{{- if .Values.smtp.auth.credentialSecret.name -}}
-valueFrom:
-  secretKeyRef:
-    name: {{ .Values.smtp.auth.credentialSecret.name | quote }}
-    key: {{ .Values.smtp.auth.credentialSecret.key | quote }}
-{{- else if .Values.global.nubusDeployment -}}
-valueFrom:
-  secretKeyRef:
-    name: {{ include "keycloak-extensions.smtp.auth.credentialSecret.name" . | quote }}
-    key: {{ .Values.smtp.auth.credentialSecret.key | quote }}
-{{- else -}}
-value: {{ .Values.smtp.auth.password | quote }}
-{{- end -}}
-{{- end -}}
-
-{{- define "keycloak-extensions.captcha.credentialSecret.name" -}}
-{{- if .Values.smtp.auth.credentialSecret.name -}}
-{{- .Values.smtp.auth.credentialSecret.name -}}
-{{- else if .Values.global.nubusDeployment -}}
-{{- printf "%s-keycloak-extensions-captcha-credentials" .Release.Name -}}
-{{- end -}}
-{{- end -}}
-
-{{- define "keycloak-extensions.captcha.captchaSiteKey" -}}
-{{- if .Values.proxy.appConfig.captcha.credentialSecret.name -}}
-valueFrom:
-  secretKeyRef:
-    name: {{ .Values.proxy.appConfig.captcha.credentialSecret.name | quote }}
-    key: {{ .Values.proxy.appConfig.captcha.credentialSecret.siteKeyKey | quote }}
-{{- else -}}
-value: {{ required ".Values.proxy.appConfig.captcha.captchaSiteKey required." .Values.proxy.appConfig.captcha.captchaSiteKey | quote }}
-{{- end -}}
-{{- end -}}
-
-{{- define "keycloak-extensions.captcha.captchaSecretKey" -}}
-{{- if .Values.proxy.appConfig.captcha.credentialSecret.name -}}
-valueFrom:
-  secretKeyRef:
-    name: {{ .Values.proxy.appConfig.captcha.credentialSecret.name | quote }}
-    key: {{ .Values.proxy.appConfig.captcha.credentialSecret.secretKeyKey | quote }}
-{{- else -}}
-value: {{ required ".Values.proxy.appConfig.captcha.captchaSecretKey required." .Values.proxy.appConfig.captcha.captchaSecretKey | quote }}
 {{- end -}}
 {{- end -}}
 

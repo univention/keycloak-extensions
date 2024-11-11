@@ -1,6 +1,6 @@
 # keycloak-extensions
 
-![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 21.0.1](https://img.shields.io/badge/AppVersion-21.0.1-informational?style=flat-square)
+![Version: 0.11.0](https://img.shields.io/badge/Version-0.11.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 21.0.1](https://img.shields.io/badge/AppVersion-21.0.1-informational?style=flat-square)
 
 A Helm chart for Kubernetes with its extensions
 
@@ -85,26 +85,24 @@ A Helm chart for Kubernetes with its extensions
 | handler.startupProbe.timeoutSeconds | int | `1` |  |
 | handler.terminationGracePeriodSeconds | string | `""` | In seconds, time the given to the pod needs to terminate gracefully. Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods |
 | handler.tolerations | list | `[]` |  |
-| keycloak | object | `{"auth":{"credentialSecret":{"key":"password","name":""},"masterRealm":"master","password":"","realm":"","username":""},"connection":{"host":""}}` | Keycloak settings. |
-| keycloak.auth.credentialSecret | object | `{"key":"password","name":""}` | Keycloak password secret reference. |
+| keycloak | object | `{"auth":{"existingSecret":{"keyMapping":{"adminPassword":null},"name":""},"masterRealm":"master","realm":"","username":""},"connection":{"host":""}}` | Keycloak settings. |
+| keycloak.auth.existingSecret | object | `{"keyMapping":{"adminPassword":null},"name":""}` | Keycloak password secret reference. |
 | keycloak.auth.masterRealm | string | `"master"` | Keycloak master realm. |
-| keycloak.auth.password | string | `""` | Keycloak password. |
 | keycloak.auth.realm | string | `""` | Keycloak realm. |
 | keycloak.auth.username | string | `""` | Keycloak user. |
 | keycloak.connection | object | `{"host":""}` | Connection parameters. |
 | keycloak.connection.host | string | `""` | Keycloak host. |
-| postgresql | object | `{"auth":{"credentialSecret":{"key":"password","name":""},"database":"","password":"","username":""},"connection":{"host":"","port":""}}` | PostgreSQL settings. |
-| postgresql.auth.credentialSecret | object | `{"key":"password","name":""}` | PostgreSQL password secret reference. |
+| postgresql | object | `{"auth":{"database":"","existingSecret":{"keyMapping":{"password":null},"name":""},"username":""},"connection":{"host":"","port":""}}` | PostgreSQL settings. |
 | postgresql.auth.database | string | `""` | PostgreSQL database. |
-| postgresql.auth.password | string | `""` | PostgreSQL user password. |
+| postgresql.auth.existingSecret | object | `{"keyMapping":{"password":null},"name":""}` | PostgreSQL password secret reference. |
 | postgresql.auth.username | string | `""` | PostgreSQL user. |
 | postgresql.connection | object | `{"host":"","port":""}` | Connection parameters. |
 | postgresql.connection.host | string | `""` | PostgreSQL host. |
 | postgresql.connection.port | string | `""` | PostgreSQL port. |
 | proxy.additionalAnnotations | object | `{}` | Additional custom annotations to add to deployments. |
 | proxy.affinity | object | `{}` |  |
-| proxy.appConfig | object | `{"captcha":{"captchaSecretKey":"some_secret_key","captchaSiteKey":"some_site_key","credentialSecret":{"name":"","secretKeyKey":"secret_key","siteKeyKey":"site_key"}},"logLevel":"debug"}` | Application configuration of the proxy |
-| proxy.appConfig.captcha | object | `{"captchaSecretKey":"some_secret_key","captchaSiteKey":"some_site_key","credentialSecret":{"name":"","secretKeyKey":"secret_key","siteKeyKey":"site_key"}}` | The Google reCaptcha v2 site key generated from [their admin site](https://www.google.com/recaptcha/admin/) |
+| proxy.appConfig | object | `{"captcha":{"captchaSecretKey":"some_secret_key","captchaSiteKey":"some_site_key","existingSecret":{"keyMapping":{"secret_key":null,"site_key":null},"name":""}},"logLevel":"debug"}` | Application configuration of the proxy |
+| proxy.appConfig.captcha | object | `{"captchaSecretKey":"some_secret_key","captchaSiteKey":"some_site_key","existingSecret":{"keyMapping":{"secret_key":null,"site_key":null},"name":""}}` | The Google reCaptcha v2 site key generated from [their admin site](https://www.google.com/recaptcha/admin/) |
 | proxy.appConfig.logLevel | string | `"debug"` | Proxy log level: `debug`, `info`, `warn` or `error` |
 | proxy.customLivenessProbe | object | `{}` |  |
 | proxy.customReadinessProbe | object | `{}` |  |
@@ -171,10 +169,9 @@ A Helm chart for Kubernetes with its extensions
 | proxy.startupProbe.timeoutSeconds | int | `1` |  |
 | proxy.terminationGracePeriodSeconds | string | `""` | In seconds, time the given to the pod needs to terminate gracefully. Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods |
 | proxy.tolerations | list | `[]` |  |
-| smtp | object | `{"auth":{"credentialSecret":{"key":"password","name":""},"enabled":true,"password":"","username":""},"connection":{"host":"","port":"587","ssl":false,"starttls":true}}` | SMTP settings. |
-| smtp.auth.credentialSecret | object | `{"key":"password","name":""}` | SMTP password secret reference. |
+| smtp | object | `{"auth":{"enabled":true,"existingSecret":{"keyMapping":{"password":null},"name":""},"username":""},"connection":{"host":"","port":"587","ssl":false,"starttls":true}}` | SMTP settings. |
 | smtp.auth.enabled | bool | `true` | Enable SMTP authentication |
-| smtp.auth.password | string | `""` | Password for SMTP authentication |
+| smtp.auth.existingSecret | object | `{"keyMapping":{"password":null},"name":""}` | SMTP password secret reference. |
 | smtp.auth.username | string | `""` | Username for SMTP authentication |
 | smtp.connection | object | `{"host":"","port":"587","ssl":false,"starttls":true}` | Connection parameters. |
 | smtp.connection.host | string | `""` | Email SMTP hostname |

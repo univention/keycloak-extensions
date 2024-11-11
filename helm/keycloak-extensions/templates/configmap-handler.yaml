@@ -21,12 +21,10 @@ metadata:
   {{- end }}
 data:
   KC_AUTH_URL: {{ include "keycloak-extensions.keycloak.connection.authUrl" . | quote }}
-  KC_USER: {{ include "keycloak-extensions.keycloak.auth.username" . | quote }}
   KC_REALM:  {{ include "keycloak-extensions.keycloak.auth.realm" . | quote }}
   KC_USER_REALM: {{ include "keycloak-extensions.keycloak.auth.masterRealm" . | quote }}
   POSTGRES_HOST: {{ include "keycloak-extensions.postgresql.connection.host" . | quote }}
   POSTGRES_PORT: {{ include "keycloak-extensions.postgresql.connection.port" . | quote }}
-  POSTGRES_USER: {{ include "keycloak-extensions.postgresql.auth.username" . | quote }}
   POSTGRES_DATABASE_NAME: {{ include "keycloak-extensions.postgresql.auth.database" . | quote }}
   LOG_LEVEL: "{{ .Values.handler.appConfig.logLevel }}"
   FAILED_ATTEMPTS_FOR_IP_BLOCK: "{{ .Values.handler.appConfig.failedAttemptsForIpBlock }}"
@@ -41,7 +39,6 @@ data:
   NEW_DEVICE_LOGIN_SUBJECT: "{{ .Values.handler.appConfig.newDeviceLoginSubject }}"
   SMTP_HOST: {{ include "keycloak-extensions.smtp.connection.host" . | quote }}
   SMTP_PORT: {{ include "keycloak-extensions.smtp.connection.port" . | quote }}
-  SMTP_USERNAME: {{ include "keycloak-extensions.smtp.auth.username" . | quote }}
   SMTP_AUTH_ENABLED: {{ .Values.smtp.auth.enabled | quote }}
   SMTP_SSL_ENABLED: {{ .Values.smtp.connection.ssl | quote }}
   SMTP_STARTTLS_ENABLED: {{ .Values.smtp.connection.starttls | quote }}

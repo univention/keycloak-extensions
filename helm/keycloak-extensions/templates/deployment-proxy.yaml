@@ -73,14 +73,32 @@ spec:
             - configMapRef:
                 name: {{ printf "%s-proxy" (include "common.names.fullname" .) }}
           env:
+            - name: KC_USER
+              value: {{ tpl .Values.keycloak.auth.username . }}
             - name: KC_PASS
-              {{- include "keycloak-extensions.keycloak.auth.password" . | nindent 14 }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ tpl .Values.keycloak.auth.existingSecret.name . }}
+                  key: {{ include "common.secrets.key" (dict "existingSecret" .Values.keycloak.auth.existingSecret "key" "adminPassword") }}
+            - name: POSTGRES_USER
+              value: {{ tpl .Values.postgresql.auth.username . }}
             - name: POSTGRES_PASSWORD
-              {{- include "keycloak-extensions.postgresql.auth.password" . | nindent 14 }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ tpl .Values.postgresql.auth.existingSecret.name . }}
+                  key: {{ include "common.secrets.key" (dict "existingSecret" .Values.postgresql.auth.existingSecret "key" "password") }}
+            {{- if .Values.proxy.appConfig.captcha.existingSecret.name }}
             - name: CAPTCHA_SITE_KEY
-              {{- include "keycloak-extensions.captcha.captchaSiteKey" . | nindent 14 }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ tpl .Values.proxy.appConfig.captcha.existingSecret.name . }}
+                  key: {{ include "common.secrets.key" (dict "existingSecret" .Values.proxy.appConfig.captcha.existingSecret "key" "site_key") }}
             - name: CAPTCHA_SECRET_KEY
-              {{- include "keycloak-extensions.captcha.captchaSecretKey" . | nindent 14 }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ tpl .Values.proxy.appConfig.captcha.existingSecret.name . }}
+                  key: {{ include "common.secrets.key" (dict "existingSecret" .Values.proxy.appConfig.captcha.existingSecret "key" "secret_key") }}
+            {{- end }}
           ports:
             {{- range $key, $value := .Values.proxy.service.ports }}
             - name: {{ $key }}

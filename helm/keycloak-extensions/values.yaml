@@ -27,11 +27,12 @@ postgresql:
     # -- PostgreSQL database.
     database: ""
     # -- PostgreSQL user password.
-    password: ""
+    # password: ""
     # -- PostgreSQL password secret reference.
-    credentialSecret:
+    existingSecret:
       name: ""
-      key: "password"
+      keyMapping:
+        password: null
 
 # -- Keycloak settings.
 keycloak:
@@ -43,16 +44,17 @@ keycloak:
     # -- Keycloak user.
     username: ""
     # -- Keycloak password.
-    password: ""
+    # password: ""
     # -- Keycloak realm.
     realm: ""
     # -- Keycloak master realm.
     masterRealm:
       "master"
       # -- Keycloak password secret reference.
-    credentialSecret:
+    existingSecret:
       name: ""
-      key: "password"
+      keyMapping:
+        adminPassword: null
 
 # -- SMTP settings.
 smtp:
@@ -72,11 +74,12 @@ smtp:
     # -- Username for SMTP authentication
     username: ""
     # -- Password for SMTP authentication
-    password: ""
+    # password: ""
     # -- SMTP password secret reference.
-    credentialSecret:
+    existingSecret:
       name: ""
-      key: "password"
+      keyMapping:
+        password: null
 
 handler:
   enabled: true
@@ -338,12 +341,13 @@ proxy:
     logLevel: "debug"
     # -- The Google reCaptcha v2 site key generated from [their admin site](https://www.google.com/recaptcha/admin/)
     captcha:
-      credentialSecret:
-        name: ""
-        siteKeyKey: "site_key"
-        secretKeyKey: "secret_key"
       captchaSiteKey: "some_site_key"
       captchaSecretKey: "some_secret_key"
+      existingSecret:
+        name: ""
+        keyMapping:
+          site_key: null
+          secret_key: null
 
   # -- Kubernetes ingress
   ingress:
