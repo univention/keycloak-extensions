@@ -87,7 +87,18 @@ handler:
   podAnnotations: {}
   podSecurityContext: {}
   replicaCount: 1
-  securityContext: {}
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    privileged: false
+    readOnlyRootFilesystem: true
+    runAsGroup: 1000
+    runAsNonRoot: true
+    runAsUser: 1000
+    seccompProfile:
+      type: RuntimeDefault
   tolerations: []
   # -- Additional custom annotations to add to deployments.
   additionalAnnotations: {}
@@ -115,7 +126,7 @@ handler:
   ## @param handler.livenessProbe.command Command for the livenessProbe
   ##
   livenessProbe:
-    enabled: false
+    enabled: true
     initialDelaySeconds: 30
     periodSeconds: 10
     timeoutSeconds: 5
@@ -132,7 +143,7 @@ handler:
   ## @param handler.readinessProbe.command Command for the readinessProbe
   ##
   readinessProbe:
-    enabled: false
+    enabled: true
     initialDelaySeconds: 5
     periodSeconds: 10
     timeoutSeconds: 5
@@ -149,7 +160,7 @@ handler:
   ## @param handler.startupProbe.command Command for the startupProbe
   ##
   startupProbe:
-    enabled: false
+    enabled: true
     initialDelaySeconds: 30
     periodSeconds: 10
     timeoutSeconds: 1
@@ -282,7 +293,7 @@ proxy:
   ## @param proxy.livenessProbe.successThreshold Success threshold for livenessProbe
   ##
   livenessProbe:
-    enabled: false
+    enabled: true
     initialDelaySeconds: 30
     periodSeconds: 10
     timeoutSeconds: 5
@@ -296,7 +307,7 @@ proxy:
   ## @param proxy.readinessProbe.successThreshold Success threshold for readinessProbe
   ##
   readinessProbe:
-    enabled: false
+    enabled: true
     initialDelaySeconds: 5
     periodSeconds: 10
     timeoutSeconds: 5
@@ -310,7 +321,7 @@ proxy:
   ## @param proxy.startupProbe.successThreshold Success threshold for startupProbe
   ##
   startupProbe:
-    enabled: false
+    enabled: true
     initialDelaySeconds: 30
     periodSeconds: 10
     timeoutSeconds: 1
