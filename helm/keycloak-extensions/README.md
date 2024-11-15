@@ -47,7 +47,7 @@ A Helm chart for Kubernetes with its extensions
 | handler.ingress.enabled | bool | `false` | Set this to `true` in order to enable the installation on Ingress related objects. |
 | handler.lifecycleHooks | object | `{}` |  |
 | handler.livenessProbe.command | string | `"exit 0\n"` |  |
-| handler.livenessProbe.enabled | bool | `false` |  |
+| handler.livenessProbe.enabled | bool | `true` |  |
 | handler.livenessProbe.failureThreshold | int | `6` |  |
 | handler.livenessProbe.initialDelaySeconds | int | `30` |  |
 | handler.livenessProbe.periodSeconds | int | `10` |  |
@@ -57,7 +57,7 @@ A Helm chart for Kubernetes with its extensions
 | handler.podAnnotations | object | `{}` |  |
 | handler.podSecurityContext | object | `{}` |  |
 | handler.readinessProbe.command | string | `"exit 0\n"` |  |
-| handler.readinessProbe.enabled | bool | `false` |  |
+| handler.readinessProbe.enabled | bool | `true` |  |
 | handler.readinessProbe.failureThreshold | int | `6` |  |
 | handler.readinessProbe.initialDelaySeconds | int | `5` |  |
 | handler.readinessProbe.periodSeconds | int | `10` |  |
@@ -68,7 +68,14 @@ A Helm chart for Kubernetes with its extensions
 | handler.resources.limits.memory | string | `"4Gi"` |  |
 | handler.resources.requests.cpu | string | `"250m"` |  |
 | handler.resources.requests.memory | string | `"512Mi"` |  |
-| handler.securityContext | object | `{}` |  |
+| handler.securityContext.allowPrivilegeEscalation | bool | `false` |  |
+| handler.securityContext.capabilities.drop[0] | string | `"ALL"` |  |
+| handler.securityContext.privileged | bool | `false` |  |
+| handler.securityContext.readOnlyRootFilesystem | bool | `true` |  |
+| handler.securityContext.runAsGroup | int | `1000` |  |
+| handler.securityContext.runAsNonRoot | bool | `true` |  |
+| handler.securityContext.runAsUser | int | `1000` |  |
+| handler.securityContext.seccompProfile.type | string | `"RuntimeDefault"` |  |
 | handler.service.additionalAnnotations | object | `{}` | Additional custom annotations to add to service. |
 | handler.service.enabled | bool | `false` |  |
 | handler.serviceAccount.annotations | object | `{}` |  |
@@ -77,7 +84,7 @@ A Helm chart for Kubernetes with its extensions
 | handler.serviceAccount.labels | object | `{}` | Additional custom labels for the ServiceAccount. |
 | handler.serviceAccount.name | string | `""` |  |
 | handler.startupProbe.command | string | `"exit 0\n"` |  |
-| handler.startupProbe.enabled | bool | `false` |  |
+| handler.startupProbe.enabled | bool | `true` |  |
 | handler.startupProbe.failureThreshold | int | `15` |  |
 | handler.startupProbe.initialDelaySeconds | int | `30` |  |
 | handler.startupProbe.periodSeconds | int | `10` |  |
@@ -120,7 +127,7 @@ A Helm chart for Kubernetes with its extensions
 | proxy.ingress.certManager.issuerRef.name | string | `""` | Name of cert-manager.io Issuer resource. |
 | proxy.ingress.enabled | bool | `true` | Set this to `true` in order to enable the installation on Ingress related objects. |
 | proxy.lifecycleHooks | object | `{}` |  |
-| proxy.livenessProbe.enabled | bool | `false` |  |
+| proxy.livenessProbe.enabled | bool | `true` |  |
 | proxy.livenessProbe.failureThreshold | int | `6` |  |
 | proxy.livenessProbe.initialDelaySeconds | int | `30` |  |
 | proxy.livenessProbe.periodSeconds | int | `10` |  |
@@ -129,7 +136,7 @@ A Helm chart for Kubernetes with its extensions
 | proxy.nodeSelector | object | `{}` |  |
 | proxy.podAnnotations | object | `{}` |  |
 | proxy.podSecurityContext | object | `{}` |  |
-| proxy.readinessProbe.enabled | bool | `false` |  |
+| proxy.readinessProbe.enabled | bool | `true` |  |
 | proxy.readinessProbe.failureThreshold | int | `6` |  |
 | proxy.readinessProbe.initialDelaySeconds | int | `5` |  |
 | proxy.readinessProbe.periodSeconds | int | `10` |  |
@@ -161,7 +168,7 @@ A Helm chart for Kubernetes with its extensions
 | proxy.serviceAccount.create | bool | `true` |  |
 | proxy.serviceAccount.labels | object | `{}` | Additional custom labels for the ServiceAccount. |
 | proxy.serviceAccount.name | string | `""` |  |
-| proxy.startupProbe.enabled | bool | `false` |  |
+| proxy.startupProbe.enabled | bool | `true` |  |
 | proxy.startupProbe.failureThreshold | int | `15` |  |
 | proxy.startupProbe.initialDelaySeconds | int | `30` |  |
 | proxy.startupProbe.periodSeconds | int | `10` |  |
