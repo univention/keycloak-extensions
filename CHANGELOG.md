@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.12.0...v0.13.0) (2024-11-20)
+
+
+### Features
+
+* migrate component secret ([6e7d230](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/6e7d23014418f34cbae7e466bcd68d087afcea4e))
+
 ## [0.12.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.11.0...v0.12.0) (2024-09-26)
 
 
