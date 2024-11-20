@@ -94,12 +94,14 @@ spec:
                 secretKeyRef:
                   name: {{ tpl .Values.smtp.auth.existingSecret.name . }}
                   key: {{ include "common.secrets.key" (dict "existingSecret" .Values.smtp.auth.existingSecret "key" "password") }}
+          {{- if .Values.handler.service.ports }}
           ports:
             {{- range $key, $value := .Values.handler.service.ports }}
             - name: {{ $key }}
               containerPort: {{ $value.containerPort }}
               protocol: {{ $value.protocol }}
             {{- end }}
+          {{- end }}
           {{- if .Values.handler.customLivenessProbe }}
           livenessProbe: {{- include "common.tplvalues.render" (dict "value" .Values.handler.customLivenessProbe "context" $) | nindent 12 }}
           {{- else if .Values.handler.livenessProbe.enabled }}
