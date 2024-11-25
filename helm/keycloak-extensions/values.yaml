@@ -129,7 +129,7 @@ handler:
   ## @param handler.livenessProbe.command Command for the livenessProbe
   ##
   livenessProbe:
-    enabled: true
+    enabled: false
     initialDelaySeconds: 30
     periodSeconds: 10
     timeoutSeconds: 5
@@ -146,7 +146,7 @@ handler:
   ## @param handler.readinessProbe.command Command for the readinessProbe
   ##
   readinessProbe:
-    enabled: true
+    enabled: false
     initialDelaySeconds: 5
     periodSeconds: 10
     timeoutSeconds: 5
@@ -163,7 +163,7 @@ handler:
   ## @param handler.startupProbe.command Command for the startupProbe
   ##
   startupProbe:
-    enabled: true
+    enabled: false
     initialDelaySeconds: 30
     periodSeconds: 10
     timeoutSeconds: 1
@@ -296,7 +296,7 @@ proxy:
   ## @param proxy.livenessProbe.successThreshold Success threshold for livenessProbe
   ##
   livenessProbe:
-    enabled: true
+    enabled: false
     initialDelaySeconds: 30
     periodSeconds: 10
     timeoutSeconds: 5
@@ -310,7 +310,7 @@ proxy:
   ## @param proxy.readinessProbe.successThreshold Success threshold for readinessProbe
   ##
   readinessProbe:
-    enabled: true
+    enabled: false
     initialDelaySeconds: 5
     periodSeconds: 10
     timeoutSeconds: 5
@@ -324,7 +324,7 @@ proxy:
   ## @param proxy.startupProbe.successThreshold Success threshold for startupProbe
   ##
   startupProbe:
-    enabled: true
+    enabled: false
     initialDelaySeconds: 30
     periodSeconds: 10
     timeoutSeconds: 1
