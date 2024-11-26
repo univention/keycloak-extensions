@@ -13,6 +13,7 @@ RUN apt-get -qq update \
   && apt-get --assume-yes --verbose-versions --no-install-recommends install \
     nodejs \
     npm \
+    ca-certificates \
   && rm -fr /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 RUN npm install \

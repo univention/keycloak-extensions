@@ -21,6 +21,12 @@ postgresql:
     host: ""
     # -- PostgreSQL port.
     port: ""
+    # -- PostgreSQL SSL flag
+    ssl: "false"
+    # -- Path to CA
+    pathCA: "/etc/ssl/certs/rootca.pem"
+    # -- CustomCA certificate
+    customca: ""
   auth:
     # -- PostgreSQL user.
     username: ""

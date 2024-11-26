@@ -99,13 +99,16 @@ A Helm chart for Kubernetes with its extensions
 | keycloak.auth.username | string | `""` | Keycloak user. |
 | keycloak.connection | object | `{"host":""}` | Connection parameters. |
 | keycloak.connection.host | string | `""` | Keycloak host. |
-| postgresql | object | `{"auth":{"database":"","existingSecret":{"keyMapping":{"password":null},"name":""},"username":""},"connection":{"host":"","port":""}}` | PostgreSQL settings. |
+| postgresql | object | `{"auth":{"database":"","existingSecret":{"keyMapping":{"password":null},"name":""},"username":""},"connection":{"customca":"","host":"","pathCA":"/etc/ssl/certs/rootca.pem","port":"","ssl":"false"}}` | PostgreSQL settings. |
 | postgresql.auth.database | string | `""` | PostgreSQL database. |
 | postgresql.auth.existingSecret | object | `{"keyMapping":{"password":null},"name":""}` | PostgreSQL password secret reference. |
 | postgresql.auth.username | string | `""` | PostgreSQL user. |
-| postgresql.connection | object | `{"host":"","port":""}` | Connection parameters. |
+| postgresql.connection | object | `{"customca":"","host":"","pathCA":"/etc/ssl/certs/rootca.pem","port":"","ssl":"false"}` | Connection parameters. |
+| postgresql.connection.customca | string | `""` | CustomCA certificate |
 | postgresql.connection.host | string | `""` | PostgreSQL host. |
+| postgresql.connection.pathCA | string | `"/etc/ssl/certs/rootca.pem"` | Path to CA |
 | postgresql.connection.port | string | `""` | PostgreSQL port. |
+| postgresql.connection.ssl | string | `"false"` | PostgreSQL SSL flag |
 | proxy.additionalAnnotations | object | `{}` | Additional custom annotations to add to deployments. |
 | proxy.affinity | object | `{}` |  |
 | proxy.appConfig | object | `{"captcha":{"captchaSecretKey":"some_secret_key","captchaSiteKey":"some_site_key","existingSecret":{"keyMapping":{"secret_key":null,"site_key":null},"name":""}},"logLevel":"debug"}` | Application configuration of the proxy |

@@ -26,6 +26,31 @@ data:
   POSTGRES_HOST: {{ include "keycloak-extensions.postgresql.connection.host" . | quote }}
   POSTGRES_PORT: {{ include "keycloak-extensions.postgresql.connection.port" . | quote }}
   POSTGRES_DATABASE_NAME: {{ include "keycloak-extensions.postgresql.auth.database" . | quote }}
+  POSTGRES_SSL: "{{ .Values.postgresql.connection.ssl }}"
   CAPTCHA_SITE_KEY: "{{ .Values.proxy.appConfig.captchaSiteKey }}"
   CAPTCHA_SECRET_KEY: "{{ .Values.proxy.appConfig.captchaSecretKey }}"
   LOG_LEVEL: "{{ .Values.proxy.appConfig.logLevel }}"
+
+{{- if .Values.postgresql.connection.customca }}
+---
+apiVersion: "v1"
+kind: ConfigMap
+metadata:
+  name: {{ printf "%s-proxy-ssl" (include "common.names.fullname" .) }}
+  namespace: {{ include "common.names.namespace" . | quote }}
+  labels:
+    {{- $commonLabels := include "common.labels.standard" . | fromYaml }}
+    {{- $uiLabels := dict "app.kubernetes.io/name" (printf "%s-proxy" (include "common.names.fullname" .)) }}
+    {{- $mergedLabels := merge $uiLabels $commonLabels}}
+    {{- toYaml $mergedLabels | nindent 4 }}
+    {{- if .Values.proxy.additionalLabels }}
+    {{- include "common.tplvalues.render" ( dict "value" .Values.proxy.additionalLabels "context" . ) | nindent 4 }}
+    {{- end }}
+  {{- if .Values.proxy.additionalAnnotations }}
+  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.proxy.additionalAnnotations "context" . ) | nindent 4 }}
+  {{- end }}
+data:
+  rootca.pem: |-
+{{ .Values.postgresql.connection.customca | indent 4 }}
+
+{{- end }}
