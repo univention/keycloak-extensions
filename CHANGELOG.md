@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.13.1](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.13.0...v0.13.1) (2024-11-27)
+
+
+### Bug Fixes
+
+* add if to ports ([977e274](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/977e27401c3923b06af113eea11689394d1dcd5a))
+* disable probes by default ([804b5f4](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/804b5f492ff555b6edbdbf450971f9067e1321c2))
+* Kyverno lint ([34e1a8b](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/34e1a8be48e51b94d069c1a86fdf954d46973a53))
+* missing quote ([9b0972f](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/9b0972f092894b63e3eebce9c8b4c5e02dfa9fa8))
+
 ## [0.13.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.12.0...v0.13.0) (2024-11-20)
 
 
