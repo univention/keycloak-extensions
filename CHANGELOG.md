@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.13.1...v0.14.0) (2024-12-02)
+
+
+### Features
+
+* added ssl support to the database connection on the proxy ([62b4759](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/62b475986dd3eace0f3781e0b5ee29e3b620d1b6))
+
 ## [0.13.1](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.13.0...v0.13.1) (2024-11-27)
 
 
