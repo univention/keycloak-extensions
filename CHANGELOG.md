@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.14.0...v0.15.0) (2024-12-20)
+
+
+### Features
+
+* upgrade UCS base image to 2024-12-12 ([70f944e](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/70f944e6da482032fa8c2a434996edd184c9bea9))
+
 ## [0.14.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.13.1...v0.14.0) (2024-12-02)
 
 
