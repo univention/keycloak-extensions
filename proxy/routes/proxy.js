@@ -235,7 +235,13 @@ const ensureCaptchaProxyRes = async (responseBuffer, proxyRes, req, res) => {
       }
       return responseBuffer;
     }
-    const token = jwt_decode(rawToken);
+    let token;
+    try {
+      token = jwt_decode(rawToken);
+    } catch (error) {
+      logger.error("Failed to decode JWT token:", error);
+      return responseBuffer;
+    }
 
     if (Object.keys(req.cookies).includes("DEVICE_FINGERPRINT")) {
       logger.debug("Login succeeded, notify user if new device.");
@@ -262,7 +268,13 @@ const newDeviceLoginNotification2fa = async (proxyRes, req, res) => {
     const rawToken = (
       resCookies.KEYCLOAK_IDENTITY || resCookies.KEYCLOAK_IDENTITY_LEGACY
     )?.value;
-    const token = jwt_decode(rawToken);
+    let token;
+    try {
+      token = jwt_decode(rawToken);
+    } catch (error) {
+      logger.error("Failed to decode JWT token:", error);
+      return;
+    }
     if (Object.keys(req.cookies).includes("DEVICE_FINGERPRINT")) {
       logger.debug("Login succeeded, notify user if new device.");
       await saveFingerprintToDeviceRelation(
