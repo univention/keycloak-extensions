@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.1](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.15.0...v0.15.1) (2025-01-22)
+
+
+### Bug Fixes
+
+* **proxy:** handle failed promise during token decoding ([56f0822](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/56f0822173ca5a19bd9828952cd72751cef8d351))
+
 ## [0.15.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.14.0...v0.15.0) (2024-12-20)
 
 
