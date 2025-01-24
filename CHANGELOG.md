@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.2](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.15.1...v0.15.2) (2025-01-24)
+
+
+### Bug Fixes
+
+* **handler:** pin httpx version ([94e511d](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/94e511d4ad6689657feb5d43fad865262c5ea32e))
+
 ## [0.15.1](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.15.0...v0.15.1) (2025-01-22)
 
 
