@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.3](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.15.2...v0.15.3) (2025-01-24)
+
+
+### Bug Fixes
+
+* **proxy:** Redis SSL activation variable gets passed as a string, which gets always treated as true ([a30b1bf](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/a30b1bf8857a11cae4813bf73e7e00ddea6bb03a))
+
 ## [0.15.2](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.15.1...v0.15.2) (2025-01-24)
 
 
