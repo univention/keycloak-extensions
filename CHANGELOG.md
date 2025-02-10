@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.4](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.15.3...v0.15.4) (2025-02-10)
+
+
+### Bug Fixes
+
+* add .kyverno to helmignore ([7f96935](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/7f9693502cc9318e20c19c1eef1297cf2614e9d9))
+
 ## [0.15.3](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.15.2...v0.15.3) (2025-01-24)
 
 
