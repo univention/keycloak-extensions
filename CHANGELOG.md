@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.16.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.15.4...v0.16.0) (2025-02-26)
+
+
+### Features
+
+* Bump ucs-base-image to use released apt sources ([ad664b8](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/ad664b8dcf732b125030be3976c41bc534e45af4))
+
 ## [0.15.4](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.15.3...v0.15.4) (2025-02-10)
 
 
