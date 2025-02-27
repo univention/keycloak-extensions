@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.16.1](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.16.0...v0.16.1) (2025-02-27)
+
+
+### Bug Fixes
+
+* url encode postgresql user and password ([44baa76](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/44baa769bcca520a73da806a1506cdf5e986c5f6))
+
 ## [0.16.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.15.4...v0.16.0) (2025-02-26)
 
 
