@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.17.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.16.1...v0.17.0) (2025-04-29)
+
+
+### Features
+
+* Bump ucs-base-image version ([1b3d914](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/1b3d9148b2b4153f7e72874c0fbaa36a33afd3d9)), closes [[secure]/dev/internal/team-nubus#1155](https://git.knut.[secure].de/[secure]/dev/internal/team-nubus/issues/1155)
+
 ## [0.16.1](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.16.0...v0.16.1) (2025-02-27)
 
 
