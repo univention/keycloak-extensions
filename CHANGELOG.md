@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.18.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.17.0...v0.18.0) (2025-05-11)
+
+
+### Features
+
+* move and upgrade ucs-base-image to 0.17.3-build-2025-05-11 ([0635e3d](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/0635e3da9052ffdb989f7b29090c3473a5851b61))
+
+
+### Bug Fixes
+
+* add bitnami to package-helm-charts ([a11865f](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/a11865f056b462760c8216d4712be488585a3582))
+* move addlicense pre-commit hook ([77d898e](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/77d898e867797e7a41e426068960d17b1782b9a9))
+* update common-ci to main ([161b291](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/commit/161b291c037eb0ab63e2028f4d237839f25a473a))
+
 ## [0.17.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.16.1...v0.17.0) (2025-04-29)
 
 
