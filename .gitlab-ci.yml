@@ -22,6 +22,10 @@ lint-pre-commit:
   before_script:
     - "helm repo add bitnami https://charts.bitnami.com/bitnami"
 
+package-helm-charts:
+  before_script:
+    - helm repo add bitnami https://charts.bitnami.com/bitnami
+
 .build-matrix: &build-matrix
   - IMAGE_NAME: "keycloak-handler"
     KANIKO_BUILD_CONTEXT: "$CI_PROJECT_DIR/handler"
