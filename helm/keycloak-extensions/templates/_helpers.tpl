@@ -114,10 +114,6 @@ master
 {{- end -}}
 {{- end -}}
 
-{{- define "keycloak-extensions.ingress.ingressClassName" -}}
-{{- required "Either .Values.proxy.ingress.ingressClassName or .Values.global.ingressClass must be defined. " (coalesce .Values.proxy.ingress.ingressClassName .Values.global.ingressClass) -}}
-{{- end -}}
-
 {{- define "keycloak-extensions.ingress.proxy.host" -}}
 {{- if .Values.proxy.ingress.host -}}
 {{- .Values.proxy.ingress.host -}}

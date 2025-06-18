@@ -19,7 +19,9 @@ metadata:
     cert-manager.io/{{ .Values.proxy.ingress.certManager.issuerRef.kind | kebabcase }}: "{{ coalesce .Values.global.certManagerIssuer .Values.proxy.ingress.certManager.issuerRef.name }}"
     {{- end }}
 spec:
-  ingressClassName: {{ include "keycloak-extensions.ingress.ingressClassName" . }}
+  {{- if or .Values.proxy.ingress.ingressClassName .Values.global.ingressClass }}
+  ingressClassName: {{ coalesce .Values.proxy.ingress.ingressClassName .Values.global.ingressClass | quote }}
+  {{- end }}
   {{- if .Values.proxy.ingress.tls.enabled }}
   tls:
     - hosts:
