@@ -37,9 +37,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 POSTGRES_USER = urllib.parse.quote_plus(
-    os.environ.get("POSTGRES_USER"))
+    str(os.environ.get("POSTGRES_USER")))
 POSTGRES_PASSWORD = urllib.parse.quote_plus(
-    os.environ.get("POSTGRES_PASSWORD"))
+    str(os.environ.get("POSTGRES_PASSWORD")))
 POSTGRES_DATABASE_NAME = os.environ.get("POSTGRES_DATABASE_NAME")
 POSTGRES_HOST = os.environ.get("POSTGRES_HOST", "localhost")
 POSTGRES_PORT = os.environ.get("POSTGRES_PORT", 5432)

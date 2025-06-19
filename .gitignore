@@ -4,3 +4,40 @@ keycloak-extensions-values.yaml
 # kyverno test files
 helm/**/.kyverno/kyverno-test.yaml
 helm/**/.kyverno/manifest.yaml
+
+# Python cache files
+**/__pycache__/
+**/*.py[cod]
+**/*$py.class
+
+# Distribution / packaging
+**/*.egg-info/
+**/dist/
+**/build/
+
+# Pytest artifacts
+**/.pytest_cache/
+**/.coverage
+**/htmlcov/
+**/.tox/
+**/coverage.xml
+**/*.cover
+
+# Virtual environments
+.env
+.venv/
+**/.venv/
+**/env/
+**/venv/
+**/.env/
+**/ENV/
+
+# Database files
+*.sqlite
+**/*.sqlite
+
+# IDE specific files
+**/.idea/
+**/.vscode/
+**/*.swp
+**/*.swo

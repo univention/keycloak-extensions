@@ -87,6 +87,7 @@ smtp:
       keyMapping:
         password: null
 
+
 handler:
   enabled: true
   ## Global values
@@ -216,6 +217,8 @@ handler:
     captchaProtectionEnable: "False"
     # -- Whether to enable email notification to users on New Device Login
     newDeviceLoginNotificationEnable: "True"
+    # -- Timezone for email notifications (see pytz.all_timezones of python library pytz)
+    emailNotificationTimezone: "UTC"
     # -- Email to send emails from
     mailFrom: "univention@example.org"
     # -- Subject for email notification to users on New Device Login
@@ -255,6 +258,7 @@ handler:
     enabled: false
     # -- Additional custom annotations to add to service.
     additionalAnnotations: {}
+    ports: {}
 
 proxy:
   enabled: true

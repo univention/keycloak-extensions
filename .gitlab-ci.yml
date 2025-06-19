@@ -3,7 +3,7 @@
 
 ---
 include:
-  - project: "univention/customers/dataport/upx/common-ci"
+  - project: "univention/dev/nubus-for-k8s/common-ci"
     ref: "main"
     file:
       - "defaults/stages.yaml"
@@ -70,6 +70,13 @@ lint-helm-chart:
     - helm repo add bitnami https://charts.bitnami.com/bitnami
     - helm dependency build helm/keycloak-extensions
     - helm lint helm/keycloak-extensions --strict
+
+unit-tests:
+  image: gitregistry.knut.univention.de/univention/dev/projects/keycloak/keycloak-extensions/keycloak-handler:${RELEASE_VERSION}
+  stage: "test"
+  script:
+    - pip install -r tests/requirements.txt
+    - pytest -vv tests/handler
 
 # TODO: this needs to be refactored. It started failing today
 # tests:

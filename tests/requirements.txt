@@ -1,0 +1,4 @@
+-r ../handler/requirements.txt
+# Testing dependencies with fixed versions
+pytest==8.4.0
+mock==5.1.0

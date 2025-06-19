@@ -20,10 +20,11 @@ A Helm chart for Kubernetes with its extensions
 | global.nubusDeployment | bool | `false` | Indicates wether this chart is part of a Nubus deployment. |
 | handler.additionalAnnotations | object | `{}` | Additional custom annotations to add to deployments. |
 | handler.affinity | object | `{}` |  |
-| handler.appConfig | object | `{"autoExpireRuleInMins":1,"captchaProtectionEnable":"False","deviceProtectionEnable":"True","eventsRetentionPeriod":1,"failedAttemptsForCaptchaTrigger":3,"failedAttemptsForDeviceBlock":5,"failedAttemptsForIpBlock":7,"ipProtectionEnable":"True","logLevel":"DEBUG","mailFrom":"univention@example.org","newDeviceLoginNotificationEnable":"True","newDeviceLoginSubject":"New device login"}` | Application configuration of the handler |
+| handler.appConfig | object | `{"autoExpireRuleInMins":1,"captchaProtectionEnable":"False","deviceProtectionEnable":"True","emailNotificationTimezone":"UTC","eventsRetentionPeriod":1,"failedAttemptsForCaptchaTrigger":3,"failedAttemptsForDeviceBlock":5,"failedAttemptsForIpBlock":7,"ipProtectionEnable":"True","logLevel":"DEBUG","mailFrom":"univention@example.org","newDeviceLoginNotificationEnable":"True","newDeviceLoginSubject":"New device login"}` | Application configuration of the handler |
 | handler.appConfig.autoExpireRuleInMins | int | `1` | Minutes to automatically expire actions such as IP and device blocks and reCaptcha prompt |
 | handler.appConfig.captchaProtectionEnable | string | `"False"` | Whether to enable reCaptcha prompting protection |
 | handler.appConfig.deviceProtectionEnable | string | `"True"` | Whether to enable device blocking |
+| handler.appConfig.emailNotificationTimezone | string | `"UTC"` | Timezone for email notifications (see pytz.all_timezones of python library pytz) |
 | handler.appConfig.eventsRetentionPeriod | int | `1` | Minutes to buffer Keycloak events locally, allowing to persist more than the configured in Keycloak |
 | handler.appConfig.failedAttemptsForCaptchaTrigger | int | `3` | Number of failed login attempts within the minutes of `eventsRetentionPeriod` to enforce reCaptcha prompt |
 | handler.appConfig.failedAttemptsForDeviceBlock | int | `5` | Number of failed login attempts within the minutes of `eventsRetentionPeriod` to trigger a device block. Should be greater than `failedAttemptsForCaptchaTrigger` if it is enabled |
@@ -78,6 +79,7 @@ A Helm chart for Kubernetes with its extensions
 | handler.securityContext.seccompProfile.type | string | `"RuntimeDefault"` |  |
 | handler.service.additionalAnnotations | object | `{}` | Additional custom annotations to add to service. |
 | handler.service.enabled | bool | `false` |  |
+| handler.service.ports | object | `{}` |  |
 | handler.serviceAccount.annotations | object | `{}` |  |
 | handler.serviceAccount.automountServiceAccountToken | bool | `false` |  |
 | handler.serviceAccount.create | bool | `true` |  |

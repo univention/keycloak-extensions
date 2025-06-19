@@ -43,5 +43,6 @@ data:
   SMTP_SSL_ENABLED: {{ .Values.smtp.connection.ssl | quote }}
   SMTP_STARTTLS_ENABLED: {{ .Values.smtp.connection.starttls | quote }}
   MAIL_FROM: "{{ .Values.handler.appConfig.mailFrom }}"
+  EMAIL_TIMEZONE: "{{ .Values.handler.appConfig.emailNotificationTimezone }}"
 
 ...

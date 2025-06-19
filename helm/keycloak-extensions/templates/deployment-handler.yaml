@@ -152,5 +152,3 @@ spec:
           {{- if .Values.handler.lifecycleHooks }}
           lifecycle: {{- include "common.tplvalues.render" (dict "value" .Values.handler.lifecycleHooks "context" $) | nindent 12 }}
           {{- end }}
-
-...

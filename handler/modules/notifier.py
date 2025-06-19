@@ -32,6 +32,7 @@
 import logging
 import os
 
+import pytz
 from database import session
 from keycloak.exceptions import KeycloakGetError
 from models.device import Device
@@ -56,6 +57,18 @@ class Notifier:
                 "NEW_DEVICE_LOGIN_NOTIFICATION_ENABLE", "true").lower()
             == "true"
         )
+
+        # Get timezone from environment variable
+        email_timezone = os.environ.get("EMAIL_TIMEZONE", "UTC")
+        try:
+            self.timezone = pytz.timezone(email_timezone)
+            self.timezone_name = email_timezone
+        except pytz.exceptions.UnknownTimeZoneError:
+            self.logger.warning(
+                f"Unknown timezone '{email_timezone}'. Falling back to UTC."
+            )
+            self.timezone = pytz.timezone("UTC")
+            self.timezone_name = "UTC"
 
     def notify_user(self, user_id: str, details: dict):
         user_email = self.keycloak.get_user_email(user_id)
@@ -83,10 +96,18 @@ class Notifier:
 
         for new_login in new_logins:
             try:
+                # Format time with timezone info
+                created_at = new_login.created_at
+                if hasattr(created_at, 'astimezone'):
+                    # Use the timezone and timezone_name set in the constructor
+                    localized_time = created_at.astimezone(self.timezone)
+                    created_at = f"{localized_time.strftime('%Y-%m-%d %H:%M:%S')} ({self.timezone_name})"
+                else:
+                    created_at = str(created_at)
                 self.notify_user(
                     new_login.user_id,
                     {
-                        "Time": new_login.created_at,
+                        "Time": created_at,
                         "Device ID": new_login.keycloak_device_id,
                         "Fingerprint": new_login.fingerprint_device_id,
                     },

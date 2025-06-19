@@ -13,6 +13,7 @@ an IP, a device or enforcing reCaptcha. The handler does the following:
 
 #### Configuration values
 
+- `EMAIL_TIMEZONE`: Timezone to be used in login notification emails (default: UTC).
 - `KC_AUTH_URL`: URL for Keycloak admin authentication, usually `http://keycloak:8080/admin`.
 - `KC_USER`: user for the realm.
 - `KC_PASS`: password for the provided user.

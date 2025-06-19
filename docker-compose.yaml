@@ -3,6 +3,21 @@
 
 version: "3.7"
 services:
+  # Environment of the pre-commit linter.
+  pre-commit:
+    profiles:
+      - test
+    image: gitregistry.knut.univention.de/univention/customers/dataport/upx/container-pre-commit/upx-pre-commit:latest
+    volumes:
+      - type: bind
+        source: .
+        target: /code
+      - type: volume
+        # pre-commit installs dependencies, having them cached speeds things up
+        # a lot.
+        source: pre-commit-cache
+        target: /cache
+
   keycloak:
     # Test Keycloak instance already configured according to README.md
     container_name: keycloak
@@ -105,7 +120,7 @@ services:
     # A non configured instance of Keycloak for development.
     container_name: keycloak-dev
     image: keycloak
-    profiles: ["development"]
+    profiles: [ "development" ]
     build:
       context: ./keycloak
       args:
@@ -129,7 +144,7 @@ services:
     # Test suite to run end-to-end tests
     container_name: e2e-tests
     image: e2e-tests:develop
-    profiles: ["test"]
+    profiles: [ "test" ]
     init: true # https://playwright.dev/docs/ci#docker
     build: ./tests/e2e
     depends_on:
