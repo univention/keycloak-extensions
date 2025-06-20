@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.19.0](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/compare/v0.18.0...v0.19.0) (2025-06-20)
+
+
+### Features
+
+* email login notice contains configurable timezone ([451280e](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/commit/451280e3c827e75466de3777e787a7fb60021b5c)), closes [[secure]/dev/internal/team-nubus#1163](https://git.knut.[secure].de/[secure]/dev/internal/team-nubus/issues/1163)
+
 ## [0.18.0](https://git.knut.[secure].de/[secure]/components/keycloak-extensions/compare/v0.17.0...v0.18.0) (2025-05-11)
 
 
