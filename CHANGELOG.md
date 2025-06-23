@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.19.1](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/compare/v0.19.0...v0.19.1) (2025-06-23)
+
+
+### Bug Fixes
+
+* bump umc-base-image version ([6fcc0aa](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/commit/6fcc0aa5490d31697ea822d8a3a6198c5efa4891)), closes [[secure]/dev/internal/team-nubus#1263](https://git.knut.[secure].de/[secure]/dev/internal/team-nubus/issues/1263)
+
 ## [0.19.0](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/compare/v0.18.0...v0.19.0) (2025-06-20)
 
 
