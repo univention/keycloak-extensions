@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.19.2](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/compare/v0.19.1...v0.19.2) (2025-06-23)
+
+
+### Bug Fixes
+
+* use default cluster ingress class if not defined ([3d908e0](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/commit/3d908e02f200fdc0c0b93dc128b4a0179176bc92)), closes [[secure]/dev/internal/team-nubus#1134](https://git.knut.[secure].de/[secure]/dev/internal/team-nubus/issues/1134)
+
 ## [0.19.1](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/compare/v0.19.0...v0.19.1) (2025-06-23)
 
 
