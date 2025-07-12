@@ -11,7 +11,7 @@ metadata:
   labels:
     {{- $commonLabels := include "common.labels.standard" . | fromYaml }}
     {{- $uiLabels := dict "app.kubernetes.io/name" (printf "%s-handler" (include "common.names.fullname" .)) }}
-    {{- $mergedLabels := merge $uiLabels $commonLabels}}
+    {{- $mergedLabels := merge $uiLabels $commonLabels }}
     {{- toYaml $mergedLabels | nindent 4 }}
     {{- if .Values.handler.additionalLabels }}
     {{- include "common.tplvalues.render" ( dict "value" .Values.handler.additionalLabels "context" . ) | nindent 4 }}

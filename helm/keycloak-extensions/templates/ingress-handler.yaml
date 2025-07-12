@@ -11,7 +11,7 @@ metadata:
   labels:
     {{- $commonLabels := include "common.labels.standard" . | fromYaml }}
     {{- $uiLabels := dict "app.kubernetes.io/name" (printf "%s-handler" (include "common.names.fullname" .)) }}
-    {{- $mergedLabels := merge $uiLabels $commonLabels}}
+    {{- $mergedLabels := merge $uiLabels $commonLabels }}
     {{- toYaml $mergedLabels | nindent 4 }}
   annotations:
     {{- with .Values.handler.ingress.annotations }}
@@ -21,7 +21,7 @@ metadata:
     cert-manager.io/{{ .Values.handler.ingress.certManager.issuerRef.kind | kebabcase }}: "{{ coalesce .Values.global.certManagerIssuer .Values.handler.ingress.certManager.issuerRef.name }}"
     {{- end }}
 spec:
-  ingressClassName: {{ include "keycloak-extensions.ingress.ingressClassName" .}}
+  ingressClassName: {{ include "keycloak-extensions.ingress.ingressClassName" . }}
   {{- if .Values.handler.ingress.tls.enabled }}
   tls:
     - hosts:

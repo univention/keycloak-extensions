@@ -11,7 +11,7 @@ metadata:
   labels:
     {{- $commonLabels := include "common.labels.standard" . | fromYaml }}
     {{- $uiLabels := dict "app.kubernetes.io/name" (printf "%s-proxy" (include "common.names.fullname" .)) }}
-    {{- $mergedLabels := merge $uiLabels $commonLabels}}
+    {{- $mergedLabels := merge $uiLabels $commonLabels }}
     {{- toYaml $mergedLabels | nindent 4 }}
   {{- if .Values.proxy.service.additionalAnnotations }}
   annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.proxy.service.additionalAnnotations "context" . ) | nindent 4 }}
@@ -37,7 +37,7 @@ spec:
   selector:
     {{- $commonLabels := include "common.labels.matchLabels" . | fromYaml }}
     {{- $uiLabels := dict "app.kubernetes.io/name" (printf "%s-proxy" (include "common.names.fullname" .)) }}
-    {{- merge $uiLabels $commonLabels | toYaml | nindent 4}}
+    {{- merge $uiLabels $commonLabels | toYaml | nindent 4 }}
 
 ...
 {{- end }}
