@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.20.0](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/compare/v0.19.2...v0.20.0) (2025-07-17)
+
+
+### Features
+
+* update ucs-base to 5.2.2-build.20250714 ([7d2506e](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/commit/7d2506e59a58c67f29c8c0de28ea3498eef28adf)), closes [[secure]/dev/internal/team-nubus#1320](https://git.knut.[secure].de/[secure]/dev/internal/team-nubus/issues/1320)
+
 ## [0.19.2](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/compare/v0.19.1...v0.19.2) (2025-06-23)
 
 
