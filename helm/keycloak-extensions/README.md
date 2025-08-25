@@ -10,7 +10,7 @@ A Helm chart for Kubernetes with its extensions
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://charts.bitnami.com/bitnami | common | ^2.x.x |
+| oci://docker.io/bitnamicharts | common | ^2.x.x |
 
 ## Values
 
