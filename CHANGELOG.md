@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.21.0](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/compare/v0.20.0...v0.21.0) (2025-08-26)
+
+
+### Features
+
+* upgrade bitnami charts ([cd6af7f](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/commit/cd6af7fcf3915308c5f495aed06e6a696ae3010d)), closes [[secure]/dev/internal/team-nubus#1406](https://git.knut.[secure].de/[secure]/dev/internal/team-nubus/issues/1406)
+
 ## [0.20.0](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/compare/v0.19.2...v0.20.0) (2025-07-17)
 
 
