@@ -33,3 +33,28 @@ proxy:
     ingressClassName: "linting-ingress"
     tls:
       secretName: "linting-secret"
+
+handler:
+  service:
+    enabled: true
+    type: "ClusterIP"
+    # -- Additional custom annotations to add to service.
+    additionalAnnotations: {}
+    ports:
+      http:
+        containerPort: 8181
+        port: 8181
+        protocol: "TCP"
+
+    sessionAffinity:
+      enabled: false
+      timeoutSeconds: 10800
+
+smtp:
+  auth:
+    username: "TestUser"
+    password: ""
+    existingSecret:
+      name: "Test"
+      keyMapping:
+        password: null

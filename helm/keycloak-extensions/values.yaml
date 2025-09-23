@@ -19,6 +19,12 @@ global:
       host: ""
       port: ""
 
+# -- Annotations being applied to all resources.
+additionalAnnotations: {}
+
+# -- Additional custom labels being applied to all resources.
+additionalLabels: {}
+
 # -- PostgreSQL settings.
 postgresql:
   # -- Connection parameters.
@@ -117,7 +123,6 @@ handler:
       type: RuntimeDefault
   tolerations: []
   # -- Additional custom annotations to add to deployments.
-  additionalAnnotations: {}
   serviceAccount:
     # Specifies whether a service account should be created
     create: true
@@ -263,7 +268,6 @@ handler:
   service:
     enabled: false
     # -- Additional custom annotations to add to service.
-    additionalAnnotations: {}
     ports: {}
 
 proxy:
@@ -287,8 +291,6 @@ proxy:
     seccompProfile:
       type: RuntimeDefault
   tolerations: []
-  # -- Additional custom annotations to add to deployments.
-  additionalAnnotations: {}
   serviceAccount:
     # Specifies whether a service account should be created
     create: true
@@ -438,8 +440,7 @@ proxy:
   service:
     enabled: true
     type: "ClusterIP"
-    # -- Additional custom annotations to add to service.
-    additionalAnnotations: {}
+
     ports:
       http:
         containerPort: 8181

@@ -9,16 +9,12 @@ metadata:
   name: {{ printf "%s-handler" (include "common.names.fullname" .) }}
   namespace: {{ include "common.names.namespace" . | quote }}
   labels:
-    {{- $commonLabels := include "common.labels.standard" . | fromYaml }}
-    {{- $uiLabels := dict "app.kubernetes.io/name" (printf "%s-handler" (include "common.names.fullname" .)) }}
-    {{- $mergedLabels := merge $uiLabels $commonLabels }}
-    {{- toYaml $mergedLabels | nindent 4 }}
-    {{- if .Values.handler.additionalLabels }}
-    {{- include "common.tplvalues.render" ( dict "value" .Values.handler.additionalLabels "context" . ) | nindent 4 }}
-    {{- end }}
-  {{- if .Values.handler.additionalAnnotations }}
-  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.handler.additionalAnnotations "context" . ) | nindent 4 }}
-  {{- end }}
+    {{- include "common.labels.standard" ( dict "customLabels" .Values.additionalLabels "context" . ) | nindent 4 }}
+  {{- include "nubus-common.annotations.render" ( dict
+    "values" ( list .Values.additionalAnnotations )
+    "context" . )
+    | nindent 2 }}
+
 data:
   KC_AUTH_URL: {{ include "keycloak-extensions.keycloak.connection.authUrl" . | quote }}
   KC_REALM:  {{ include "keycloak-extensions.keycloak.auth.realm" . | quote }}

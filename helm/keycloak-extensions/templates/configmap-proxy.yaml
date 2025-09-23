@@ -8,16 +8,11 @@ metadata:
   name: {{ printf "%s-proxy" (include "common.names.fullname" .) }}
   namespace: {{ include "common.names.namespace" . | quote }}
   labels:
-    {{- $commonLabels := include "common.labels.standard" . | fromYaml }}
-    {{- $uiLabels := dict "app.kubernetes.io/name" (printf "%s-proxy" (include "common.names.fullname" .)) }}
-    {{- $mergedLabels := merge $uiLabels $commonLabels }}
-    {{- toYaml $mergedLabels | nindent 4 }}
-    {{- if .Values.proxy.additionalLabels }}
-    {{- include "common.tplvalues.render" ( dict "value" .Values.proxy.additionalLabels "context" . ) | nindent 4 }}
-    {{- end }}
-  {{- if .Values.proxy.additionalAnnotations }}
-  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.proxy.additionalAnnotations "context" . ) | nindent 4 }}
-  {{- end }}
+    {{- include "common.labels.standard" ( dict "customLabels" .Values.additionalLabels "context" . ) | nindent 4 }}
+  {{- include "nubus-common.annotations.render" ( dict
+    "values" ( list .Values.additionalAnnotations )
+    "context" . )
+    | nindent 2 }}
 data:
   KEYCLOAK_URL: {{ include "keycloak-extensions.keycloak.connection.baseUrl" . | quote }}
   KC_AUTH_URL: {{ include "keycloak-extensions.keycloak.connection.authUrl" . | quote }}
@@ -46,9 +41,11 @@ metadata:
     {{- if .Values.proxy.additionalLabels }}
     {{- include "common.tplvalues.render" ( dict "value" .Values.proxy.additionalLabels "context" . ) | nindent 4 }}
     {{- end }}
-  {{- if .Values.proxy.additionalAnnotations }}
-  annotations: {{- include "common.tplvalues.render" ( dict "value" .Values.proxy.additionalAnnotations "context" . ) | nindent 4 }}
-  {{- end }}
+  {{- include "nubus-common.annotations.render" ( dict
+    "values" ( list .Values.additionalAnnotations )
+    "context" . )
+    | nindent 2 }}
+
 data:
   rootca.pem: |-
 {{ .Values.postgresql.connection.customca | indent 4 }}

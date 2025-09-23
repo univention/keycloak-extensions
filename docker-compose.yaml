@@ -4,19 +4,6 @@
 version: "3.7"
 services:
   # Environment of the pre-commit linter.
-  pre-commit:
-    profiles:
-      - test
-    image: gitregistry.knut.univention.de/univention/customers/dataport/upx/container-pre-commit/upx-pre-commit:latest
-    volumes:
-      - type: bind
-        source: .
-        target: /code
-      - type: volume
-        # pre-commit installs dependencies, having them cached speeds things up
-        # a lot.
-        source: pre-commit-cache
-        target: /cache
 
   keycloak:
     # Test Keycloak instance already configured according to README.md
@@ -163,3 +150,33 @@ services:
     command: "-c helm"
     volumes:
       - ./helm:/helm-docs/helm
+
+  test-helm:
+    image: "gitregistry.knut.univention.de/univention/dev/nubus-for-k8s/common-helm/testrunner:0.24.2"
+    pull_policy: "if_not_present"
+    command: "pytest tests/"
+    profiles:
+      - "test"
+    volumes:
+      - "./helm/:/app/helm/"
+      - "./helm-unittests/:/app/tests"
+
+  pre-commit:
+    profiles:
+      - "pre-commit"
+    image: gitregistry.knut.univention.de/univention/dev/tooling/pre-commit/upx-pre-commit:${IMAGE_TAG:-latest}
+    volumes:
+      - type: bind
+        source: .
+        target: /code
+      - type: volume
+        # pre-commit installs dependencies, having them cached speeds things up
+        # a lot.
+        source: pre-commit-cache
+        target: /cache
+
+volumes:
+  pre-commit-cache:
+
+
+...

@@ -9,14 +9,11 @@ kind: Ingress
 metadata:
   name: {{ printf "%s-handler" (include "common.names.fullname" .) }}
   labels:
-    {{- $commonLabels := include "common.labels.standard" . | fromYaml }}
-    {{- $uiLabels := dict "app.kubernetes.io/name" (printf "%s-handler" (include "common.names.fullname" .)) }}
-    {{- $mergedLabels := merge $uiLabels $commonLabels }}
-    {{- toYaml $mergedLabels | nindent 4 }}
-  annotations:
-    {{- with .Values.handler.ingress.annotations }}
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
+    {{- include "common.labels.standard" ( dict "customLabels" .Values.additionalLabels "context" . ) | nindent 4 }}
+  {{- include "nubus-common.annotations.render" ( dict
+  "values" ( list .Values.additionalAnnotations .Values.proxy.ingress.annotations )
+  "context" . )
+  | nindent 2 }}
     {{- if .Values.handler.ingress.certManager.enabled }}
     cert-manager.io/{{ .Values.handler.ingress.certManager.issuerRef.kind | kebabcase }}: "{{ coalesce .Values.global.certManagerIssuer .Values.handler.ingress.certManager.issuerRef.name }}"
     {{- end }}

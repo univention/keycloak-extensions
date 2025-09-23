@@ -10,7 +10,7 @@ A Helm chart for Kubernetes with its extensions
 
 | Repository | Name | Version |
 |------------|------|---------|
-| oci://docker.io/bitnamicharts | common | ^2.x.x |
+| oci://artifacts.software-univention.de/nubus/charts | nubus-common | 0.24.2 |
 
 ## Values
 
@@ -21,7 +21,6 @@ A Helm chart for Kubernetes with its extensions
 | global.imagePullSecrets | list | `[]` | Global image pull secrets |
 | global.imageRegistry | string | `""` | Global image registry |
 | global.nubusDeployment | bool | `false` | Indicates wether this chart is part of a Nubus deployment. |
-| handler.additionalAnnotations | object | `{}` | Additional custom annotations to add to deployments. |
 | handler.affinity | object | `{}` |  |
 | handler.appConfig | object | `{"autoExpireRuleInMins":1,"captchaProtectionEnable":"False","deviceProtectionEnable":"True","emailNotificationTimezone":"UTC","eventsRetentionPeriod":1,"failedAttemptsForCaptchaTrigger":3,"failedAttemptsForDeviceBlock":5,"failedAttemptsForIpBlock":7,"ipProtectionEnable":"True","logLevel":"DEBUG","mailFrom":"univention@example.org","newDeviceLoginNotificationEnable":"True","newDeviceLoginSubject":"New device login"}` | Application configuration of the handler |
 | handler.appConfig.autoExpireRuleInMins | int | `1` | Minutes to automatically expire actions such as IP and device blocks and reCaptcha prompt |
@@ -80,14 +79,10 @@ A Helm chart for Kubernetes with its extensions
 | handler.securityContext.runAsNonRoot | bool | `true` |  |
 | handler.securityContext.runAsUser | int | `1000` |  |
 | handler.securityContext.seccompProfile.type | string | `"RuntimeDefault"` |  |
-| handler.service.additionalAnnotations | object | `{}` | Additional custom annotations to add to service. |
 | handler.service.enabled | bool | `false` |  |
-| handler.service.ports | object | `{}` |  |
-| handler.serviceAccount.annotations | object | `{}` |  |
-| handler.serviceAccount.automountServiceAccountToken | bool | `false` |  |
-| handler.serviceAccount.create | bool | `true` |  |
+| handler.service.ports | object | `{}` | Additional custom annotations to add to service. |
+| handler.serviceAccount | object | `{"annotations":{},"automountServiceAccountToken":false,"create":true,"labels":{},"name":""}` | Additional custom annotations to add to deployments. |
 | handler.serviceAccount.labels | object | `{}` | Additional custom labels for the ServiceAccount. |
-| handler.serviceAccount.name | string | `""` |  |
 | handler.startupProbe.command | string | `"exit 0\n"` |  |
 | handler.startupProbe.enabled | bool | `true` |  |
 | handler.startupProbe.failureThreshold | int | `15` |  |
@@ -114,7 +109,6 @@ A Helm chart for Kubernetes with its extensions
 | postgresql.connection.pathCA | string | `"/etc/ssl/certs/rootca.pem"` | Path to CA |
 | postgresql.connection.port | string | `""` | PostgreSQL port. |
 | postgresql.connection.ssl | string | `"false"` | PostgreSQL SSL flag |
-| proxy.additionalAnnotations | object | `{}` | Additional custom annotations to add to deployments. |
 | proxy.affinity | object | `{}` |  |
 | proxy.appConfig | object | `{"captcha":{"captchaSecretKey":"some_secret_key","captchaSiteKey":"some_site_key","existingSecret":{"keyMapping":{"secret_key":null,"site_key":null},"name":""}},"logLevel":"debug"}` | Application configuration of the proxy |
 | proxy.appConfig.captcha | object | `{"captchaSecretKey":"some_secret_key","captchaSiteKey":"some_site_key","existingSecret":{"keyMapping":{"secret_key":null,"site_key":null},"name":""}}` | The Google reCaptcha v2 site key generated from [their admin site](https://www.google.com/recaptcha/admin/) |
@@ -163,7 +157,6 @@ A Helm chart for Kubernetes with its extensions
 | proxy.securityContext.runAsNonRoot | bool | `true` |  |
 | proxy.securityContext.runAsUser | int | `1000` |  |
 | proxy.securityContext.seccompProfile.type | string | `"RuntimeDefault"` |  |
-| proxy.service.additionalAnnotations | object | `{}` | Additional custom annotations to add to service. |
 | proxy.service.enabled | bool | `true` |  |
 | proxy.service.ports.http.containerPort | int | `8181` |  |
 | proxy.service.ports.http.port | int | `8181` |  |
