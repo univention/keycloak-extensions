@@ -6,6 +6,12 @@
 global:
   # -- Indicates wether this chart is part of a Nubus deployment.
   nubusDeployment: false
+  # -- Global image registry
+  imageRegistry: ""
+  # -- Global image pull policy
+  imagePullPolicy: ""
+  # -- Global image pull secrets
+  imagePullSecrets: []
   keycloak:
     realm: ""
   postgresql:
@@ -136,7 +142,7 @@ handler:
   ## @param handler.livenessProbe.command Command for the livenessProbe
   ##
   livenessProbe:
-    enabled: false
+    enabled: true
     initialDelaySeconds: 30
     periodSeconds: 10
     timeoutSeconds: 5
@@ -153,7 +159,7 @@ handler:
   ## @param handler.readinessProbe.command Command for the readinessProbe
   ##
   readinessProbe:
-    enabled: false
+    enabled: true
     initialDelaySeconds: 5
     periodSeconds: 10
     timeoutSeconds: 5
@@ -170,7 +176,7 @@ handler:
   ## @param handler.startupProbe.command Command for the startupProbe
   ##
   startupProbe:
-    enabled: false
+    enabled: true
     initialDelaySeconds: 30
     periodSeconds: 10
     timeoutSeconds: 1
@@ -306,7 +312,7 @@ proxy:
   ## @param proxy.livenessProbe.successThreshold Success threshold for livenessProbe
   ##
   livenessProbe:
-    enabled: false
+    enabled: true
     initialDelaySeconds: 30
     periodSeconds: 10
     timeoutSeconds: 5
@@ -320,7 +326,7 @@ proxy:
   ## @param proxy.readinessProbe.successThreshold Success threshold for readinessProbe
   ##
   readinessProbe:
-    enabled: false
+    enabled: true
     initialDelaySeconds: 5
     periodSeconds: 10
     timeoutSeconds: 5
@@ -334,7 +340,7 @@ proxy:
   ## @param proxy.startupProbe.successThreshold Success threshold for startupProbe
   ##
   startupProbe:
-    enabled: false
+    enabled: true
     initialDelaySeconds: 30
     periodSeconds: 10
     timeoutSeconds: 1

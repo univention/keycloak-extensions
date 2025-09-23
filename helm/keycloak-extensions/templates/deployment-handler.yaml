@@ -51,10 +51,16 @@ spec:
       securityContext:
         {{ toYaml . | nindent 8 | trim }}
       {{- end }}
-      {{- if .Values.handler.imagePullSecrets }}
+      {{- if or .Values.handler.imagePullSecrets .Values.global.imagePullSecrets }}
       imagePullSecrets:
+        {{- if .Values.handler.imagePullSecrets }}
         {{- range .Values.handler.imagePullSecrets }}
         - name: "{{ . }}"
+        {{- end }}
+        {{- else if .Values.global.imagePullSecrets }}
+        {{- range .Values.global.imagePullSecrets }}
+        - name: "{{ . }}"
+        {{- end }}
         {{- end }}
       {{- end }}
       {{- if .Values.handler.serviceAccount.create }}
@@ -67,8 +73,8 @@ spec:
         - name: "keycloak-bfp-handler"
           securityContext:
             {{- toYaml .Values.handler.securityContext | nindent 12 }}
-          image: "{{ .Values.handler.image.registry }}/{{ .Values.handler.image.repository }}{{ if .Values.handler.image.sha256 }}@sha256:{{ .Values.handler.image.sha256 }}{{ else }}:{{ .Values.handler.image.tag }}{{ end }}"
-          imagePullPolicy: {{ .Values.handler.image.imagePullPolicy }}
+          image: "{{ .Values.global.imageRegistry | default .Values.handler.image.registry }}/{{ .Values.handler.image.repository }}{{ if .Values.handler.image.sha256 }}@sha256:{{ .Values.handler.image.sha256 }}{{ else }}:{{ .Values.handler.image.tag }}{{ end }}"
+          imagePullPolicy: {{ .Values.global.imagePullPolicy | default .Values.handler.image.imagePullPolicy }}
           envFrom:
             - configMapRef:
                 name: {{ printf "%s-handler" (include "common.names.fullname" .) }}

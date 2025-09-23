@@ -1,27 +1,13 @@
 # SPDX-License-Identifier: AGPL-3.0-only
-# SPDX-FileCopyrightText: 2024-2025 Univention GmbH
+# SPDX-FileCopyrightText: 2025 Univention GmbH
 ---
-# Add service-specific configuration here
-# For example:
-keycloak-extensions:
-  handler:
-    replicaCount: 42
-    livenessProbe:
-      enabled: true
-    readinessProbe:
-      enabled: true
-  proxy:
-    replicaCount: 42
-    livenessProbe:
-      enabled: true
-    readinessProbe:
-      enabled: true
 
-global:
-  imageRegistry: "my_private_registry.domain.tld"
-  imagePullSecrets:
-    - "kyverno-test"
-  imagePullPolicy: "kyverno"
+handler:
+  replicaCount: 42
 
-imagePullSecrets:
-  - "kyverno-test"
+proxy:
+  replicaCount: 42
+  ingress:
+    ingressClassName: "kyverno"
+    tls:
+      secretName: "kyverno-tls"
