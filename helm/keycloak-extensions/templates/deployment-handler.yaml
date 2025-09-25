@@ -68,7 +68,7 @@ spec:
       terminationGracePeriodSeconds: {{ .Values.handler.terminationGracePeriodSeconds }}
       {{- end }}
       containers:
-        - name: "keycloak-bfp-handler"
+        - name: "main"
           securityContext:
             {{- toYaml .Values.handler.securityContext | nindent 12 }}
           image: "{{ .Values.global.imageRegistry | default .Values.handler.image.registry }}/{{ .Values.handler.image.repository }}{{ if .Values.handler.image.sha256 }}@sha256:{{ .Values.handler.image.sha256 }}{{ else }}:{{ .Values.handler.image.tag }}{{ end }}"
@@ -92,12 +92,12 @@ spec:
                   name: {{ tpl .Values.postgresql.auth.existingSecret.name . }}
                   key: {{ include "common.secrets.key" (dict "existingSecret" .Values.postgresql.auth.existingSecret "key" "password") | quote }}
             - name: SMTP_USERNAME
-              value: {{ tpl .Values.smtp.auth.username . }}
+              value: {{ tpl (required "smtp.auth.username is required" .Values.smtp.auth.username) . }}
             - name: SMTP_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "nubus-common.secrets.name" (dict "existingSecret" .Values.smtp.auth.existingSecret "defaultNameSuffix" "smtp-credentials" "context" .) | quote }}
-                  key: {{ include "nubus-common.secrets.key" (dict "existingSecret" .Values.smtp.auth.existingSecret "key" "password") | quote }}
+                  name: {{ include "nubus-common.secrets.name" (dict "existingSecret" .Values.smtp.auth.existingSecret "defaultNameSuffix" "smtp-credentials" "context" .)}}
+                  key: {{ include "nubus-common.secrets.key" (dict "existingSecret" .Values.smtp.auth.existingSecret "key" "password")}}
           {{- if .Values.handler.service.ports }}
           ports:
             {{- range $key, $value := .Values.handler.service.ports }}
