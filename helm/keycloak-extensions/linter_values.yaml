@@ -19,12 +19,9 @@ postgresql:
 
 keycloak:
   auth:
-    username: "linting-adminUsername"
+    username: "stub-values-username"
     realm: "linting-realm"
-    existingSecret:
-      name: "custom-keycloak-credentials"
-      keyMapping:
-        adminPassword: "admin_password"
+    password: "stub-value"
   connection:
     host: "linting-host"
 

@@ -92,9 +92,10 @@ A Helm chart for Kubernetes with its extensions
 | handler.startupProbe.timeoutSeconds | int | `1` |  |
 | handler.terminationGracePeriodSeconds | string | `""` | In seconds, time the given to the pod needs to terminate gracefully. Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods |
 | handler.tolerations | list | `[]` |  |
-| keycloak | object | `{"auth":{"existingSecret":{"keyMapping":{"adminPassword":null},"name":""},"masterRealm":"master","realm":"","username":""},"connection":{"host":""}}` | Keycloak settings. |
+| keycloak | object | `{"auth":{"existingSecret":{"keyMapping":{"adminPassword":null},"name":""},"masterRealm":"master","password":"","realm":"","username":""},"connection":{"host":""}}` | Keycloak settings. |
 | keycloak.auth.existingSecret | object | `{"keyMapping":{"adminPassword":null},"name":""}` | Keycloak password secret reference. |
 | keycloak.auth.masterRealm | string | `"master"` | Keycloak master realm. |
+| keycloak.auth.password | string | `""` | Keycloak password. |
 | keycloak.auth.realm | string | `""` | Keycloak realm. |
 | keycloak.auth.username | string | `""` | Keycloak user. |
 | keycloak.connection | object | `{"host":""}` | Connection parameters. |

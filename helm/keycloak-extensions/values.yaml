@@ -62,13 +62,13 @@ keycloak:
     # -- Keycloak user.
     username: ""
     # -- Keycloak password.
-    # password: ""
+    password: ""
     # -- Keycloak realm.
     realm: ""
     # -- Keycloak master realm.
     masterRealm:
       "master"
-      # -- Keycloak password secret reference.
+    # -- Keycloak password secret reference.
     existingSecret:
       name: ""
       keyMapping:
