@@ -45,7 +45,7 @@ postgresql:
     # -- PostgreSQL database.
     database: ""
     # -- PostgreSQL user password.
-    # password: ""
+    password: ""
     # -- PostgreSQL password secret reference.
     existingSecret:
       name: ""

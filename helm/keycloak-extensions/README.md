@@ -100,9 +100,10 @@ A Helm chart for Kubernetes with its extensions
 | keycloak.auth.username | string | `""` | Keycloak user. |
 | keycloak.connection | object | `{"host":""}` | Connection parameters. |
 | keycloak.connection.host | string | `""` | Keycloak host. |
-| postgresql | object | `{"auth":{"database":"","existingSecret":{"keyMapping":{"password":null},"name":""},"username":""},"connection":{"customca":"","host":"","pathCA":"/etc/ssl/certs/rootca.pem","port":"","ssl":"false"}}` | PostgreSQL settings. |
+| postgresql | object | `{"auth":{"database":"","existingSecret":{"keyMapping":{"password":null},"name":""},"password":"","username":""},"connection":{"customca":"","host":"","pathCA":"/etc/ssl/certs/rootca.pem","port":"","ssl":"false"}}` | PostgreSQL settings. |
 | postgresql.auth.database | string | `""` | PostgreSQL database. |
 | postgresql.auth.existingSecret | object | `{"keyMapping":{"password":null},"name":""}` | PostgreSQL password secret reference. |
+| postgresql.auth.password | string | `""` | PostgreSQL user password. |
 | postgresql.auth.username | string | `""` | PostgreSQL user. |
 | postgresql.connection | object | `{"customca":"","host":"","pathCA":"/etc/ssl/certs/rootca.pem","port":"","ssl":"false"}` | Connection parameters. |
 | postgresql.connection.customca | string | `""` | CustomCA certificate |

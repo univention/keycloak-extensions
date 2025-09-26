@@ -10,12 +10,9 @@ postgresql:
     host: "linting-host"
     port: "linting-port"
   auth:
-    username: "linting-username"
+    username: "stub-values-username"
     database: "linting-database"
-    existingSecret:
-      name: "custom-postgres-credentials"
-      keyMapping:
-        password: "custom-password"
+    password: "stub-value"
 
 keycloak:
   auth:
