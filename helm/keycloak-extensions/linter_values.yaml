@@ -27,6 +27,10 @@ proxy:
     ingressClassName: "linting-ingress"
     tls:
       secretName: "linting-secret"
+  appConfig:
+    captcha:
+      captchaSiteKey: "stub-values-site-key"
+      captchaSecretKey: "stub-values-secret-key"
 
 handler:
   service:
@@ -43,6 +47,9 @@ handler:
     sessionAffinity:
       enabled: false
       timeoutSeconds: 10800
+
+  appConfig:
+    captchaProtectionEnable: true
 
 smtp:
   auth:
