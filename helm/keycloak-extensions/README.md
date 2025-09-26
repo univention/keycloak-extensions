@@ -16,10 +16,12 @@ A Helm chart for Kubernetes with its extensions
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| global | object | `{"imagePullPolicy":"","imagePullSecrets":[],"imageRegistry":"","keycloak":{"realm":""},"nubusDeployment":false,"postgresql":{"connection":{"host":"","port":""}}}` | Global Keycloak Extensions configuration values |
-| global.imagePullPolicy | string | `""` | Global image pull policy |
-| global.imagePullSecrets | list | `[]` | Global image pull secrets |
-| global.imageRegistry | string | `""` | Global image registry |
+| additionalAnnotations | object | `{}` | Annotations being applied to all resources. |
+| additionalLabels | object | `{}` | Additional custom labels being applied to all resources. |
+| global | object | `{"imagePullPolicy":null,"imagePullSecrets":[],"imageRegistry":"artifacts.software-univention.de","keycloak":{"realm":""},"nubusDeployment":false,"postgresql":{"connection":{"host":"","port":""}}}` | Global Keycloak Extensions configuration values |
+| global.imagePullPolicy | string | `nil` | Define an ImagePullPolicy.  Ref.: https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy  "IfNotPresent" => The image is pulled only if it is not already present locally. "Always" => Every time the kubelet launches a container, the kubelet queries the container image registry to             resolve the name to an image digest. If the kubelet has a container image with that exact digest cached             locally, the kubelet uses its cached image; otherwise, the kubelet pulls the image with the resolved             digest, and uses that image to launch the container. "Never" => The kubelet does not try fetching the image. If the image is somehow already present locally, the            kubelet attempts to start the container; otherwise, startup fails. |
+| global.imagePullSecrets | list | `[]` | Credentials to fetch images from private registry. Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/  imagePullSecrets:   - "docker-registry" |
+| global.imageRegistry | string | `"artifacts.software-univention.de"` | Global image registry |
 | global.nubusDeployment | bool | `false` | Indicates wether this chart is part of a Nubus deployment. |
 | handler.affinity | object | `{}` |  |
 | handler.appConfig | object | `{"autoExpireRuleInMins":1,"captchaProtectionEnable":"False","deviceProtectionEnable":"True","emailNotificationTimezone":"UTC","eventsRetentionPeriod":1,"failedAttemptsForCaptchaTrigger":3,"failedAttemptsForDeviceBlock":5,"failedAttemptsForIpBlock":7,"ipProtectionEnable":"True","logLevel":"DEBUG","mailFrom":"univention@example.org","newDeviceLoginNotificationEnable":"True","newDeviceLoginSubject":"New device login"}` | Application configuration of the handler |
@@ -41,8 +43,8 @@ A Helm chart for Kubernetes with its extensions
 | handler.customStartupProbe | object | `{}` |  |
 | handler.enabled | bool | `true` |  |
 | handler.environment | object | `{}` |  |
-| handler.image.imagePullPolicy | string | `"IfNotPresent"` |  |
-| handler.image.registry | string | `"artifacts.software-univention.de"` | Container registry address. |
+| handler.image.pullPolicy | string | `nil` |  |
+| handler.image.registry | string | `nil` | Container registry address. |
 | handler.image.repository | string | `"nubus-dev/images/keycloak-handler"` |  |
 | handler.image.tag | string | `"latest"` |  |
 | handler.imagePullSecrets | list | `[]` | Credentials to fetch images from private registry. Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/  imagePullSecrets:   - "docker-registry" |
@@ -92,6 +94,7 @@ A Helm chart for Kubernetes with its extensions
 | handler.startupProbe.timeoutSeconds | int | `1` |  |
 | handler.terminationGracePeriodSeconds | string | `""` | In seconds, time the given to the pod needs to terminate gracefully. Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod/#termination-of-pods |
 | handler.tolerations | list | `[]` |  |
+| imagePullSecrets | list | `[]` | Credentials to fetch images from private registry. Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/  imagePullSecrets:   - "docker-registry" |
 | keycloak | object | `{"auth":{"existingSecret":{"keyMapping":{"adminPassword":null},"name":""},"masterRealm":"master","password":"","realm":"","username":""},"connection":{"host":""}}` | Keycloak settings. |
 | keycloak.auth.existingSecret | object | `{"keyMapping":{"adminPassword":null},"name":""}` | Keycloak password secret reference. |
 | keycloak.auth.masterRealm | string | `"master"` | Keycloak master realm. |
@@ -120,8 +123,8 @@ A Helm chart for Kubernetes with its extensions
 | proxy.customStartupProbe | object | `{}` |  |
 | proxy.enabled | bool | `true` |  |
 | proxy.environment | object | `{}` |  |
-| proxy.image.imagePullPolicy | string | `"IfNotPresent"` |  |
-| proxy.image.registry | string | `"artifacts.software-univention.de"` | Container registry address. |
+| proxy.image.pullPolicy | string | `nil` |  |
+| proxy.image.registry | string | `nil` | Container registry address. |
 | proxy.image.repository | string | `"nubus-dev/images/keycloak-proxy"` |  |
 | proxy.image.tag | string | `"latest"` |  |
 | proxy.imagePullSecrets | list | `[]` | Credentials to fetch images from private registry. Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/  imagePullSecrets:   - "docker-registry" |

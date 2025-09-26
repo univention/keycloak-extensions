@@ -49,16 +49,13 @@ spec:
       securityContext:
         {{ toYaml . | nindent 8 | trim }}
       {{- end }}
-      {{- if or .Values.handler.imagePullSecrets .Values.global.imagePullSecrets }}
+      {{- if or .Values.imagePullSecrets .Values.global.imagePullSecrets }}
       imagePullSecrets:
-        {{- if .Values.handler.imagePullSecrets }}
-        {{- range .Values.handler.imagePullSecrets }}
-        - name: "{{ . }}"
-        {{- end }}
-        {{- else if .Values.global.imagePullSecrets }}
         {{- range .Values.global.imagePullSecrets }}
         - name: "{{ . }}"
         {{- end }}
+        {{- range .Values.imagePullSecrets }}
+        - name: "{{ . }}"
         {{- end }}
       {{- end }}
       {{- if .Values.handler.serviceAccount.create }}
@@ -71,8 +68,8 @@ spec:
         - name: "main"
           securityContext:
             {{- toYaml .Values.handler.securityContext | nindent 12 }}
-          image: "{{ .Values.global.imageRegistry | default .Values.handler.image.registry }}/{{ .Values.handler.image.repository }}{{ if .Values.handler.image.sha256 }}@sha256:{{ .Values.handler.image.sha256 }}{{ else }}:{{ .Values.handler.image.tag }}{{ end }}"
-          imagePullPolicy: {{ .Values.global.imagePullPolicy | default .Values.handler.image.imagePullPolicy }}
+          image: "{{ .Values.handler.image.registry | default .Values.global.imageRegistry }}/{{ .Values.handler.image.repository }}{{ if .Values.handler.image.sha256 }}@sha256:{{ .Values.handler.image.sha256 }}{{ else }}:{{ .Values.handler.image.tag }}{{ end }}"
+          imagePullPolicy: {{ coalesce .Values.handler.image.pullPolicy .Values.global.imagePullPolicy | quote }}
           envFrom:
             - configMapRef:
                 name: {{ printf "%s-handler" (include "common.names.fullname" .) }}

@@ -7,23 +7,45 @@ global:
   # -- Indicates wether this chart is part of a Nubus deployment.
   nubusDeployment: false
   # -- Global image registry
-  imageRegistry: ""
-  # -- Global image pull policy
-  imagePullPolicy: ""
-  # -- Global image pull secrets
-  imagePullSecrets: []
+  imageRegistry: "artifacts.software-univention.de"
   keycloak:
     realm: ""
   postgresql:
     connection:
       host: ""
       port: ""
+  # -- Credentials to fetch images from private registry.
+  # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  #
+  # imagePullSecrets:
+  #   - "docker-registry"
+  imagePullSecrets: []
+
+  # -- Define an ImagePullPolicy.
+  #
+  # Ref.: https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy
+  #
+  # "IfNotPresent" => The image is pulled only if it is not already present locally.
+  # "Always" => Every time the kubelet launches a container, the kubelet queries the container image registry to
+  #             resolve the name to an image digest. If the kubelet has a container image with that exact digest cached
+  #             locally, the kubelet uses its cached image; otherwise, the kubelet pulls the image with the resolved
+  #             digest, and uses that image to launch the container.
+  # "Never" => The kubelet does not try fetching the image. If the image is somehow already present locally, the
+  #            kubelet attempts to start the container; otherwise, startup fails.
+  imagePullPolicy: null
 
 # -- Annotations being applied to all resources.
 additionalAnnotations: {}
 
 # -- Additional custom labels being applied to all resources.
 additionalLabels: {}
+
+# -- Credentials to fetch images from private registry.
+# Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+#
+# imagePullSecrets:
+#   - "docker-registry"
+imagePullSecrets: []
 
 # -- PostgreSQL settings.
 postgresql:
@@ -243,10 +265,10 @@ handler:
   ## Docker image
   image:
     # -- Container registry address.
-    registry: "artifacts.software-univention.de"
+    registry: null
     repository: "nubus-dev/images/keycloak-handler"
     tag: "latest"
-    imagePullPolicy: "IfNotPresent"
+    pullPolicy: null
 
   # -- Credentials to fetch images from private registry.
   # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
@@ -415,10 +437,10 @@ proxy:
   ## Docker image
   image:
     # -- Container registry address.
-    registry: "artifacts.software-univention.de"
+    registry: null
     repository: "nubus-dev/images/keycloak-proxy"
     tag: "latest"
-    imagePullPolicy: "IfNotPresent"
+    pullPolicy: null
 
   # -- Credentials to fetch images from private registry.
   # Ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
