@@ -79,17 +79,13 @@ unit-tests:
     - pip install -r tests/requirements.txt
     - pytest -vv tests/handler
 
-# TODO: this needs to be refactored. It started failing today
-# tests:
-#   stage: "test"
-#   needs: []
-#   rules:
-#     - if: '$CI_PIPELINE_SOURCE == "schedule"'
-#       when: "never"
-#     - when: "on_success"
-#   trigger:
-#     include: "/.gitlab/ci/tests/docker_tests.yml"
-#     strategy: depend
+chart-tests:
+  image: "gitregistry.knut.univention.de/univention/dev/nubus-for-k8s/common-helm/testrunner:0.27.0"
+  stage: "test"
+  script:
+    - helm dep build helm/keycloak-extensions
+    - pytest -vv helm-unittests
+
 
 check-debian-updates:
   parallel:
