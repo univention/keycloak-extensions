@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.22.0](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/compare/v0.21.2...v0.22.0) (2025-09-29)
+
+
+### Features
+
+* template improvements for kyverno ([54a384c](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/commit/54a384c8d9f26e998ff769746474451a8777be10)), closes [[secure]/dev/internal/team-nubus#1426](https://git.knut.[secure].de/[secure]/dev/internal/team-nubus/issues/1426)
+
 ## [0.21.2](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/compare/v0.21.1...v0.21.2) (2025-09-11)
 
 
