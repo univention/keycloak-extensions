@@ -80,21 +80,21 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ include "nubus-common.secrets.name" (dict "existingSecret" .Values.keycloak.auth.existingSecret "defaultNameSuffix" "keycloak-credentials" "context" .)}}
-                  key: {{ include "nubus-common.secrets.key" (dict "existingSecret" .Values.keycloak.auth.existingSecret "key" "adminPassword")}}
+                  key: {{ include "nubus-common.secrets.key" (dict "existingSecret" .Values.keycloak.auth.existingSecret "key" "adminPassword" "context" .)}}
             - name: POSTGRES_USER
               value: {{ tpl (required "postgresql.auth.username is required" .Values.postgresql.auth.username) . }}
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ include "nubus-common.secrets.name" (dict "existingSecret" .Values.postgresql.auth.existingSecret "defaultNameSuffix" "postgresql-credentials" "context" .)}}
-                  key: {{ include "nubus-common.secrets.key" (dict "existingSecret" .Values.postgresql.auth.existingSecret "key" "password")}}
+                  key: {{ include "nubus-common.secrets.key" (dict "existingSecret" .Values.postgresql.auth.existingSecret "key" "password" "context" .)}}
             - name: SMTP_USERNAME
               value: {{ tpl (required "smtp.auth.username is required" .Values.smtp.auth.username) . }}
             - name: SMTP_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: {{ include "nubus-common.secrets.name" (dict "existingSecret" .Values.smtp.auth.existingSecret "defaultNameSuffix" "smtp-credentials" "context" .)}}
-                  key: {{ include "nubus-common.secrets.key" (dict "existingSecret" .Values.smtp.auth.existingSecret "key" "password")}}
+                  key: {{ include "nubus-common.secrets.key" (dict "existingSecret" .Values.smtp.auth.existingSecret "key" "password" "context" .)}}
           {{- if .Values.handler.service.ports }}
           ports:
             {{- range $key, $value := .Values.handler.service.ports }}
