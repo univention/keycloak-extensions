@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.23.0](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/compare/v0.22.0...v0.23.0) (2025-10-15)
+
+
+### Features
+
+* adjust to common behavior / add tests for labels and image configuration ([b99a4bb](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/commit/b99a4bbdfe86841dd61d23be7e449a0eadd39a67)), closes [[secure]/dev/internal/team-nubus#1398](https://git.knut.[secure].de/[secure]/dev/internal/team-nubus/issues/1398)
+* generate captcha secret / add tests on secrets ([ebedbdc](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/commit/ebedbdc71d8015c4fdcbfdabe7b3fd28a873e169)), closes [[secure]/dev/internal/team-nubus#1398](https://git.knut.[secure].de/[secure]/dev/internal/team-nubus/issues/1398)
+* generate keycloak secret / add tests on secrets ([c7e8dc8](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/commit/c7e8dc801021cfa48f5a4dc2ce24d71935baee2c)), closes [[secure]/dev/internal/team-nubus#1398](https://git.knut.[secure].de/[secure]/dev/internal/team-nubus/issues/1398)
+* generate postgresql secret / add tests on secrets ([baf6a9e](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/commit/baf6a9e7bdde69c9fa1af94ef1189a3ab47c69a3)), closes [[secure]/dev/internal/team-nubus#1398](https://git.knut.[secure].de/[secure]/dev/internal/team-nubus/issues/1398)
+* generate smtp secret / add tests on secrets ([efea83b](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/commit/efea83b5f0e4f261e27a85a767c39a3ef8e6c07f)), closes [[secure]/dev/internal/team-nubus#1398](https://git.knut.[secure].de/[secure]/dev/internal/team-nubus/issues/1398)
+* replace additional component annotations with global ones and add chart test ([9de3fd8](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/commit/9de3fd8a886935e46b16862b2e79f3e3e217974c)), closes [[secure]/dev/internal/team-nubus#1398](https://git.knut.[secure].de/[secure]/dev/internal/team-nubus/issues/1398)
+
+
+### Bug Fixes
+
+* correct typos in require messages ([5a5ec84](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/commit/5a5ec84cb677fe6f872d17cad3c49c13c55b8904)), closes [[secure]/dev/internal/team-nubus#1398](https://git.knut.[secure].de/[secure]/dev/internal/team-nubus/issues/1398)
+
 ## [0.22.0](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/compare/v0.21.2...v0.22.0) (2025-09-29)
 
 
