@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.23.1](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/compare/v0.23.0...v0.23.1) (2025-11-04)
+
+
+### Bug Fixes
+
+* **deps:** Update gitregistry.knut.[secure].de/[secure]/dev/projects/ucs-base-image/ucs-base Docker tag to v5.2.3-build.20251030 ([2200385](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/commit/2200385d2a5fa29a068d29297dbac5d09f87dde7)), closes [#0](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/issues/0)
+
 ## [0.23.0](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/compare/v0.22.0...v0.23.0) (2025-10-15)
 
 
