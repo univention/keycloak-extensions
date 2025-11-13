@@ -88,6 +88,9 @@ spec:
                 secretKeyRef:
                   name: {{ include "nubus-common.secrets.name" (dict "existingSecret" .Values.postgresql.auth.existingSecret "defaultNameSuffix" "postgresql-credentials" "context" .)}}
                   key: {{ include "nubus-common.secrets.key" (dict "existingSecret" .Values.postgresql.auth.existingSecret "key" "password" "context" .)}}
+            - name: SMTP_AUTH_ENABLED
+              value: {{ .Values.smtp.auth.enabled | quote }}
+            {{- if .Values.smtp.auth.enabled }}
             - name: SMTP_USERNAME
               value: {{ tpl (required "smtp.auth.username is required" .Values.smtp.auth.username) . }}
             - name: SMTP_PASSWORD
@@ -95,6 +98,7 @@ spec:
                 secretKeyRef:
                   name: {{ include "nubus-common.secrets.name" (dict "existingSecret" .Values.smtp.auth.existingSecret "defaultNameSuffix" "smtp-credentials" "context" .)}}
                   key: {{ include "nubus-common.secrets.key" (dict "existingSecret" .Values.smtp.auth.existingSecret "key" "password" "context" .)}}
+            {{- end }}
           {{- if .Values.handler.service.ports }}
           ports:
             {{- range $key, $value := .Values.handler.service.ports }}
