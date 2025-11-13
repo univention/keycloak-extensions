@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.23.2](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/compare/v0.23.1...v0.23.2) (2025-11-13)
+
+
+### Bug Fixes
+
+* do not require or template the secrets if smtp auth is disabled ([be179e2](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/commit/be179e260822bf09adceb7c9884309d48f9e784b)), closes [[secure]/dev/internal/team-nubus#1525](https://git.knut.[secure].de/[secure]/dev/internal/team-nubus/issues/1525)
+* fix invalid probes in deployment ([ea8f5b6](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/commit/ea8f5b6c4e8b44b806433413dfaa0c948cfee33c)), closes [[secure]/dev/internal/team-nubus#1525](https://git.knut.[secure].de/[secure]/dev/internal/team-nubus/issues/1525)
+
 ## [0.23.1](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/compare/v0.23.0...v0.23.1) (2025-11-04)
 
 
