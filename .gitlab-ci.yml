@@ -4,7 +4,7 @@
 ---
 include:
   - project: "univention/dev/nubus-for-k8s/common-ci"
-    ref: "v1.43.3"
+    ref: "v1.50.0"
     file:
       - "defaults/stages.yaml"
       - "defaults/nubus-workflow.yaml"
@@ -57,6 +57,10 @@ push-image-external:
   parallel:
     matrix: *publish-matrix
 
+container-release-attestation:
+  parallel:
+    matrix: *build-matrix
+
 lint-helm-chart:
   stage: "lint"
   needs: []
@@ -93,12 +97,13 @@ check-debian-updates:
   variables:
     TARGET_IMAGE: "${CI_REGISTRY_IMAGE}/${IMAGE_NAME}:latest"
 
-sonarqube:
-  extends: .sonarqube
-  needs: []
-  rules:
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-    - if: $CI_COMMIT_BRANCH == 'development'
+# TODO: Deactivate until sonarqube is properly set up
+# sonarqube:
+#   extends: .sonarqube
+#   needs: []
+#   rules:
+#     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+#     - if: $CI_COMMIT_BRANCH == 'development'
 
 
 ...
