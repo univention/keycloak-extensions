@@ -108,10 +108,11 @@ spec:
           {{- else if .Values.handler.livenessProbe.enabled }}
           livenessProbe:
             exec:
-              - /bin/bash
-              - -c
-              - |
-                {{- .Values.handler.livenessProbe.command | nindent 16 }}
+              command:
+                - /bin/bash
+                - -c
+                - |
+                  {{- .Values.handler.livenessProbe.command | nindent 18 }}
             initialDelaySeconds: {{ .Values.handler.livenessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.handler.livenessProbe.periodSeconds }}
             timeoutSeconds: {{ .Values.handler.livenessProbe.timeoutSeconds }}
@@ -123,10 +124,11 @@ spec:
           {{- else if .Values.handler.readinessProbe.enabled }}
           readinessProbe:
             exec:
-              - /bin/bash
-              - -c
-              - |
-                {{- .Values.handler.readinessProbe.command | nindent 16 }}
+              command:
+                - /bin/bash
+                - -c
+                - |
+                  {{- .Values.handler.readinessProbe.command | nindent 18 }}
             initialDelaySeconds: {{ .Values.handler.readinessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.handler.readinessProbe.periodSeconds }}
             timeoutSeconds: {{ .Values.handler.readinessProbe.timeoutSeconds }}
@@ -138,10 +140,11 @@ spec:
           {{- else if .Values.handler.startupProbe.enabled }}
           startupProbe:
             exec:
-              - /bin/bash
-              - -c
-              - |
-                {{- .Values.handler.startupProbe.command | nindent 16 }}
+              command:
+                - /bin/bash
+                - -c
+                - |
+                  {{- .Values.handler.startupProbe.command | nindent 18 }}
             initialDelaySeconds: {{ .Values.handler.startupProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.handler.startupProbe.periodSeconds }}
             timeoutSeconds: {{ .Values.handler.startupProbe.timeoutSeconds }}

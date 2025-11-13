@@ -112,9 +112,9 @@ smtp:
     # -- Enable SMTP authentication
     enabled: true
     # -- Username for SMTP authentication
-    username: ""
+    username: "keycloak-extensions"
     # -- Password for SMTP authentication
-    # password: ""
+    password: ""
     # -- SMTP password secret reference.
     existingSecret:
       name: ""
