@@ -2,11 +2,10 @@
 # SPDX-FileCopyrightText: 2025 Univention GmbH
 
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest.mock import MagicMock, patch
 
 import pytest
-import pytz
 from models.device import Device
 from modules.notifier import Notifier
 
@@ -31,7 +30,7 @@ def device():
         user_id="user123",
         is_notified=False,
     )
-    device.created_at = datetime(2024, 5, 20, 12, 0, 0, tzinfo=pytz.utc)
+    device.created_at = datetime(2024, 5, 20, 12, 0, 0, tzinfo=timezone.utc)
     return device
 
 
@@ -40,6 +39,7 @@ def device():
     ("Europe/Berlin", True, 14),  # UTC+2 in summer
     ("Asia/Tokyo", True, 21),  # UTC+9
     ("Etc/GMT+2", True, 10),  # UTC-2
+    ("Africa/Nairobi", True, 15),  # UTC+3
     ("InvalidZone", False, 12),  # Invalid timezone should fallback to UTC
 ])
 @patch("modules.notifier.mail.Email")

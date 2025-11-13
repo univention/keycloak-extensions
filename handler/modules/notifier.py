@@ -31,8 +31,8 @@
 
 import logging
 import os
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
-import pytz
 from database import session
 from keycloak.exceptions import KeycloakGetError
 from models.device import Device
@@ -61,13 +61,13 @@ class Notifier:
         # Get timezone from environment variable
         email_timezone = os.environ.get("EMAIL_TIMEZONE", "UTC")
         try:
-            self.timezone = pytz.timezone(email_timezone)
+            self.timezone = ZoneInfo(email_timezone)
             self.timezone_name = email_timezone
-        except pytz.exceptions.UnknownTimeZoneError:
+        except ZoneInfoNotFoundError:
             self.logger.warning(
                 f"Unknown timezone '{email_timezone}'. Falling back to UTC."
             )
-            self.timezone = pytz.timezone("UTC")
+            self.timezone = ZoneInfo("UTC")
             self.timezone_name = "UTC"
 
     def notify_user(self, user_id: str, details: dict):
