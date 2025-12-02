@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.23.3](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/compare/v0.23.2...v0.23.3) (2025-12-02)
+
+
+### Bug Fixes
+
+* bump image to errata 298 ([626052d](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/commit/626052d2bec49a56c4d12921a7ff48839e1562d4)), closes [[secure]/dev/internal/team-nubus#1543](https://git.knut.[secure].de/[secure]/dev/internal/team-nubus/issues/1543)
+
 ## [0.23.2](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/compare/v0.23.1...v0.23.2) (2025-11-13)
 
 
