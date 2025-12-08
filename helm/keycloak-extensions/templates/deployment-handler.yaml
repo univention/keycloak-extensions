@@ -99,6 +99,9 @@ spec:
                   name: {{ include "nubus-common.secrets.name" (dict "existingSecret" .Values.smtp.auth.existingSecret "defaultNameSuffix" "smtp-credentials" "context" .)}}
                   key: {{ include "nubus-common.secrets.key" (dict "existingSecret" .Values.smtp.auth.existingSecret "key" "password" "context" .)}}
             {{- end }}
+          {{- with .Values.handler.extraEnvVars }}
+            {{- . | toYaml | nindent 12 }}
+          {{- end }}
           {{- if .Values.handler.service.ports }}
           ports:
             {{- range $key, $value := .Values.handler.service.ports }}

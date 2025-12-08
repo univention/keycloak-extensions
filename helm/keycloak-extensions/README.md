@@ -43,6 +43,7 @@ A Helm chart for Kubernetes with its extensions
 | handler.customStartupProbe | object | `{}` |  |
 | handler.enabled | bool | `true` |  |
 | handler.environment | object | `{}` |  |
+| handler.extraEnvVars | list | `[]` | Array with extra environment variables to add to containers.  extraEnvVars:   - name: FOO     value: "bar" |
 | handler.image.pullPolicy | string | `nil` |  |
 | handler.image.registry | string | `nil` | Container registry address. |
 | handler.image.repository | string | `"nubus-dev/images/keycloak-handler"` |  |
@@ -123,6 +124,7 @@ A Helm chart for Kubernetes with its extensions
 | proxy.customStartupProbe | object | `{}` |  |
 | proxy.enabled | bool | `true` |  |
 | proxy.environment | object | `{}` |  |
+| proxy.extraEnvVars | list | `[]` | Array with extra environment variables to add to containers.  extraEnvVars:   - name: FOO     value: "bar" |
 | proxy.image.pullPolicy | string | `nil` |  |
 | proxy.image.registry | string | `nil` | Container registry address. |
 | proxy.image.repository | string | `"nubus-dev/images/keycloak-proxy"` |  |

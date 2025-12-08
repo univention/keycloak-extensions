@@ -277,6 +277,13 @@ handler:
   #   - "docker-registry"
   imagePullSecrets: []
 
+  # -- Array with extra environment variables to add to containers.
+  #
+  # extraEnvVars:
+  #   - name: FOO
+  #     value: "bar"
+  extraEnvVars: []
+
   ## Deployment resources
   resources:
     requests:
@@ -448,6 +455,13 @@ proxy:
   # imagePullSecrets:
   #   - "docker-registry"
   imagePullSecrets: []
+
+  # -- Array with extra environment variables to add to containers.
+  #
+  # extraEnvVars:
+  #   - name: FOO
+  #     value: "bar"
+  extraEnvVars: []
 
   ## Deployment resources
   resources:

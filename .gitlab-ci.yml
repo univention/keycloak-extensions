@@ -84,7 +84,7 @@ unit-tests:
     - pytest -vv tests/handler
 
 chart-tests:
-  image: "gitregistry.knut.univention.de/univention/dev/nubus-for-k8s/common-helm/testrunner:0.28.0"
+  image: "gitregistry.knut.univention.de/univention/dev/nubus-for-k8s/common-helm/testrunner:0.29.0"
   stage: "test"
   script:
     - helm dep build helm/keycloak-extensions

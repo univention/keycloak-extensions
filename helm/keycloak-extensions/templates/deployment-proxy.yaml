@@ -104,6 +104,9 @@ spec:
             - name: NODE_EXTRA_CA_CERTS
               value: "{{ .Values.postgresql.connection.pathCA }}"
             {{- end }}
+          {{- with .Values.proxy.extraEnvVars }}
+            {{- . | toYaml | nindent 12 }}
+          {{- end }}
           ports:
             {{- range $key, $value := .Values.proxy.service.ports }}
             - name: {{ $key }}
