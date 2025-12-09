@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.24.0](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/compare/v0.23.3...v0.24.0) (2025-12-09)
+
+
+### Features
+
+* **helm:** Add component-specific extraEnvVars support ([5ba50f3](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/commit/5ba50f35698339e4fabca9d629e097464b6a2f4d)), closes [[secure]/dev/internal/team-nubus#977](https://git.knut.[secure].de/[secure]/dev/internal/team-nubus/issues/977)
+
 ## [0.23.3](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/compare/v0.23.2...v0.23.3) (2025-12-02)
 
 
