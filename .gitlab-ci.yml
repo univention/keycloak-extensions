@@ -97,13 +97,12 @@ check-debian-updates:
   variables:
     TARGET_IMAGE: "${CI_REGISTRY_IMAGE}/${IMAGE_NAME}:latest"
 
-# TODO: Deactivate until sonarqube is properly set up
-# sonarqube:
-#   extends: .sonarqube
-#   needs: []
-#   rules:
-#     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-#     - if: $CI_COMMIT_BRANCH == 'development'
+sonarqube:
+  extends: .sonarqube
+  needs: []
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_COMMIT_BRANCH == 'development'
 
 
 ...
