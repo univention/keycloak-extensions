@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.24.2](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/compare/v0.24.1...v0.24.2) (2026-02-25)
+
+
+### Bug Fixes
+
+* trigger version bump ([53928d4](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/commit/53928d44ddb8bb2a3e690fa8b833c2570c7c3796)), closes [#0](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/issues/0)
+
 ## [0.24.1](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/compare/v0.24.0...v0.24.1) (2026-01-13)
 
 
