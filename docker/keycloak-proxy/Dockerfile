@@ -15,7 +15,7 @@ RUN apt-get -qq update \
   nodejs \
   npm \
   && rm -fr /var/lib/apt/lists/* /var/cache/apt/archives/* \
-  && npm install --ignore-scripts \
+  && npm install --ignore-scripts --omit=dev \
   && npm cache clean --force
 
 ENV PORT=8181
