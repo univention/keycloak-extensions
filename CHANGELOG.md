@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.24.3](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/compare/v0.24.2...v0.24.3) (2026-03-11)
+
+
+### Bug Fixes
+
+* Dependency updates ([5cb990b](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/commit/5cb990b14418c7b2c13607624a682c3c88def995)), closes [[secure]/dev/internal/team-nubus#1477](https://git.knut.[secure].de/[secure]/dev/internal/team-nubus/issues/1477)
+
 ## [0.24.2](https://git.knut.[secure].de/[secure]/dev/projects/keycloak/keycloak-extensions/compare/v0.24.1...v0.24.2) (2026-02-25)
 
 
