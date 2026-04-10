@@ -21,7 +21,7 @@
     "winston": "3.8.2"
   },
   "devDependencies": {
-    "eslint": "^8.37.0",
+    "eslint": "^10.0.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-n": "^15.0.0",
