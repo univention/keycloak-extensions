@@ -47,8 +47,8 @@ app.use(cookieParser());
  */
 app.use("/", proxy);
 
-var server = app.listen(process.env.PORT, function () {
-  const host = server.address().address;
-  const port = server.address().port;
+app.listen(process.env.PORT, function () {
+  const host = this.address().address;
+  const port = this.address().port;
   logger.info(`Proxy running at http://${host}:${port}`);
 });

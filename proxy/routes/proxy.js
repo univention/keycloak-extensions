@@ -31,7 +31,7 @@
  */
 
 const express = require("express");
-const jwt_decode = require("jwt-decode");
+const { jwtDecode } = require("jwt-decode");
 const setCookie = require("set-cookie-parser");
 const formBody = require("body/form");
 
@@ -136,43 +136,44 @@ const applyBlocks = (req, res, next) => {
 // Proxy the login form and inject FingerprintJs.
 const loginMiddleware = createProxyMiddleware({
   target: process.env.KEYCLOAK_URL,
-  logLevel: `${process.env.LOG_LEVEL}`.toLowerCase() ?? "info",
   pathFilter: "**",
   ws: true,
   selfHandleResponse: true,
   logger,
 
-  onProxyReq: (proxyReq, req, res) => {
-    const ip =
-      req.headers["x-forwarded-for"] ||
-      req.socket.remoteAddress.split(":").at(-1);
-    proxyReq.setHeader("x-forwarded-for", ip);
-  },
-
-  onProxyRes: responseInterceptor(
-    async (responseBuffer, proxyRes, req, res) => {
-      if (res.writableEnded) return responseBuffer;
-
-      if (
-        (req.path.includes("openid-connect/auth") ||
-          req.path.includes("protocol/saml")) &&
-        (proxyRes.headers["content-type"] ?? "").includes("text/html")
-      ) {
-        logger.debug(
-          `Injecting FingerprintJS script into ${req.method} ${req.path}`,
-        );
-        let response = responseBuffer.toString("utf8"); // Convert buffer to string
-        response = injectFingerprintJS(response);
-        // TODO: Add captcha to login form on first load if needed
-        if (captchaPromptScheduled(req)) {
-          logger.debug("Prompting for reCaptcha");
-          return injectGoogleCaptcha(response);
-        }
-        return response;
-      }
-      return responseBuffer;
+  on: {
+    proxyReq: (proxyReq, req, res) => {
+      const ip =
+        req.headers["x-forwarded-for"] ||
+        req.socket.remoteAddress.split(":").at(-1);
+      proxyReq.setHeader("x-forwarded-for", ip);
     },
-  ),
+
+    proxyRes: responseInterceptor(
+      async (responseBuffer, proxyRes, req, res) => {
+        if (res.writableEnded) return responseBuffer;
+
+        if (
+          (req.path.includes("openid-connect/auth") ||
+            req.path.includes("protocol/saml")) &&
+          (proxyRes.headers["content-type"] ?? "").includes("text/html")
+        ) {
+          logger.debug(
+            `Injecting FingerprintJS script into ${req.method} ${req.path}`,
+          );
+          let response = responseBuffer.toString("utf8"); // Convert buffer to string
+          response = injectFingerprintJS(response);
+          // TODO: Add captcha to login form on first load if needed
+          if (captchaPromptScheduled(req)) {
+            logger.debug("Prompting for reCaptcha");
+            return injectGoogleCaptcha(response);
+          }
+          return response;
+        }
+        return responseBuffer;
+      },
+    ),
+  },
 });
 
 const ensureCaptchaProxyReq = async (proxyReq, req, res) => {
@@ -237,7 +238,7 @@ const ensureCaptchaProxyRes = async (responseBuffer, proxyRes, req, res) => {
     }
     let token;
     try {
-      token = jwt_decode(rawToken);
+      token = jwtDecode(rawToken);
     } catch (error) {
       logger.error("Failed to decode JWT token:", error);
       return responseBuffer;
@@ -270,7 +271,7 @@ const newDeviceLoginNotification2fa = async (proxyRes, req, res) => {
     )?.value;
     let token;
     try {
-      token = jwt_decode(rawToken);
+      token = jwtDecode(rawToken);
     } catch (error) {
       logger.error("Failed to decode JWT token:", error);
       return;
@@ -295,14 +296,14 @@ const newDeviceLoginNotification2fa = async (proxyRes, req, res) => {
  * @desc
  * Proxy the Keycloak SAML login form and inject fingerprintjs.
  */
-router.get("*/protocol/saml*", fetchCaptchaActions, loginMiddleware);
+router.get(/\/protocol\/saml/, fetchCaptchaActions, loginMiddleware);
 
 /**
  * @name *\/openid-connect/auth*
  * @desc
  * Proxy the Keycloak OIDC login form and inject fingerprintjs and captcha.
  */
-router.get("*/openid-connect/auth*", fetchCaptchaActions, loginMiddleware);
+router.get(/\/openid-connect\/auth/, fetchCaptchaActions, loginMiddleware);
 
 /**
  * @name *\/openid-connect/token*
@@ -310,21 +311,22 @@ router.get("*/openid-connect/auth*", fetchCaptchaActions, loginMiddleware);
  * Proxy the Keycloak OIDC login token API (only device/IP block)
  */
 router.post(
-  "*/openid-connect/token*",
+  /\/openid-connect\/token/,
   fetchBlockActions,
   applyBlocks,
   createProxyMiddleware({
     target: process.env.KEYCLOAK_URL,
-    logLevel: `${process.env.LOG_LEVEL}`.toLowerCase() ?? "info",
     pathFilter: "**",
     logger,
-    onProxyReq: (proxyReq, req, res) => {
-      if (req.path.includes("openid-connect/token")) {
-        const ip =
-          req.headers["x-forwarded-for"] ||
-          req.socket.remoteAddress.split(":").at(-1);
-        proxyReq.setHeader("x-forwarded-for", ip);
-      }
+    on: {
+      proxyReq: (proxyReq, req, res) => {
+        if (req.path.includes("openid-connect/token")) {
+          const ip =
+            req.headers["x-forwarded-for"] ||
+            req.socket.remoteAddress.split(":").at(-1);
+          proxyReq.setHeader("x-forwarded-for", ip);
+        }
+      },
     },
   }),
 );
@@ -335,20 +337,21 @@ router.post(
  * Proxy everything Keycloak login post attempts to take actions
  */
 router.post(
-  "*/login-actions/authenticate*",
+  /\/login-actions\/authenticate/,
   fetchCaptchaActions,
   fetchBlockActions,
   applyBlocks,
   createProxyMiddleware({
     target: process.env.KEYCLOAK_URL,
-    logLevel: `${process.env.LOG_LEVEL}`.toLowerCase() ?? "info",
     pathFilter: "**",
     ws: true,
     selfHandleResponse: true,
     logger,
 
-    onProxyReq: ensureCaptchaProxyReq,
-    onProxyRes: responseInterceptor(ensureCaptchaProxyRes),
+    on: {
+      proxyReq: ensureCaptchaProxyReq,
+      proxyRes: responseInterceptor(ensureCaptchaProxyRes),
+    },
   }),
 );
 
@@ -358,13 +361,14 @@ router.post(
  * Proxy 2FA
  */
 router.post(
-  "*/login-actions/required-action*",
+  /\/login-actions\/required-action/,
   createProxyMiddleware({
     target: process.env.KEYCLOAK_URL,
-    logLevel: `${process.env.LOG_LEVEL}`.toLowerCase() ?? "info",
     pathFilter: "**",
     logger,
-    onProxyRes: newDeviceLoginNotification2fa,
+    on: {
+      proxyRes: newDeviceLoginNotification2fa,
+    },
   }),
 );
 
@@ -377,7 +381,6 @@ router.use(
   "/",
   createProxyMiddleware({
     target: process.env.KEYCLOAK_URL,
-    logLevel: `${process.env.LOG_LEVEL}`.toLowerCase() ?? "info",
     pathFilter: "**",
     logger,
   }),

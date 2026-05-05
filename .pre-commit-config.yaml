@@ -20,14 +20,16 @@ repos:
           - -i
         require_serial: false
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: "v8.56.0" # Use the sha / tag you want to point at
+    rev: "v10.3.0"
     hooks:
       - id: eslint
         name: eslint
         description: Check NodeJS syntax and enforce style.
         args: [--fix]
         additional_dependencies:
-          - eslint@8.37.0
+          - eslint@10.3.0
+          - "@eslint/js@9.39.1"
+          - globals@15.15.0
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
