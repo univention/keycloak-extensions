@@ -150,7 +150,7 @@ services:
   e2e-tests:
     # Test suite to run end-to-end tests
     container_name: e2e-tests
-    image: e2e-tests:develop
+    image: ${CI_REGISTRY_IMAGE:-keycloak-extensions}/e2e-tests:${IMAGE_TAG:-develop}
     profiles: [ "test" ]
     init: true # https://playwright.dev/docs/ci#docker
     build: ./tests/e2e

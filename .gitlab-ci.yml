@@ -15,6 +15,10 @@ include:
       - "jobs/package-and-publish-helm-charts-external.yaml"
       - "jobs/check-debian-updates.yaml"
       - "templates/sonarqube.yaml"
+  - project: "univention/infrastructure/docker-services"
+    ref: "master"
+    file:
+      - "dind.yml"
 
 variables:
   SOUVAP_HELM_PROJECT_ID: 77
@@ -32,6 +36,9 @@ package-helm-charts:
     KANIKO_BUILD_CONTEXT: "$CI_PROJECT_DIR/handler"
   - IMAGE_NAME: "keycloak-proxy"
     KANIKO_BUILD_CONTEXT: "$CI_PROJECT_DIR/proxy"
+  - IMAGE_NAME: "e2e-tests"
+    KANIKO_BUILD_CONTEXT: "$CI_PROJECT_DIR/tests/e2e"
+    DOCKERFILE_PATH: "$CI_PROJECT_DIR/tests/e2e/Dockerfile"
 
 .publish-matrix: &publish-matrix
   - IMAGE_NAME:
@@ -82,6 +89,25 @@ unit-tests:
   script:
     - pip install -r tests/requirements.txt
     - pytest -vv tests/handler
+
+tests:
+  extends: .dind
+  stage: "test"
+  image: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:24.0.7"
+  variables:
+    IMAGE_TAG: ${RELEASE_VERSION}
+  artifacts:
+    when: on_failure
+    paths:
+      - tests/e2e/test-results/**/*.webm
+    expire_in: 1 day
+  script:
+    - docker compose --profile=test up -d --wait keycloak database
+    - docker compose --profile=test up -d --wait proxy handler
+    - docker compose --profile=test run --name e2e-ci e2e-tests
+  after_script:
+    - docker cp e2e-ci:/e2e/test-results/ $CI_PROJECT_DIR/tests/e2e/ || true
+    - docker compose --profile=test down
 
 chart-tests:
   image: "gitregistry.knut.univention.de/univention/dev/nubus-for-k8s/common-helm/testrunner:0.29.0"
