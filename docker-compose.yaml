@@ -18,8 +18,18 @@ services:
       - KEYCLOAK_ADMIN_PASSWORD=univention
       - PROXY_ADDRESS_FORWARDING=true
       - KC_PROXY=edge
+      - KC_HOSTNAME=proxy
+      - KC_HOSTNAME_PORT=8181
+      - KC_HOSTNAME_STRICT=false
+      - KC_HOSTNAME_STRICT_HTTPS=false
       - KEYCLOAK_LOGLEVEL=ALL
       - ROOT_LOGLEVEL=ALL
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/realms/master"]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+      start_period: 30s
 
   proxy:
     # The proxy in front of Keycloak handling blocks and captcha.
@@ -33,9 +43,12 @@ services:
     ports:
       - 8181:8181
     depends_on:
-      - keycloak
-      - database
-      - handler
+      keycloak:
+        condition: service_healthy
+      database:
+        condition: service_healthy
+      handler:
+        condition: service_started
     environment:
       KEYCLOAK_URL: http://keycloak:8080
       LOG_LEVEL: debug
@@ -59,8 +72,10 @@ services:
       dockerfile: ../docker/keycloak-handler/Dockerfile
     restart: unless-stopped
     depends_on:
-      - keycloak
-      - database
+      keycloak:
+        condition: service_healthy
+      database:
+        condition: service_healthy
     environment:
       # Keycloak
       KC_AUTH_URL: http://keycloak:8080/admin
@@ -102,6 +117,11 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
       POSTGRES_DB: handler
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   keycloak-dev:
     # A non configured instance of Keycloak for development.
@@ -135,10 +155,14 @@ services:
     init: true # https://playwright.dev/docs/ci#docker
     build: ./tests/e2e
     depends_on:
-      - keycloak
-      - database
-      - handler
-      - proxy
+      keycloak:
+        condition: service_healthy
+      database:
+        condition: service_started
+      handler:
+        condition: service_started
+      proxy:
+        condition: service_started
     command: pytest --base-url http://proxy:8181 --slowmo 500 --video retain-on-failure
 
   # Environment which allows to run the tool "helm-docs". See the directory
