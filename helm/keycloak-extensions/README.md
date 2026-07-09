@@ -76,6 +76,7 @@ A Helm chart for Kubernetes with its extensions
 | handler.resources.requests.memory | string | `"512Mi"` |  |
 | handler.securityContext.allowPrivilegeEscalation | bool | `false` |  |
 | handler.securityContext.capabilities.drop[0] | string | `"ALL"` |  |
+| handler.securityContext.enabled | bool | `true` |  |
 | handler.securityContext.privileged | bool | `false` |  |
 | handler.securityContext.readOnlyRootFilesystem | bool | `true` |  |
 | handler.securityContext.runAsGroup | int | `1000` |  |
@@ -158,6 +159,7 @@ A Helm chart for Kubernetes with its extensions
 | proxy.resources.requests.memory | string | `"512Mi"` |  |
 | proxy.securityContext.allowPrivilegeEscalation | bool | `false` |  |
 | proxy.securityContext.capabilities.drop[0] | string | `"ALL"` |  |
+| proxy.securityContext.enabled | bool | `true` |  |
 | proxy.securityContext.privileged | bool | `false` |  |
 | proxy.securityContext.readOnlyRootFilesystem | bool | `true` |  |
 | proxy.securityContext.runAsGroup | int | `1000` |  |

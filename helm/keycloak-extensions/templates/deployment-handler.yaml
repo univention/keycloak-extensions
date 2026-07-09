@@ -45,9 +45,9 @@ spec:
       nodeSelector:
         {{ toYaml . | nindent 8 | trim }}
       {{- end }}
-      {{- with .Values.handler.podSecurityContext }}
+      {{- if .Values.handler.podSecurityContext.enabled }}
       securityContext:
-        {{ toYaml . | nindent 8 | trim }}
+        {{ omit .Values.handler.podSecurityContext "enabled" | toYaml | nindent 8 | trim }}
       {{- end }}
       {{- if or .Values.imagePullSecrets .Values.global.imagePullSecrets }}
       imagePullSecrets:
@@ -66,8 +66,10 @@ spec:
       {{- end }}
       containers:
         - name: "main"
+          {{- if .Values.handler.securityContext.enabled }}
           securityContext:
-            {{- toYaml .Values.handler.securityContext | nindent 12 }}
+            {{- omit .Values.handler.securityContext "enabled" | toYaml | nindent 12 }}
+          {{- end }}
           image: "{{ .Values.handler.image.registry | default .Values.global.imageRegistry }}/{{ .Values.handler.image.repository }}{{ if .Values.handler.image.sha256 }}@sha256:{{ .Values.handler.image.sha256 }}{{ else }}:{{ .Values.handler.image.tag }}{{ end }}"
           imagePullPolicy: {{ coalesce .Values.handler.image.pullPolicy .Values.global.imagePullPolicy | quote }}
           envFrom:
