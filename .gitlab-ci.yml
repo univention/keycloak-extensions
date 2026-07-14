@@ -4,14 +4,14 @@
 ---
 include:
   - project: "univention/dev/nubus-for-k8s/common-ci"
-    ref: "v1.62.0"
+    ref: "v1.66.2"
     file:
       - "defaults/stages.yaml"
       - "defaults/nubus-workflow.yaml"
       - "jobs/lint-commit-messages.yaml"
       - "jobs/lint-pre-commit.yaml"
       - "jobs/semantic-release-env.yaml"
-      - "jobs/container-build-external.yaml"
+      - "jobs/container-build-external-buildkit.yaml"
       - "jobs/package-and-publish-helm-charts-external.yaml"
       - "jobs/check-debian-updates.yaml"
       - "templates/sonarqube.yaml"
@@ -33,11 +33,11 @@ package-helm-charts:
 
 .build-matrix: &build-matrix
   - IMAGE_NAME: "keycloak-handler"
-    KANIKO_BUILD_CONTEXT: "$CI_PROJECT_DIR/handler"
+    BUILD_CONTEXT: "$CI_PROJECT_DIR/handler"
   - IMAGE_NAME: "keycloak-proxy"
-    KANIKO_BUILD_CONTEXT: "$CI_PROJECT_DIR/proxy"
+    BUILD_CONTEXT: "$CI_PROJECT_DIR/proxy"
   - IMAGE_NAME: "e2e-tests"
-    KANIKO_BUILD_CONTEXT: "$CI_PROJECT_DIR/tests/e2e"
+    BUILD_CONTEXT: "$CI_PROJECT_DIR/tests/e2e"
     DOCKERFILE_PATH: "$CI_PROJECT_DIR/tests/e2e/Dockerfile"
 
 .publish-matrix: &publish-matrix
@@ -49,7 +49,6 @@ container-build:
   parallel:
     matrix: *build-matrix
   variables:
-    KANIKO_ARGS: "--skip-unused-stages=true --cache=true --cache-repo=$CI_REGISTRY_IMAGE/${IMAGE_NAME}-cache"
     DOCKERFILE_PATH: "${CI_PROJECT_DIR}/docker/${IMAGE_NAME}/Dockerfile"
 
 container-malware-scan:
