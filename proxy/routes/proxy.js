@@ -136,7 +136,6 @@ const applyBlocks = (req, res, next) => {
 // Proxy the login form and inject FingerprintJs.
 const loginMiddleware = createProxyMiddleware({
   target: process.env.KEYCLOAK_URL,
-  pathFilter: "**",
   ws: true,
   selfHandleResponse: true,
   logger,
@@ -316,7 +315,6 @@ router.post(
   applyBlocks,
   createProxyMiddleware({
     target: process.env.KEYCLOAK_URL,
-    pathFilter: "**",
     logger,
     on: {
       proxyReq: (proxyReq, req, res) => {
@@ -343,7 +341,6 @@ router.post(
   applyBlocks,
   createProxyMiddleware({
     target: process.env.KEYCLOAK_URL,
-    pathFilter: "**",
     ws: true,
     selfHandleResponse: true,
     logger,
@@ -364,7 +361,6 @@ router.post(
   /\/login-actions\/required-action/,
   createProxyMiddleware({
     target: process.env.KEYCLOAK_URL,
-    pathFilter: "**",
     logger,
     on: {
       proxyRes: newDeviceLoginNotification2fa,
@@ -381,7 +377,6 @@ router.use(
   "/",
   createProxyMiddleware({
     target: process.env.KEYCLOAK_URL,
-    pathFilter: "**",
     logger,
   }),
 );
