@@ -24,7 +24,7 @@ A Helm chart for Kubernetes with its extensions
 | global.imageRegistry | string | `"artifacts.software-univention.de"` | Global image registry |
 | global.nubusDeployment | bool | `false` | Indicates wether this chart is part of a Nubus deployment. |
 | handler.affinity | object | `{}` |  |
-| handler.appConfig | object | `{"autoExpireRuleInMins":1,"captchaProtectionEnable":"False","deviceProtectionEnable":"True","emailNotificationTimezone":"UTC","eventsRetentionPeriod":1,"failedAttemptsForCaptchaTrigger":3,"failedAttemptsForDeviceBlock":5,"failedAttemptsForIpBlock":7,"ipProtectionEnable":"True","logLevel":"DEBUG","mailFrom":"univention@example.org","newDeviceLoginNotificationEnable":"True","newDeviceLoginSubject":"New device login"}` | Application configuration of the handler |
+| handler.appConfig | object | `{"autoExpireRuleInMins":1,"captchaProtectionEnable":"False","deviceProtectionEnable":"True","emailNotificationTimezone":"UTC","eventsRetentionPeriod":1,"failedAttemptsForCaptchaTrigger":3,"failedAttemptsForDeviceBlock":5,"failedAttemptsForIpBlock":7,"ipProtectionEnable":"True","logLevel":"INFO","mailFrom":"univention@example.org","newDeviceLoginNotificationEnable":"True","newDeviceLoginSubject":"New device login"}` | Application configuration of the handler |
 | handler.appConfig.autoExpireRuleInMins | int | `1` | Minutes to automatically expire actions such as IP and device blocks and reCaptcha prompt |
 | handler.appConfig.captchaProtectionEnable | string | `"False"` | Whether to enable reCaptcha prompting protection |
 | handler.appConfig.deviceProtectionEnable | string | `"True"` | Whether to enable device blocking |
@@ -34,7 +34,7 @@ A Helm chart for Kubernetes with its extensions
 | handler.appConfig.failedAttemptsForDeviceBlock | int | `5` | Number of failed login attempts within the minutes of `eventsRetentionPeriod` to trigger a device block. Should be greater than `failedAttemptsForCaptchaTrigger` if it is enabled |
 | handler.appConfig.failedAttemptsForIpBlock | int | `7` | Number of failed login attempts within the minutes of `eventsRetentionPeriod` to trigger an IP block. Should be greater than `failedAttemptsForDeviceBlock` if it is enabled |
 | handler.appConfig.ipProtectionEnable | string | `"True"` | Whether to enable IP blocking |
-| handler.appConfig.logLevel | string | `"DEBUG"` | Application LOG level: `DEBUG`, `INFO`, `WARN` or `ERROR` |
+| handler.appConfig.logLevel | string | `"INFO"` | Application LOG level: `DEBUG`, `INFO`, `WARN` or `ERROR` |
 | handler.appConfig.mailFrom | string | `"univention@example.org"` | Email to send emails from |
 | handler.appConfig.newDeviceLoginNotificationEnable | string | `"True"` | Whether to enable email notification to users on New Device Login |
 | handler.appConfig.newDeviceLoginSubject | string | `"New device login"` | Subject for email notification to users on New Device Login |
@@ -117,9 +117,9 @@ A Helm chart for Kubernetes with its extensions
 | postgresql.connection.port | string | `""` | PostgreSQL port. |
 | postgresql.connection.ssl | string | `"false"` | PostgreSQL SSL flag |
 | proxy.affinity | object | `{}` |  |
-| proxy.appConfig | object | `{"captcha":{"captchaSecretKey":"some_secret_key","captchaSiteKey":"some_site_key","existingSecret":{"keyMapping":{"secret_key":null,"site_key":null},"name":""}},"logLevel":"debug"}` | Application configuration of the proxy |
+| proxy.appConfig | object | `{"captcha":{"captchaSecretKey":"some_secret_key","captchaSiteKey":"some_site_key","existingSecret":{"keyMapping":{"secret_key":null,"site_key":null},"name":""}},"logLevel":"info"}` | Application configuration of the proxy |
 | proxy.appConfig.captcha | object | `{"captchaSecretKey":"some_secret_key","captchaSiteKey":"some_site_key","existingSecret":{"keyMapping":{"secret_key":null,"site_key":null},"name":""}}` | The Google reCaptcha v2 site key generated from [their admin site](https://www.google.com/recaptcha/admin/) |
-| proxy.appConfig.logLevel | string | `"debug"` | Proxy log level: `debug`, `info`, `warn` or `error` |
+| proxy.appConfig.logLevel | string | `"info"` | Proxy log level: `debug`, `info`, `warn` or `error` |
 | proxy.customLivenessProbe | object | `{}` |  |
 | proxy.customReadinessProbe | object | `{}` |  |
 | proxy.customStartupProbe | object | `{}` |  |
@@ -143,6 +143,7 @@ A Helm chart for Kubernetes with its extensions
 | proxy.livenessProbe.periodSeconds | int | `10` |  |
 | proxy.livenessProbe.successThreshold | int | `1` |  |
 | proxy.livenessProbe.timeoutSeconds | int | `5` |  |
+| proxy.logVolume.sizeLimit | string | `"1Gi"` | Size limit of the emptyDir volume holding the log file. |
 | proxy.nodeSelector | object | `{}` |  |
 | proxy.podAnnotations | object | `{}` |  |
 | proxy.podSecurityContext | object | `{}` |  |

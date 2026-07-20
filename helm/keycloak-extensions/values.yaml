@@ -230,7 +230,7 @@ handler:
   # -- Application configuration of the handler
   appConfig:
     # -- Application LOG level: `DEBUG`, `INFO`, `WARN` or `ERROR`
-    logLevel: "DEBUG"
+    logLevel: "INFO"
     # -- Number of failed login attempts within the minutes of `eventsRetentionPeriod` to trigger an IP block. Should be greater than `failedAttemptsForDeviceBlock` if it is enabled
     failedAttemptsForIpBlock: 7
     # -- Number of failed login attempts within the minutes of `eventsRetentionPeriod` to trigger a device block. Should be greater than `failedAttemptsForCaptchaTrigger` if it is enabled
@@ -396,7 +396,7 @@ proxy:
   # -- Application configuration of the proxy
   appConfig:
     # -- Proxy log level: `debug`, `info`, `warn` or `error`
-    logLevel: "debug"
+    logLevel: "info"
     # -- The Google reCaptcha v2 site key generated from [their admin site](https://www.google.com/recaptcha/admin/)
     captcha:
       captchaSiteKey: "some_site_key"
@@ -471,6 +471,10 @@ proxy:
     limits:
       memory: "4Gi"
       cpu: "4"
+
+  logVolume:
+    # -- Size limit of the emptyDir volume holding the log file.
+    sizeLimit: "1Gi"
 
   ## Kubernetes service
   service:

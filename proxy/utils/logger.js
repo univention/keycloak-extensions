@@ -40,7 +40,7 @@ const logger = winston.createLogger({
   defaultMeta: { service: "proxy" },
   transports: [
     new winston.transports.Console({ level }),
-    new winston.transports.File({ filename: "proxy.log", level}),
+    new winston.transports.File({ filename: "/var/log/proxy/proxy.log", level}),
   ],
 });
 

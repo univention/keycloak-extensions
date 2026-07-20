@@ -116,6 +116,8 @@ spec:
               protocol: {{ $value.protocol }}
             {{- end }}
           volumeMounts:
+            - name: "logs"
+              mountPath: "/var/log/proxy"
             {{- if .Values.postgresql.connection.customca }}
             - name: "customca"
               mountPath: "{{ .Values.postgresql.connection.pathCA }}"
@@ -164,6 +166,9 @@ spec:
           lifecycle: {{- include "common.tplvalues.render" (dict "value" .Values.proxy.lifecycleHooks "context" $) | nindent 12 }}
           {{- end }}
       volumes:
+        - name: "logs"
+          emptyDir:
+            sizeLimit: {{ .Values.proxy.logVolume.sizeLimit | quote }}
         {{- if .Values.postgresql.connection.customca }}
         - name: "customca"
           configMap:
