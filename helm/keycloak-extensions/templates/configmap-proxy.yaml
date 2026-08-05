@@ -25,6 +25,7 @@ data:
   CAPTCHA_SITE_KEY: "{{ .Values.proxy.appConfig.captchaSiteKey }}"
   CAPTCHA_SECRET_KEY: "{{ .Values.proxy.appConfig.captchaSecretKey }}"
   LOG_LEVEL: "{{ .Values.proxy.appConfig.logLevel }}"
+  LOG_FILE: "{{ .Values.proxy.appConfig.logFile }}"
 
 {{- if .Values.postgresql.connection.customca }}
 ---

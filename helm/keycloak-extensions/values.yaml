@@ -397,6 +397,8 @@ proxy:
   appConfig:
     # -- Proxy log level: `debug`, `info`, `warn` or `error`
     logLevel: "info"
+    # -- Absolute path of an additional log file to write to.
+    logFile: ""
     # -- The Google reCaptcha v2 site key generated from [their admin site](https://www.google.com/recaptcha/admin/)
     captcha:
       captchaSiteKey: "some_site_key"
@@ -473,7 +475,8 @@ proxy:
       cpu: "4"
 
   logVolume:
-    # -- Size limit of the emptyDir volume holding the log file.
+    # -- Size limit of the emptyDir volume holding the log file. Used only when
+    # `proxy.appConfig.logFile` is set.
     sizeLimit: "1Gi"
 
   ## Kubernetes service

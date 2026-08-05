@@ -117,8 +117,9 @@ A Helm chart for Kubernetes with its extensions
 | postgresql.connection.port | string | `""` | PostgreSQL port. |
 | postgresql.connection.ssl | string | `"false"` | PostgreSQL SSL flag |
 | proxy.affinity | object | `{}` |  |
-| proxy.appConfig | object | `{"captcha":{"captchaSecretKey":"some_secret_key","captchaSiteKey":"some_site_key","existingSecret":{"keyMapping":{"secret_key":null,"site_key":null},"name":""}},"logLevel":"info"}` | Application configuration of the proxy |
+| proxy.appConfig | object | `{"captcha":{"captchaSecretKey":"some_secret_key","captchaSiteKey":"some_site_key","existingSecret":{"keyMapping":{"secret_key":null,"site_key":null},"name":""}},"logFile":"","logLevel":"info"}` | Application configuration of the proxy |
 | proxy.appConfig.captcha | object | `{"captchaSecretKey":"some_secret_key","captchaSiteKey":"some_site_key","existingSecret":{"keyMapping":{"secret_key":null,"site_key":null},"name":""}}` | The Google reCaptcha v2 site key generated from [their admin site](https://www.google.com/recaptcha/admin/) |
+| proxy.appConfig.logFile | string | `""` | Absolute path of an additional log file to write to. |
 | proxy.appConfig.logLevel | string | `"info"` | Proxy log level: `debug`, `info`, `warn` or `error` |
 | proxy.customLivenessProbe | object | `{}` |  |
 | proxy.customReadinessProbe | object | `{}` |  |
@@ -143,7 +144,7 @@ A Helm chart for Kubernetes with its extensions
 | proxy.livenessProbe.periodSeconds | int | `10` |  |
 | proxy.livenessProbe.successThreshold | int | `1` |  |
 | proxy.livenessProbe.timeoutSeconds | int | `5` |  |
-| proxy.logVolume.sizeLimit | string | `"1Gi"` | Size limit of the emptyDir volume holding the log file. |
+| proxy.logVolume.sizeLimit | string | `"1Gi"` | Size limit of the emptyDir volume holding the log file. Used only when `proxy.appConfig.logFile` is set. |
 | proxy.nodeSelector | object | `{}` |  |
 | proxy.podAnnotations | object | `{}` |  |
 | proxy.podSecurityContext | object | `{}` |  |
