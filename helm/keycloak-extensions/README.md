@@ -10,7 +10,7 @@ A Helm chart for Kubernetes with its extensions
 
 | Repository | Name | Version |
 |------------|------|---------|
-| oci://artifacts.software-univention.de/nubus/charts | nubus-common | 0.28.0 |
+| oci://artifacts.software-univention.de/nubus/charts | nubus-common | 0.29.19 |
 
 ## Values
 
