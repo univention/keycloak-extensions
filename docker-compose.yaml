@@ -170,7 +170,7 @@ services:
   helm-docs:
     profiles:
       - test
-    image: "jnorwood/helm-docs:v1.11.0"
+    image: "jnorwood/helm-docs:v1.11.3@sha256:c9b1a275ddc60ea1de290ced305dcc1412543e0624123d8b5182758880b12499"
     command: "-c helm"
     volumes:
       - ./helm:/helm-docs/helm
