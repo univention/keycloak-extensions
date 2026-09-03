@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # SPDX-FileCopyrightText: 2023 Univention GmbH
 
-ARG KEYCLOAK_VERSION=19.0.3
+ARG KEYCLOAK_VERSION=26.7.3@sha256:ff4257d0d64efbe99ed1ddfaf07765cc3c36dc7518bf8324d41961327f441c54
 
 FROM maven:3.8.2-openjdk-11 as maven
 ARG KEYCLOAK_VERSION
