@@ -75,7 +75,7 @@ lint-helm-chart:
       when: "never"
     - when: "on_success"
   image:
-    name: "registry.opencode.de/bmi/opendesk/components/platform-development/images/helm:1.0.2"
+    name: "registry.opencode.de/bmi/opendesk/components/platform-development/images/helm:1.5.0@sha256:a3ecc0ba47ec83c10c77c271c32a88eddd4251c78053f3d7d86e67aabf0ebc1e"
     entrypoint: [""]
   script:
     - helm repo add bitnami https://charts.bitnami.com/bitnami
