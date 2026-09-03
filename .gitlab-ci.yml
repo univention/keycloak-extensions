@@ -75,7 +75,7 @@ lint-helm-chart:
       when: "never"
     - when: "on_success"
   image:
-    name: "registry.opencode.de/bmi/opendesk/components/platform-development/images/helm:1.0.2"
+    name: "registry.opencode.de/bmi/opendesk/components/platform-development/images/helm:1.0.2@sha256:d0a76e26e4f37d41e064e9ec22ee0ce10f1d2d96564c8f141d90f3a8fdd81ea2"
     entrypoint: [""]
   script:
     - helm repo add bitnami https://charts.bitnami.com/bitnami
@@ -92,7 +92,7 @@ unit-tests:
 tests:
   extends: .dind
   stage: "test"
-  image: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:24.0.7"
+  image: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:24.0.7@sha256:52459560108c9833c5ae0ffb998fc2677616ffb7f759177cd8b8b4cf2cb8f157"
   variables:
     IMAGE_TAG: ${RELEASE_VERSION}
   artifacts:
@@ -109,7 +109,7 @@ tests:
     - docker compose --profile=test down
 
 chart-tests:
-  image: "gitregistry.knut.univention.de/univention/dev/nubus-for-k8s/common-helm/testrunner:0.29.0"
+  image: "gitregistry.knut.univention.de/univention/dev/nubus-for-k8s/common-helm/testrunner:0.29.0@sha256:1aaefc069f9fd594dde7fc8c0a1b14c4707099ce34ae114649b8053bcee5eddc"
   stage: "test"
   script:
     - helm dep build helm/keycloak-extensions
