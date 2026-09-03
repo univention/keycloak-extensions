@@ -92,7 +92,7 @@ unit-tests:
 tests:
   extends: .dind
   stage: "test"
-  image: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:24.0.7"
+  image: "${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/docker:24.0.9@sha256:9b17a9f25adf17b88d0a013b4f00160754adf4b07ccbe9986664a49886c2c98e"
   variables:
     IMAGE_TAG: ${RELEASE_VERSION}
   artifacts:
