@@ -176,7 +176,7 @@ services:
       - ./helm:/helm-docs/helm
 
   test-helm:
-    image: "gitregistry.knut.univention.de/univention/dev/nubus-for-k8s/common-helm/testrunner:0.29.0"
+    image: "gitregistry.knut.univention.de/univention/dev/nubus-for-k8s/common-helm/testrunner:0.29.19@sha256:568f55e9800cc06269909d9342622a55a4918eaad99cd961ed0c1fdf2312c16d"
     pull_policy: "if_not_present"
     command: "pytest tests/"
     profiles:
