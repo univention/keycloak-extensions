@@ -1,4 +1,4 @@
 python-keycloak==7.1.1
-SQLAlchemy==2.0.51
-psycopg2-binary==2.9.12
+SQLAlchemy==2.0.53
+psycopg2-binary==2.9.13
 httpx==0.28.1
