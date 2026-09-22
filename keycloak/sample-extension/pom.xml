@@ -32,7 +32,7 @@
             </plugin>
             <plugin>
                 <groupId>org.wildfly.plugins</groupId>
-                <version>3.0.2.Final</version>
+                <version>6.0.1.Final</version>
                 <artifactId>wildfly-maven-plugin</artifactId>
                 <configuration>
                     <skip>false</skip>
