@@ -4,7 +4,7 @@
 ---
 include:
   - project: "univention/dev/nubus-for-k8s/common-ci"
-    ref: "v1.68.2"
+    ref: "v1.69.2"
     file:
       - "defaults/stages.yaml"
       - "defaults/nubus-workflow.yaml"
@@ -19,6 +19,7 @@ include:
     ref: "master"
     file:
       - "dind.yml"
+  - component: "$CI_SERVER_FQDN/univention/dev/nubus-for-k8s/common-ci/vul-man@v1.69.2"
 
 variables:
   SOUVAP_HELM_PROJECT_ID: 77
@@ -66,6 +67,10 @@ push-image-external:
 container-release-attestation:
   parallel:
     matrix: *build-matrix
+
+sbom-upload:
+  parallel:
+    matrix: *publish-matrix
 
 lint-helm-chart:
   stage: "lint"
