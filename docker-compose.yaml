@@ -110,7 +110,7 @@ services:
   database:
     # PostgreSQL database shared between proxy and handler containers.
     container_name: keycloak-extensions-postgres
-    image: postgres:15.1-alpine
+    image: postgres:15.19-alpine@sha256:54e0dd8e8cddcdbb9156c2486eed5a43eccb7214d7c6828097d41ce049fb3984
     ports:
       - 5432:5432
     environment:
