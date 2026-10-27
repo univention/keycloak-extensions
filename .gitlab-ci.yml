@@ -109,7 +109,7 @@ tests:
     - docker compose --profile=test down
 
 chart-tests:
-  image: "gitregistry.knut.univention.de/univention/dev/nubus-for-k8s/common-helm/testrunner:0.29.0"
+  image: "gitregistry.knut.univention.de/univention/dev/nubus-for-k8s/common-helm/testrunner:0.29.24@sha256:1f34d54d23452475db4e92a43b669b8cb1817c4837b0003b2d897d47ed2f9d35"
   stage: "test"
   script:
     - helm dep build helm/keycloak-extensions
