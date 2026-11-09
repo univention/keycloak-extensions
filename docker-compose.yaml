@@ -8,9 +8,15 @@ services:
   keycloak:
     # Test Keycloak instance already configured according to README.md
     container_name: keycloak
-    image: keycloak
-    build: ./keycloak/test
-    command: start-dev --http-enabled=true --import-realm
+    image: quay.io/keycloak/keycloak:19.0.2@sha256:e5f375089926aae34abab1b95937fb0721121d5b2016e89c89a4817f59c07e91
+    # --import-realm skips the master realm Keycloak creates on first start; --override replaces it with the export.
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - >-
+        /opt/keycloak/bin/kc.sh import --file /opt/keycloak/data/import/realm-export.json --override true
+        && exec /opt/keycloak/bin/kc.sh start-dev --http-enabled=true
+    volumes:
+      - ./keycloak/test/realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
     ports:
       - 5050:8080
     environment:
@@ -24,6 +30,8 @@ services:
       - KC_HOSTNAME_STRICT_HTTPS=false
       - KEYCLOAK_LOGLEVEL=ALL
       - ROOT_LOGLEVEL=ALL
+      # The JDK 17 in Keycloak 19 throws a NullPointerException reading cgroup v2 limits on current CI nodes
+      - JAVA_OPTS_APPEND=-XX:-UseContainerSupport
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/realms/master"]
       interval: 10s
