@@ -43,7 +43,7 @@ services:
     # The proxy in front of Keycloak handling blocks and captcha.
     # More at /proxy/README.md
     container_name: keycloak-proxy
-    image: keycloak-proxy:develop
+    image: ${CI_REGISTRY_IMAGE:-keycloak-extensions}/keycloak-proxy:${IMAGE_TAG:-develop}
     build:
       context: ./proxy
       dockerfile: ../docker/keycloak-proxy/Dockerfile
@@ -74,7 +74,7 @@ services:
     # The container checking for new events and triggering actions for the proxy.
     # More at /handler/README.md
     container_name: keycloak-handler
-    image: keycloak-handler:develop
+    image: ${CI_REGISTRY_IMAGE:-keycloak-extensions}/keycloak-handler:${IMAGE_TAG:-develop}
     build:
       context: ./handler
       dockerfile: ../docker/keycloak-handler/Dockerfile
