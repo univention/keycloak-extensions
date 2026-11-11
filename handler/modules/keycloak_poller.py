@@ -134,11 +134,13 @@ class KeycloakPoller:
         ]
         return self.events
 
-    def get_user_email(self, user_id):
+    def get_user(self, user_id):
+        """
+        Get the Keycloak user representation of the given user
+        """
         try:
-            user = self.kc_admin.get_user(user_id)
+            return self.kc_admin.get_user(user_id)
         except KeycloakAuthenticationError:
             self.logger.debug("Renewing Keycloak connection")
             self.connect()
-            user = self.kc_admin.get_user(user_id)
-        return user.get("email", None)
+            return self.kc_admin.get_user(user_id)

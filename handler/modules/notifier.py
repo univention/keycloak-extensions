@@ -71,18 +71,24 @@ class Notifier:
             self.timezone_name = "UTC"
 
     def notify_user(self, user_id: str, details: dict):
-        user_email = self.keycloak.get_user_email(user_id)
+        user = self.keycloak.get_user(user_id)
+        user_email = user.get("email")
         self.logger.info(
-            "Notifying user %s about login at %s with fingerprint %s",
+            "Notifying user %s about login at %s with device ID %s",
             user_id,
-            details["Time"],
-            details["Fingerprint"],
+            details["time"],
+            details["device_id"],
         )
-        if user_email is None:
-            self.logger.warn(
+        if not user_email:
+            self.logger.warning(
                 "User %s does not have an email address!", user_id)
             return
-        e = mail.Email(user_email, details)
+        full_name = " ".join(
+            part.strip()
+            for part in (user.get("firstName") or "", user.get("lastName") or "")
+            if part.strip()
+        )
+        e = mail.Email(user_email, {**details, "full_name": full_name})
         e.send()
 
     def notify_new_logins(self):
@@ -107,9 +113,8 @@ class Notifier:
                 self.notify_user(
                     new_login.user_id,
                     {
-                        "Time": created_at,
-                        "Device ID": new_login.keycloak_device_id,
-                        "Fingerprint": new_login.fingerprint_device_id,
+                        "time": created_at,
+                        "device_id": new_login.keycloak_device_id,
                     },
                 )
                 self.logger.debug(

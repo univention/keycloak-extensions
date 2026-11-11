@@ -13,7 +13,12 @@ from modules.notifier import Notifier
 @pytest.fixture
 def keycloak_mock():
     mock = MagicMock()
-    mock.get_user_email.return_value = "test@example.com"
+    mock.get_user.return_value = {
+        "username": "jdoe",
+        "firstName": "Jane",
+        "lastName": "Doe",
+        "email": "test@example.com",
+    }
     return mock
 
 
@@ -68,18 +73,47 @@ def test_notify_new_logins_timezones(mock_session, mock_email_class, device, tim
 
     # Second argument should be the details dict
     details = args[1]
-    assert "Time" in details
-
-    # Check for correct timezone name
     expected_timezone = timezone if valid else "UTC"
     # Check for correct hour based on timezone
     expected_time = f"2024-05-20 {expected_hour}:00:00 ({expected_timezone})"
-    assert details["Time"] == expected_time
-
-    assert "Device ID" in details
-    assert details["Device ID"] == "device123"
-    assert "Fingerprint" in details
-    assert details["Fingerprint"] == "fingerprint123"
+    assert details == {
+        "time": expected_time,
+        "device_id": "device123",
+        "full_name": "Jane Doe",
+    }
 
     # Verify that send was called
     mock_email_instance.send.assert_called_once()
+
+
+@pytest.mark.parametrize("first_name,last_name,expected", [
+    ("Jane", "Doe", "Jane Doe"),
+    ("", "Doe", "Doe"),
+    (None, "Doe", "Doe"),
+    ("  Jane ", " Doe", "Jane Doe"),
+])
+@patch("modules.notifier.mail.Email")
+def test_notify_user_full_name(mock_email_class, keycloak_mock, first_name, last_name, expected):
+    user = {"username": "jdoe", "lastName": last_name,
+            "email": "test@example.com"}
+    if first_name is not None:
+        user["firstName"] = first_name
+    keycloak_mock.get_user.return_value = user
+
+    Notifier(keycloak_mock).notify_user(
+        "user123", {"time": "2024-05-20 12:00:00 (UTC)", "device_id": "device123"})
+
+    args, _ = mock_email_class.call_args
+    assert args[1]["full_name"] == expected
+    assert "username" not in args[1]
+
+
+@patch("modules.notifier.mail.Email")
+def test_notify_user_without_email(mock_email_class, keycloak_mock):
+    keycloak_mock.get_user.return_value = {
+        "username": "jdoe", "lastName": "Doe"}
+
+    Notifier(keycloak_mock).notify_user(
+        "user123", {"time": "2024-05-20 12:00:00 (UTC)", "device_id": "device123"})
+
+    mock_email_class.assert_not_called()
