@@ -253,8 +253,11 @@ handler:
     emailNotificationTimezone: "UTC"
     # -- Email to send emails from
     mailFrom: "univention@example.org"
-    # -- Subject for email notification to users on New Device Login
-    newDeviceLoginSubject: "New device login"
+    # -- Subject for email notification to users on New Device Login. `{fqdn}` is replaced with `instanceFqdn`.
+    newDeviceLoginSubject: "Recent sign-in to a Nubus account on {fqdn}"
+    # -- Public FQDN of the instance shown in the New Device Login email.
+    # Defaults to the host name of the proxy ingress (`proxy.ingress.host`, or `<global.subDomains.keycloak>.<global.domain>` in a Nubus deployment).
+    instanceFqdn: ""
 
   # -- Kubernetes ingress
   ingress:

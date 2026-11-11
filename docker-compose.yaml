@@ -113,7 +113,8 @@ services:
       MAIL_FROM: univention@example.org
       SMTP_USERNAME: user
       SMTP_PASSWORD: somepassword
-      NEW_DEVICE_LOGIN_SUBJECT: "New device login"
+      NEW_DEVICE_LOGIN_SUBJECT: "Recent sign-in to a Nubus account on {fqdn}"
+      INSTANCE_FQDN: id.example.org
 
   database:
     # PostgreSQL database shared between proxy and handler containers.

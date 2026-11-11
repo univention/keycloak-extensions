@@ -37,4 +37,5 @@ an IP, a device or enforcing reCaptcha. The handler does the following:
 - `MAIL_FROM`: Email to send emails from. Example: `univention@example.org`.
 - `SMTP_USERNAME`: Username for SMTP authentication. Example: `user`.
 - `SMTP_PASSWORD`: Password for SMTP authentication. Example: `somepassword`.
-- `NEW_DEVICE_LOGIN_SUBJECT`: Subject for email notification to users on New Device Login. Example: `New device login`.
+- `NEW_DEVICE_LOGIN_SUBJECT`: Subject for email notification to users on New Device Login. `{fqdn}` is replaced with the instance FQDN. Default: `Recent sign-in to a Nubus account on {fqdn}`.
+- `INSTANCE_FQDN`: Public FQDN of the instance shown in the New Device Login email. Example: `id.example.org`. Defaults to the host name of `KC_AUTH_URL`.

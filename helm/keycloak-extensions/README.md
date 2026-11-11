@@ -24,7 +24,7 @@ A Helm chart for Kubernetes with its extensions
 | global.imageRegistry | string | `"artifacts.software-univention.de"` | Global image registry |
 | global.nubusDeployment | bool | `false` | Indicates wether this chart is part of a Nubus deployment. |
 | handler.affinity | object | `{}` |  |
-| handler.appConfig | object | `{"autoExpireRuleInMins":1,"captchaProtectionEnable":"False","deviceProtectionEnable":"True","emailNotificationTimezone":"UTC","eventsRetentionPeriod":1,"failedAttemptsForCaptchaTrigger":3,"failedAttemptsForDeviceBlock":5,"failedAttemptsForIpBlock":7,"ipProtectionEnable":"True","logLevel":"INFO","mailFrom":"univention@example.org","newDeviceLoginNotificationEnable":"True","newDeviceLoginSubject":"New device login"}` | Application configuration of the handler |
+| handler.appConfig | object | `{"autoExpireRuleInMins":1,"captchaProtectionEnable":"False","deviceProtectionEnable":"True","emailNotificationTimezone":"UTC","eventsRetentionPeriod":1,"failedAttemptsForCaptchaTrigger":3,"failedAttemptsForDeviceBlock":5,"failedAttemptsForIpBlock":7,"instanceFqdn":"","ipProtectionEnable":"True","logLevel":"INFO","mailFrom":"univention@example.org","newDeviceLoginNotificationEnable":"True","newDeviceLoginSubject":"Recent sign-in to a Nubus account on {fqdn}"}` | Application configuration of the handler |
 | handler.appConfig.autoExpireRuleInMins | int | `1` | Minutes to automatically expire actions such as IP and device blocks and reCaptcha prompt |
 | handler.appConfig.captchaProtectionEnable | string | `"False"` | Whether to enable reCaptcha prompting protection |
 | handler.appConfig.deviceProtectionEnable | string | `"True"` | Whether to enable device blocking |
@@ -33,11 +33,12 @@ A Helm chart for Kubernetes with its extensions
 | handler.appConfig.failedAttemptsForCaptchaTrigger | int | `3` | Number of failed login attempts within the minutes of `eventsRetentionPeriod` to enforce reCaptcha prompt |
 | handler.appConfig.failedAttemptsForDeviceBlock | int | `5` | Number of failed login attempts within the minutes of `eventsRetentionPeriod` to trigger a device block. Should be greater than `failedAttemptsForCaptchaTrigger` if it is enabled |
 | handler.appConfig.failedAttemptsForIpBlock | int | `7` | Number of failed login attempts within the minutes of `eventsRetentionPeriod` to trigger an IP block. Should be greater than `failedAttemptsForDeviceBlock` if it is enabled |
+| handler.appConfig.instanceFqdn | string | `""` | Public FQDN of the instance shown in the New Device Login email. Defaults to the host name of the proxy ingress (`proxy.ingress.host`, or `<global.subDomains.keycloak>.<global.domain>` in a Nubus deployment). |
 | handler.appConfig.ipProtectionEnable | string | `"True"` | Whether to enable IP blocking |
 | handler.appConfig.logLevel | string | `"INFO"` | Application LOG level: `DEBUG`, `INFO`, `WARN` or `ERROR` |
 | handler.appConfig.mailFrom | string | `"univention@example.org"` | Email to send emails from |
 | handler.appConfig.newDeviceLoginNotificationEnable | string | `"True"` | Whether to enable email notification to users on New Device Login |
-| handler.appConfig.newDeviceLoginSubject | string | `"New device login"` | Subject for email notification to users on New Device Login |
+| handler.appConfig.newDeviceLoginSubject | string | `"Recent sign-in to a Nubus account on {fqdn}"` | Subject for email notification to users on New Device Login. `{fqdn}` is replaced with `instanceFqdn`. |
 | handler.customLivenessProbe | object | `{}` |  |
 | handler.customReadinessProbe | object | `{}` |  |
 | handler.customStartupProbe | object | `{}` |  |
