@@ -29,14 +29,40 @@
 # <https://www.gnu.org/licenses/>.
 #
 
+import base64
+import binascii
 import logging
 import os
+import re
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from database import session
 from keycloak.exceptions import KeycloakGetError
 from models.device import Device
 from modules import mail
+
+SESSION_ID_PATTERN = re.compile(r"^[A-Za-z0-9_-]+$")
+
+
+def session_id_from_device_id(device_id: str) -> str:
+    """
+    Return the Keycloak session ID for the stored device ID.
+
+    Since Keycloak 26 the AUTH_SESSION_ID cookie, which the proxy stores as
+    device ID, is the Base64 encoding of `<session ID>.<signature>`. The
+    session ID is what administrators find as `sessionId` in the Keycloak
+    login events. Values in any other format are returned unchanged.
+    """
+    try:
+        padded = device_id.translate(str.maketrans("-_", "+/"))
+        padded += "=" * (-len(padded) % 4)
+        decoded = base64.b64decode(padded, validate=True).decode("ascii")
+    except (binascii.Error, ValueError):
+        return device_id
+    session_id, separator, signature = decoded.partition(".")
+    if separator and signature and SESSION_ID_PATTERN.match(session_id):
+        return session_id
+    return device_id
 
 
 class Notifier:
@@ -114,7 +140,8 @@ class Notifier:
                     new_login.user_id,
                     {
                         "time": created_at,
-                        "device_id": new_login.keycloak_device_id,
+                        "device_id": session_id_from_device_id(
+                            new_login.keycloak_device_id),
                     },
                 )
                 self.logger.debug(

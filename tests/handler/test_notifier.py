@@ -7,7 +7,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 from models.device import Device
-from modules.notifier import Notifier
+from modules.notifier import Notifier, session_id_from_device_id
 
 
 @pytest.fixture
@@ -117,3 +117,18 @@ def test_notify_user_without_email(mock_email_class, keycloak_mock):
         "user123", {"time": "2024-05-20 12:00:00 (UTC)", "device_id": "device123"})
 
     mock_email_class.assert_not_called()
+
+
+@pytest.mark.parametrize("device_id,expected", [
+    # Keycloak 26: Base64 of "<session ID>.<signature>"
+    ("TmcwdnZsZVV5Q1ZsZ1pGWmJaUUJhWk5nLmFGbjVtWTZfbXVoWnVvNVpVQllvNlRWV3JFVDM5Nm1Vc0FMdHRTd0VaNk9kVlZHcTZBV213amR3VENqVkhBaDJMajctS19UZFJtY2VUaDVQc3FfV25R",
+     "Ng0vvleUyCVlgZFZbZQBaZNg"),
+    # Older Keycloak: plain session ID
+    ("Ng0vvleUyCVlgZFZbZQBaZNg", "Ng0vvleUyCVlgZFZbZQBaZNg"),
+    ("4f6b1c2e-0d1a-4b8e-9a51-6f0e1d2c3b4a",
+     "4f6b1c2e-0d1a-4b8e-9a51-6f0e1d2c3b4a"),
+    ("device123", "device123"),
+    ("", ""),
+])
+def test_session_id_from_device_id(device_id, expected):
+    assert session_id_from_device_id(device_id) == expected
