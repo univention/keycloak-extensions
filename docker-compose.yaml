@@ -8,7 +8,7 @@ services:
   keycloak:
     # Test Keycloak instance already configured according to README.md
     container_name: keycloak
-    image: quay.io/keycloak/keycloak:19.0.2@sha256:e5f375089926aae34abab1b95937fb0721121d5b2016e89c89a4817f59c07e91
+    image: quay.io/keycloak/keycloak:26.8.2@sha256:c68e286cacd87b942ac1939a0a1481461109d6acd3a57dc496969a319a76bbf0
     # --import-realm skips the master realm Keycloak creates on first start; --override replaces it with the export.
     entrypoint: ["/bin/bash", "-c"]
     command:
