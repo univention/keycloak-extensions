@@ -8,7 +8,7 @@ services:
   keycloak:
     # Test Keycloak instance already configured according to README.md
     container_name: keycloak
-    image: quay.io/keycloak/keycloak:19.0.2@sha256:e5f375089926aae34abab1b95937fb0721121d5b2016e89c89a4817f59c07e91
+    image: quay.io/keycloak/keycloak:19.0.3@sha256:979743420b63a7c45fcd2cbaf0a0c528473fd28d6f4cd627969e1b4c39f6fcc0
     # --import-realm skips the master realm Keycloak creates on first start; --override replaces it with the export.
     entrypoint: ["/bin/bash", "-c"]
     command:
@@ -118,7 +118,7 @@ services:
   database:
     # PostgreSQL database shared between proxy and handler containers.
     container_name: keycloak-extensions-postgres
-    image: postgres:15.19-alpine@sha256:aae6554de426ae1990f1a939ff183a0299146cf7142a6f4c379c3357af9cc2d8
+    image: postgres:15.20-alpine@sha256:23799e521dee9265a8b388ecf3bc0f1eaa34b95be67f5a76af4f8f6adb44c720
     ports:
       - 5432:5432
     environment:
@@ -184,7 +184,7 @@ services:
       - ./helm:/helm-docs/helm
 
   test-helm:
-    image: "gitregistry.knut.univention.de/univention/dev/nubus-for-k8s/common-helm/testrunner:0.29.24@sha256:1f34d54d23452475db4e92a43b669b8cb1817c4837b0003b2d897d47ed2f9d35"
+    image: "gitregistry.knut.univention.de/univention/dev/nubus-for-k8s/common-helm/testrunner:0.29.25@sha256:ad501511d7b3ede40c1f42fc57f48838f57ba104a432934fc4925fe0d4c53088"
     pull_policy: "if_not_present"
     command: "pytest tests/"
     profiles:
