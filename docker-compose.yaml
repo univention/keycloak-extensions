@@ -118,7 +118,7 @@ services:
   database:
     # PostgreSQL database shared between proxy and handler containers.
     container_name: keycloak-extensions-postgres
-    image: postgres:15.20-alpine@sha256:23799e521dee9265a8b388ecf3bc0f1eaa34b95be67f5a76af4f8f6adb44c720
+    image: postgres:15.20-alpine@sha256:e18480a22d6e48f4d816a6696769b1ec09ac73a824c5649e49c7d8b684913f3d
     ports:
       - 5432:5432
     environment:
@@ -184,7 +184,7 @@ services:
       - ./helm:/helm-docs/helm
 
   test-helm:
-    image: "gitregistry.knut.univention.de/univention/dev/nubus-for-k8s/common-helm/testrunner:0.29.25@sha256:ad501511d7b3ede40c1f42fc57f48838f57ba104a432934fc4925fe0d4c53088"
+    image: "gitregistry.knut.univention.de/univention/dev/nubus-for-k8s/common-helm/testrunner:0.30.1@sha256:c11f2d5210be69da131df071a442bfef55ff5892734b33718523579a74193602"
     pull_policy: "if_not_present"
     command: "pytest tests/"
     profiles:
